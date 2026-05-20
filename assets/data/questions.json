@@ -1,0 +1,1431 @@
+[
+  {
+    "id": 1,
+    "text": "¿Cuál fue tu primera impresión de mí?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 2,
+    "text": "¿Qué es lo que más te gusta de nuestra relación?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 3,
+    "text": "¿Cuál es tu recuerdo favorito de nosotros?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 4,
+    "text": "¿Qué es lo que más te hace reír de mí?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 5,
+    "text": "¿Cómo describirías nuestro primer beso?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 6,
+    "text": "¿Qué canción te recuerda a mí?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 7,
+    "text": "¿Cuál es el mejor regalo que te he hecho?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 8,
+    "text": "¿Qué es lo que más te admiras de mí?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 9,
+    "text": "¿Cuál es tu comida favorita para compartir?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 10,
+    "text": "¿Qué superpoder me darías?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 11,
+    "text": "¿Si pudieras cambiar algo de mí, qué sería?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 12,
+    "text": "¿Cuál es mi mayor defecto según tú?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 13,
+    "text": "¿Qué es lo más loco que hemos hecho juntos?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 14,
+    "text": "¿Cuál es tu película favorita para ver conmigo?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 15,
+    "text": "¿Qué es lo que más te gusta de mi físico?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 16,
+    "text": "¿Cuál es el detalle más romántico que he tenido?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 17,
+    "text": "¿Qué significa el amor para ti?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 18,
+    "text": "¿Crees en las almas gemelas?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 19,
+    "text": "¿Qué es lo que más te enamora de mí cada día?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 20,
+    "text": "¿Cuál sería tu cita ideal conmigo?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 21,
+    "text": "¿Qué palabra define nuestra relación?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 22,
+    "text": "¿Cómo te imaginas que seremos de viejitos?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 24,
+    "text": "¿Cuál es tu lugar favorito para darnos un beso?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 25,
+    "text": "¿Qué sientes cuando me ves después de un día largo?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 26,
+    "text": "¿Cuál es tu fantasía más recurrente conmigo?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 27,
+    "text": "¿Qué parte de mi cuerpo te vuelve loco/a?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 28,
+    "text": "¿Cuál ha sido nuestro momento más apasionado?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 29,
+    "text": "¿Qué prenda de ropa te gusta más cómo me queda?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 30,
+    "text": "¿Te gustaría probar algo nuevo en la intimidad?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 31,
+    "text": "¿Cuál es el lugar más extraño donde lo hemos hecho?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 32,
+    "text": "¿Qué es lo que más te excita de mí?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 33,
+    "text": "¿Prefieres luz encendida o apagada?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 34,
+    "text": "¿Cuál es tu posición favorita?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 35,
+    "text": "¿Qué es lo más atrevido que me dirías al oído?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 36,
+    "text": "¿Quién de los dos es más ordenado?",
+    "category": "Convivencia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 37,
+    "text": "¿Qué manía mía te molesta más?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 38,
+    "text": "¿Cuál es nuestra tarea del hogar favorita?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 39,
+    "text": "¿Qué es lo que más te gusta de vivir/estar conmigo?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 40,
+    "text": "¿Cómo nos repartiríamos las tareas si viviéramos juntos?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 41,
+    "text": "¿Qué es lo primero que haces al despertar a mi lado?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 42,
+    "text": "¿Cuál es nuestro plan de domingo perfecto?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 43,
+    "text": "¿Qué objeto mío tirarías a la basura si pudieras?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 44,
+    "text": "¿Quién cocina mejor de los dos?",
+    "category": "Convivencia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 45,
+    "text": "¿Qué es lo que más te gusta de nuestra comunicación?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 46,
+    "text": "¿Dónde te ves viviendo en 5 años?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 47,
+    "text": "¿Te gustaría tener hijos algún día?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 48,
+    "text": "¿Cuál es tu mayor sueño que quieres cumplir conmigo?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 49,
+    "text": "¿Cómo te imaginas nuestra boda ideal?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 50,
+    "text": "¿Qué proyecto te gustaría que emprendiéramos juntos?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 51,
+    "text": "¿Cuál es tu mayor miedo respecto al futuro?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 52,
+    "text": "¿Qué metas personales quieres alcanzar este año?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 53,
+    "text": "¿Cómo crees que cambiará nuestra relación con el tiempo?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 54,
+    "text": "¿Qué es lo que más te emociona de nuestro futuro?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 55,
+    "text": "¿Si ganáramos la lotería, qué haríamos primero?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 56,
+    "text": "¿Cuál es el viaje de tus sueños?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 57,
+    "text": "¿Prefieres playa o montaña?",
+    "category": "Viajes",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 58,
+    "text": "¿Cuál ha sido nuestro mejor viaje juntos?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 59,
+    "text": "¿A qué país te mudarías conmigo por un año?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 60,
+    "text": "¿Eres de planear todo o de improvisar en los viajes?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 61,
+    "text": "¿Qué es lo que nunca falta en tu maleta?",
+    "category": "Viajes",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 62,
+    "text": "¿Cuál es el lugar más romántico que conoces?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 63,
+    "text": "¿Qué actividad extrema te gustaría hacer conmigo?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 64,
+    "text": "¿Prefieres hotel de lujo o acampada?",
+    "category": "Viajes",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 65,
+    "text": "¿Cuál es el próximo destino que visitaremos?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 66,
+    "text": "¿Cuál es tu pasatiempo favorito?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 67,
+    "text": "¿Qué hobby te gustaría que compartiéramos?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 68,
+    "text": "¿Prefieres noche de pelis o salir de fiesta?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 69,
+    "text": "¿Cuál es tu videojuego o juego de mesa favorito?",
+    "category": "Pasatiempos",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 70,
+    "text": "¿Qué deporte te gustaría practicar conmigo?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 71,
+    "text": "¿Cuál es tu libro favorito?",
+    "category": "Pasatiempos",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 72,
+    "text": "¿Qué tipo de música te gusta bailar conmigo?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 73,
+    "text": "¿Cuál es tu serie favorita de todos los tiempos?",
+    "category": "Pasatiempos",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 74,
+    "text": "¿Qué actividad creativa te gusta hacer?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 75,
+    "text": "¿Cuál es tu forma favorita de relajarte?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 76,
+    "text": "¿Qué valor es el más importante en una relación?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 77,
+    "text": "¿Qué es lo que nunca perdonarías?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 78,
+    "text": "¿Qué opinas de la honestidad radical?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 79,
+    "text": "¿Cuál es tu filosofía de vida?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 80,
+    "text": "¿Qué importancia le das a la familia?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 81,
+    "text": "¿Crees que las personas pueden cambiar?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 82,
+    "text": "¿Qué es lo que más te enorgullece de ti mismo/a?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 83,
+    "text": "¿Cómo manejas el estrés o la frustración?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 84,
+    "text": "¿Qué legado te gustaría dejar en el mundo?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 85,
+    "text": "¿Qué significa la lealtad para ti?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 86,
+    "text": "¿Cuál es tu mayor talento oculto?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 87,
+    "text": "¿Qué es lo más vergonzoso que te ha pasado?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 88,
+    "text": "¿Si pudieras viajar al pasado, a qué momento irías?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 89,
+    "text": "¿Cuál es tu animal espiritual?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 90,
+    "text": "¿Qué tres cosas te llevarías a una isla desierta?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 91,
+    "text": "¿Cuál es tu mayor placer culposo?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 92,
+    "text": "¿Qué es lo que más te gusta de mi personalidad?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 93,
+    "text": "¿Cuál es tu estación del año favorita y por qué?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 94,
+    "text": "¿Qué es lo más valiente que has hecho?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 95,
+    "text": "¿Cuál es tu refrán o frase favorita?",
+    "category": "General",
+    "target": "any"
+  },
+  {
+    "id": 96,
+    "text": "¿Qué es lo que más te gusta de nuestra comunicación?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 97,
+    "text": "¿Cuál es el sueño más extraño que has tenido conmigo?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 98,
+    "text": "¿Qué es lo que más te gusta de mis abrazos?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 99,
+    "text": "¿Cómo supiste que yo era la persona indicada?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 100,
+    "text": "¿Qué es lo que más te gusta de nuestra complicidad?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 101,
+    "text": "¿Cuál es tu mayor debilidad cuando estás conmigo?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 102,
+    "text": "¿Qué es lo más atrevido que has pensado hacer conmigo?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 103,
+    "text": "¿Cuál es tu zona erógena favorita?",
+    "category": "Picante",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 104,
+    "text": "¿Qué es lo que más te gusta de mi voz?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 105,
+    "text": "¿Cuál es el mejor cumplido que te he hecho?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 106,
+    "text": "¿Cuál es mi fecha de nacimiento completa?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 107,
+    "text": "¿Cómo se llama mi mejor amigo/a de la infancia?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 108,
+    "text": "¿Cuál es el nombre de mi primera mascota?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 109,
+    "text": "¿Qué carrera quise estudiar antes de la que elegí?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 110,
+    "text": "¿Cuál es mi postre favorito?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 111,
+    "text": "¿A qué le tengo fobia?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 112,
+    "text": "¿Cuál es el nombre de mi abuelo materno?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 113,
+    "text": "¿Cuál fue mi primer trabajo?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 114,
+    "text": "¿Cuál es mi color favorito?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 115,
+    "text": "¿Cuál es mi talla de zapatos?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 116,
+    "text": "¿Cuál es mi película favorita de la infancia?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 117,
+    "text": "¿Cuál es el nombre de mi canción favorita actual?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 118,
+    "text": "¿Cuál es mi mayor sueño por cumplir?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 119,
+    "text": "¿Qué es lo que más me hace enojar?",
+    "category": "General",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 120,
+    "text": "¿Cuál es mi destino de viaje soñado?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 121,
+    "text": "¿Cuál es tu primer recuerdo de la infancia?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 122,
+    "text": "¿Cuál es la comida que más te gusta cocinar juntos?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 123,
+    "text": "¿Qué canción te hace pensar en la relación?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 124,
+    "text": "¿Cuál es tu plan de cita ideal?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 125,
+    "text": "Si pudieran viajar a cualquier lugar juntos, ¿dónde viajarían?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 126,
+    "text": "¿Cuál es tu película favorita para ver juntos?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 127,
+    "text": "¿Qué es lo que más agradeces de la relación?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 128,
+    "text": "¿Cuál es la cualidad más atractiva de tu pareja?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 129,
+    "text": "¿Qué tipo de actividad te gustaría probar juntos en el futuro?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 130,
+    "text": "¿Cuál es tu recuerdo favorito de un momento juntos?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 131,
+    "text": "Si pudieras tener una cena con cualquier persona, ¿quién sería?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 132,
+    "text": "¿Cuál es tu tradición favorita en la relación?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 133,
+    "text": "¿Qué te gustaría mejorar en la comunicación de pareja?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 134,
+    "text": "Si pudieras cambiar una cosa en nuestra rutina diaria, ¿qué sería?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 135,
+    "text": "Si pudieras cambiar algo de tu pasado, ¿qué sería?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 136,
+    "text": "¿Cuál es la mayor lección que has aprendido de nuestra relación?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 137,
+    "text": "¿Cuál es tu lugar favorito para una cita romántica?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 138,
+    "text": "Si pudieras viajar en el tiempo, ¿a qué período histórico te gustaría ir con tu pareja?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 139,
+    "text": "Si pudieras revivir un día juntos, ¿cuál sería?",
+    "category": "Romántico",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 140,
+    "text": "Si fueras director de cine, ¿qué película harías sobre nuestra historia de amor?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 141,
+    "text": "¿Cuál es tu desafío más grande en la relación?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 142,
+    "text": "¿Qué talento o habilidad de tu pareja admiras más?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 143,
+    "text": "¿Cuál es el lugar más exótico en la Tierra que te gustaría explorar juntos?",
+    "category": "Viajes",
+    "target": "any"
+  },
+  {
+    "id": 144,
+    "text": "¿Cuál es tu plan de futuro juntos más emocionante?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 145,
+    "text": "¿Qué tres deseos pedirías si se te concedieran ahora mismo?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 146,
+    "text": "¿Qué es lo que más te gusta de la forma en que tu pareja te cuida?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 147,
+    "text": "Si pudieras darle un regalo a tu pareja ahora mismo, ¿qué sería?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 148,
+    "text": "¿Cuál es tu superpoder ficticio favorito y cómo lo usarías en nuestra relación?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 149,
+    "text": "Si pudieras intercambiar vidas con tu pareja por un día, ¿qué harías en su piel?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 150,
+    "text": "¿Cuál es la cosa más extraña o divertida que has querido hacer juntos pero aún no han intentado?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 151,
+    "text": "¿Cuál es tu lugar ideal para un retiro romántico?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 152,
+    "text": "Si se tratara de crear un proyecto juntos, ¿cuál sería y de qué trataría?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 153,
+    "text": "Si pudieras cambiar algo en la vida de tu pareja, ¿qué sería?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 154,
+    "text": "¿Cuál es la experiencia que más te ha enseñado sobre el amor?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 155,
+    "text": "¿Qué lecciones has aprendido de las dificultades en la relación?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 156,
+    "text": "¿Cuál es tu mayor sueño compartido como pareja?",
+    "category": "Futuro",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 157,
+    "text": "Si pudieras tener una conversación profunda con tu pareja, ¿sobre qué sería?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 158,
+    "text": "¿Qué actividad disfrutan hacer juntos sin importar el tiempo?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 159,
+    "text": "¿Cuál es tu recuerdo favorito de una fecha especial?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 160,
+    "text": "¿Cuál es tu forma favorita de demostrar amor a tu pareja?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 161,
+    "text": "Si pudieras cambiar algo en ti para mejorar la relación, ¿qué sería?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 162,
+    "text": "¿Qué personaje famoso crees que mejor representa su relación?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 163,
+    "text": "¿Qué deseo tienes para el futuro de tu relación?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 164,
+    "text": "¿Cuál es la cualidad que te hace sentir más conectado con tu pareja?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 165,
+    "text": "¿Qué tradición te gustaría comenzar como pareja?",
+    "category": "Futuro",
+    "target": "any"
+  },
+  {
+    "id": 166,
+    "text": "¿Cuál es tu película romántica favorita?",
+    "category": "Pasatiempos",
+    "target": "any"
+  },
+  {
+    "id": 167,
+    "text": "¿Qué es lo que más te hace sentir amado por tu pareja?",
+    "category": "Romántico",
+    "target": "any"
+  },
+  {
+    "id": 168,
+    "text": "Si pudieras agradecer a tu pareja por algo, ¿qué sería?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 169,
+    "text": "¿Cuál es tu plan para mantener la chispa viva en la relación?",
+    "category": "Flirteo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 170,
+    "text": "¿Qué superpoder ridículo te gustaría tener?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 171,
+    "text": "¿Cuál fue tu apodo más vergonzoso de la infancia?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 172,
+    "text": "Si fuéramos personajes animados, ¿quién serías tú y quién sería yo?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 173,
+    "text": "¿Qué harías si despiertas hablando solo en rimas?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 174,
+    "text": "¿Qué combinación de comida rara te encanta?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 175,
+    "text": "¿Cuál es el peor regalo que podrías recibir de mí?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 176,
+    "text": "¿Qué harías si descubres que soy un agente secreto?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 177,
+    "text": "Si pudieras intercambiar cuerpos conmigo, ¿qué sería lo primero que harías?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 178,
+    "text": "¿Qué personaje famoso te gustaría que fuera tu mejor amigo?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 179,
+    "text": "¿Cuál es la excusa más tonta que has inventado?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 180,
+    "text": "¿Qué harías si te conviertes en viral por un video tonto?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 181,
+    "text": "¿Si tuvieras que elegir un animal para gobernar el mundo, cuál sería?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 182,
+    "text": "¿Qué harías si despertaras atrapado en un videojuego?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 183,
+    "text": "¿Cuál es la peor película que has visto... y te encantó?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 184,
+    "text": "¿Cuál sería tu estrategia para ganar un concurso de tacos?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 185,
+    "text": "¿Qué canción te haría bailar incluso en una reunión seria?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 186,
+    "text": "¿Qué harías si fueras invisible por 24 horas?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 187,
+    "text": "¿Cuál fue tu mayor metida de pata en una cita?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 188,
+    "text": "¿Qué harías si un pingüino aparece en la puerta de casa?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 189,
+    "text": "¿Qué harías si nuestros perros/gatos comenzaran a hablarnos?",
+    "category": "Humor",
+    "target": "any"
+  },
+  {
+    "id": 190,
+    "text": "¿Cómo describirías tu infancia en tres palabras?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 191,
+    "text": "¿Qué valor es más importante para ti en una relación?",
+    "category": "Valores",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 192,
+    "text": "¿Qué sueño tenías de niño que todavía te gustaría cumplir?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 193,
+    "text": "¿Cuál ha sido una experiencia que cambió tu forma de ver la vida?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 194,
+    "text": "¿Cómo manejas el estrés o la presión?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 195,
+    "text": "¿Qué costumbre familiar te gustaría mantener?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 196,
+    "text": "¿Hay alguna meta personal que no hayas contado a casi nadie?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 197,
+    "text": "¿Cuál ha sido tu mayor logro personal hasta ahora?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 198,
+    "text": "¿Qué significa para ti el éxito?",
+    "category": "Profundo",
+    "target": "any"
+  },
+  {
+    "id": 199,
+    "text": "¿Cómo es tu día perfecto?",
+    "category": "Convivencia",
+    "target": "any"
+  },
+  {
+    "id": 200,
+    "text": "¿Qué piensas sobre la forma en que se debe manejar el dinero?",
+    "category": "Valores",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 201,
+    "text": "¿Qué temores o inseguridades te cuesta compartir?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 202,
+    "text": "¿Cuál ha sido una decisión difícil que marcó tu vida?",
+    "category": "Profundo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 203,
+    "text": "¿Qué tan importante es para ti el tiempo a solas?",
+    "category": "Valores",
+    "target": "any"
+  },
+  {
+    "id": 204,
+    "text": "¿Cuál es mi color favorito?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 205,
+    "text": "¿Cuál es mi comida preferida?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 206,
+    "text": "¿A qué le tengo más miedo?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 207,
+    "text": "¿Cuál es mi lugar soñado para vacacionar?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 208,
+    "text": "¿Cómo tomo el café (o té) normalmente?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 209,
+    "text": "¿Qué serie o programa podría ver mil veces?",
+    "category": "Trivia",
+    "target": "any"
+  },
+  {
+    "id": 210,
+    "text": "¿Cuál es mi recuerdo favorito de la infancia?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 211,
+    "text": "¿Qué talento o habilidad secreta tengo?",
+    "category": "Trivia",
+    "target": "any"
+  },
+  {
+    "id": 212,
+    "text": "¿Cuál es mi guilty pleasure?",
+    "category": "Trivia",
+    "target": "any"
+  },
+  {
+    "id": 213,
+    "text": "¿Cuál es el regalo más significativo que he recibido?",
+    "category": "Trivia",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 214,
+    "text": "¿Cuál es tu fantasía sexual que aún no has cumplido?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 215,
+    "text": "¿Qué parte de tu cuerpo te gusta más que toquen?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 216,
+    "text": "¿Con qué frecuencia te gusta tener relaciones sexuales?",
+    "category": "Picante",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 217,
+    "text": "¿Qué opinas del uso de juguetes sexuales en pareja?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 218,
+    "text": "¿Has tenido alguna fantasía conmigo que nunca me contaste?",
+    "category": "Picante",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 219,
+    "text": "¿Qué importancia tiene para ti la intimidad física?",
+    "category": "Valores",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 220,
+    "text": "¿Cómo te sientes después de una buena experiencia sexual?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 221,
+    "text": "¿Qué palabras te gustan oír en el momento de mayor placer?",
+    "category": "Picante",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 222,
+    "text": "¿Cual es el pensamiento más travieso que has tenido sobre mí?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 223,
+    "text": "¿Te atreverías a enviarme un mensaje subido de tono?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 224,
+    "text": "¿Qué me harías si estuviéramos solos en un ascensor?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 225,
+    "text": "¿Qué parte de mí te provoca más deseo?",
+    "category": "Flirteo",
+    "target": "any",
+    "isSuddenDeath": true
+  },
+  {
+    "id": 226,
+    "text": "¿Te animarías a tener una cita sin ropa interior?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 227,
+    "text": "¿Has fantaseado conmigo en un lugar público?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 228,
+    "text": "¿Te gustaría que grabáramos un video íntimo?",
+    "category": "Picante",
+    "target": "any"
+  },
+  {
+    "id": 229,
+    "text": "¿Con qué palabra clave deberíamos empezar una noche picante?",
+    "category": "Flirteo",
+    "target": "any"
+  },
+  {
+    "id": 230,
+    "text": "¿Has soñado alguna vez algo ardiente conmigo?",
+    "category": "Picante",
+    "target": "any"
+  }
+]
