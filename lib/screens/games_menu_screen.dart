@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'questions/questions_start_screen.dart';
 import 'roulette/roulette_start_screen.dart';
 import 'drinks/drinks_start_screen.dart';
+import 'bomb/bomb_start_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../widgets/neon_background.dart';
 import 'dart:ui';
@@ -103,11 +104,16 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
             enabled: false,
           ),
           _GameCard(
-            title: 'Retos',
-            icon: Icons.flash_on,
-            color: Colors.blue,
-            onTap: () {},
-            enabled: false,
+            title: 'Bomba',
+            icon: Icons.timer,
+            color: Colors.deepOrange,
+            onTap: () {
+              _playSound();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BombStartScreen()),
+              );
+            },
           ),
           _GameCard(
             title: 'Otros',

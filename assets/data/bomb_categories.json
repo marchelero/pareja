@@ -1,0 +1,77 @@
+[
+  {
+    "id": "1",
+    "text": "Apodos cariñosos (o ridículos)",
+    "isHot": false
+  },
+  {
+    "id": "2",
+    "text": "Lugares donde hemos tenido una cita",
+    "isHot": false
+  },
+  {
+    "id": "3",
+    "text": "Partes del cuerpo que te gustan del otro",
+    "isHot": false
+  },
+  {
+    "id": "4",
+    "text": "Cosas que harías con 1 millón de dólares",
+    "isHot": false
+  },
+  {
+    "id": "5",
+    "text": "Películas de terror",
+    "isHot": false
+  },
+  {
+    "id": "6",
+    "text": "Marcas de ropa interior",
+    "isHot": true
+  },
+  {
+    "id": "7",
+    "text": "Lugares prohibidos donde te gustaría hacerlo",
+    "isHot": true
+  },
+  {
+    "id": "8",
+    "text": "Fantasías sexuales comunes",
+    "isHot": true
+  },
+  {
+    "id": "9",
+    "text": "Juguetes para adultos",
+    "isHot": true
+  },
+  {
+    "id": "10",
+    "text": "Cosas que gimes o dices en la cama",
+    "isHot": true
+  },
+  {
+    "id": "11",
+    "text": "Cosas que te encienden de inmediato",
+    "isHot": true
+  },
+  {
+    "id": "12",
+    "text": "Posiciones del Kamasutra",
+    "isHot": true
+  },
+  {
+    "id": "13",
+    "text": "Excusas para no ir a trabajar",
+    "isHot": false
+  },
+  {
+    "id": "14",
+    "text": "Bebidas alcohólicas",
+    "isHot": false
+  },
+  {
+    "id": "15",
+    "text": "Palabras relacionadas con besos",
+    "isHot": false
+  }
+]
