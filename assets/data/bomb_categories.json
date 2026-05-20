@@ -1,77 +1,32 @@
 [
-  {
-    "id": "1",
-    "text": "Apodos cariñosos (o ridículos)",
-    "isHot": false
-  },
-  {
-    "id": "2",
-    "text": "Lugares donde hemos tenido una cita",
-    "isHot": false
-  },
-  {
-    "id": "3",
-    "text": "Partes del cuerpo que te gustan del otro",
-    "isHot": false
-  },
-  {
-    "id": "4",
-    "text": "Cosas que harías con 1 millón de dólares",
-    "isHot": false
-  },
-  {
-    "id": "5",
-    "text": "Películas de terror",
-    "isHot": false
-  },
-  {
-    "id": "6",
-    "text": "Marcas de ropa interior",
-    "isHot": true
-  },
-  {
-    "id": "7",
-    "text": "Lugares prohibidos donde te gustaría hacerlo",
-    "isHot": true
-  },
-  {
-    "id": "8",
-    "text": "Fantasías sexuales comunes",
-    "isHot": true
-  },
-  {
-    "id": "9",
-    "text": "Juguetes para adultos",
-    "isHot": true
-  },
-  {
-    "id": "10",
-    "text": "Cosas que gimes o dices en la cama",
-    "isHot": true
-  },
-  {
-    "id": "11",
-    "text": "Cosas que te encienden de inmediato",
-    "isHot": true
-  },
-  {
-    "id": "12",
-    "text": "Posiciones del Kamasutra",
-    "isHot": true
-  },
-  {
-    "id": "13",
-    "text": "Excusas para no ir a trabajar",
-    "isHot": false
-  },
-  {
-    "id": "14",
-    "text": "Bebidas alcohólicas",
-    "isHot": false
-  },
-  {
-    "id": "15",
-    "text": "Palabras relacionadas con besos",
-    "isHot": false
-  }
+  { "id": "1", "text": "Apodos cariñosos (o ridículos)", "isHot": false },
+  { "id": "2", "text": "Lugares donde hemos tenido una cita", "isHot": false },
+  { "id": "3", "text": "Partes del cuerpo que te gustan del otro", "isHot": false },
+  { "id": "4", "text": "Cosas que harías con 1 millón de dólares", "isHot": false },
+  { "id": "5", "text": "Películas de terror", "isHot": false },
+  { "id": "6", "text": "Marcas de ropa interior", "isHot": true },
+  { "id": "7", "text": "Lugares prohibidos donde te gustaría hacerlo", "isHot": true },
+  { "id": "8", "text": "Fantasías sexuales comunes", "isHot": true },
+  { "id": "9", "text": "Juguetes para adultos", "isHot": true },
+  { "id": "10", "text": "Cosas que gimes o dices en la cama", "isHot": true },
+  { "id": "11", "text": "Cosas que te encienden de inmediato", "isHot": true },
+  { "id": "12", "text": "Posiciones del Kamasutra", "isHot": true },
+  { "id": "13", "text": "Excusas para no ir a trabajar", "isHot": false },
+  { "id": "14", "text": "Bebidas alcohólicas", "isHot": false },
+  { "id": "15", "text": "Palabras relacionadas con besos", "isHot": false },
+  { "id": "16", "text": "Nombres de países europeos", "isHot": false },
+  { "id": "17", "text": "Superhéroes famosos", "isHot": false },
+  { "id": "18", "text": "Cosas que huelen mal", "isHot": false },
+  { "id": "19", "text": "Canciones para bailar en una boda", "isHot": false },
+  { "id": "20", "text": "Deportes que usan pelota", "isHot": false },
+  { "id": "21", "text": "Comidas que se comen con las manos", "isHot": false },
+  { "id": "22", "text": "Lugares para esconder un cadáver (en broma)", "isHot": false },
+  { "id": "23", "text": "Cosas que te hacen sudar", "isHot": false },
+  { "id": "24", "text": "Partes sensibles del cuerpo", "isHot": true },
+  { "id": "25", "text": "Cosas que compras en una farmacia", "isHot": false },
+  { "id": "26", "text": "Frutas sugestivas", "isHot": true },
+  { "id": "27", "text": "Cosas que te pones antes de dormir", "isHot": false },
+  { "id": "28", "text": "Sonidos de animales", "isHot": false },
+  { "id": "29", "text": "Lugares donde no querrías estar desnudo", "isHot": false },
+  { "id": "30", "text": "Películas de Disney", "isHot": false }
 ]
