@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../core/storage/local_storage.dart';
 import '../../widgets/neon_background.dart';
+import '../../widgets/player_names_section.dart';
 import 'most_likely_game_screen.dart';
 
 class MostLikelyStartScreen extends StatefulWidget {
@@ -13,27 +14,12 @@ class MostLikelyStartScreen extends StatefulWidget {
 }
 
 class _MostLikelyStartScreenState extends State<MostLikelyStartScreen> {
-  final TextEditingController _heController = TextEditingController();
-  final TextEditingController _sheController = TextEditingController();
+  String _heName = 'ÉL';
+  String _sheName = 'ELLA';
   int _bestOf = 5;
   bool _isHotMode = false;
 
   final AudioPlayer _audioPlayer = AudioPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNames();
-  }
-
-  Future<void> _loadNames() async {
-    final he = await LocalStorage.getHeName();
-    final she = await LocalStorage.getSheName();
-    setState(() {
-      _heController.text = he;
-      _sheController.text = she;
-    });
-  }
 
   Future<void> _playSound() async {
     try {
@@ -45,8 +31,6 @@ class _MostLikelyStartScreenState extends State<MostLikelyStartScreen> {
 
   @override
   void dispose() {
-    _heController.dispose();
-    _sheController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -99,6 +83,19 @@ class _MostLikelyStartScreenState extends State<MostLikelyStartScreen> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
+                      // Player names
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: PlayerNamesSection(
+                          onChanged: (he, she) => setState(() {
+                            _heName = he;
+                            _sheName = she;
+                          }),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Settings
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: ClipRRect(
@@ -114,47 +111,6 @@ class _MostLikelyStartScreenState extends State<MostLikelyStartScreen> {
                               ),
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.male, color: Colors.blueAccent, size: 24),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: TextField(
-                                          controller: _heController,
-                                          style: const TextStyle(color: Colors.white),
-                                          decoration: InputDecoration(
-                                            hintText: 'Nombre de ÉL',
-                                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withOpacity(0.3))),
-                                            focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.female, color: Colors.pinkAccent, size: 24),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: TextField(
-                                          controller: _sheController,
-                                          style: const TextStyle(color: Colors.white),
-                                          decoration: InputDecoration(
-                                            hintText: 'Nombre de ELLA',
-                                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withOpacity(0.3))),
-                                            focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 15),
-                                    child: Divider(color: Colors.white12, height: 1),
-                                  ),
                                   _buildSettingRow(
                                     icon: Icons.emoji_events,
                                     title: 'Rondas:',
@@ -215,7 +171,7 @@ class _MostLikelyStartScreenState extends State<MostLikelyStartScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       _playSound();
-                      await LocalStorage.saveNames(_heController.text, _sheController.text);
+                      await LocalStorage.saveNames(_heName, _sheName);
                       if (!context.mounted) return;
                       Navigator.pushReplacement(
                         context,
@@ -223,8 +179,8 @@ class _MostLikelyStartScreenState extends State<MostLikelyStartScreen> {
                           builder: (context) => MostLikelyGameScreen(
                             bestOf: _bestOf,
                             isHotMode: _isHotMode,
-                            heName: _heController.text,
-                            sheName: _sheController.text,
+                            heName: _heName,
+                            sheName: _sheName,
                           ),
                         ),
                       );

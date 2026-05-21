@@ -1,7 +1,7 @@
 import 'dart:ui';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/storage/local_storage.dart';
+import '../../widgets/player_names_section.dart';
 import 'drinks_game_screen.dart';
 import '../../widgets/neon_background.dart';
 
@@ -13,33 +13,12 @@ class DrinksStartScreen extends StatefulWidget {
 }
 
 class _DrinksStartScreenState extends State<DrinksStartScreen> {
+  String _heName = 'ÉL';
+  String _sheName = 'ELLA';
   int _sipsPerGlass = 5;
   int _initialLevel = 1;
-  int _levelingSpeed = 7; // Default to Medium (7 turns)
+  int _levelingSpeed = 7;
   bool _isHotMode = true;
-  final TextEditingController _heController = TextEditingController();
-  final TextEditingController _sheController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNames();
-  }
-
-  Future<void> _loadNames() async {
-    final he = await LocalStorage.getHeName();
-    final she = await LocalStorage.getSheName();
-    _heController.text = he;
-    _sheController.text = she;
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    _heController.dispose();
-    _sheController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,18 +35,12 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           child: ListView(
             padding: const EdgeInsets.all(24),
             children: [
-            _buildSectionTitle('JUGADORES'),
-            _buildCard(
-              child: Row(
-                children: [
-                  Expanded(child: _buildNameInput(_heController, Icons.male, Colors.blue)),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Icon(Icons.local_bar, color: Colors.amber, size: 30),
-                  ),
-                  Expanded(child: _buildNameInput(_sheController, Icons.female, Colors.pink)),
-                ],
-              ),
+            _buildSectionTitle('Jugadores'),
+            PlayerNamesSection(
+              onChanged: (he, she) => setState(() {
+                _heName = he;
+                _sheName = she;
+              }),
             ),
             const SizedBox(height: 24),
             _buildSectionTitle('SORBOS POR VASO'),
@@ -186,12 +159,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           ),
           child: InkWell(
             onTap: () async {
-              String heName = _heController.text.trim();
-              String sheName = _sheController.text.trim();
-              await LocalStorage.saveNames(
-                heName.isEmpty ? 'ÉL' : heName,
-                sheName.isEmpty ? 'ELLA' : sheName,
-              );
+              await LocalStorage.saveNames(_heName, _sheName);
               if (!mounted) return;
               Navigator.push(
                 context,
@@ -253,28 +221,6 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           child: child,
         ),
       ),
-    );
-  }
-
-  Widget _buildNameInput(TextEditingController controller, IconData icon, Color color) {
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(vertical: 8),
-            hintText: icon == Icons.male ? 'ÉL' : 'ELLA',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.3), fontWeight: FontWeight.normal),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: color.withOpacity(0.3))),
-            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: color)),
-          ),
-        ),
-      ],
     );
   }
 

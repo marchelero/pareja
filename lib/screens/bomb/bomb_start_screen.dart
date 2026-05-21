@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../widgets/neon_background.dart';
+import '../../widgets/player_names_section.dart';
 import 'bomb_game_screen.dart';
 
 class BombStartScreen extends StatefulWidget {
@@ -12,11 +13,12 @@ class BombStartScreen extends StatefulWidget {
 }
 
 class _BombStartScreenState extends State<BombStartScreen> {
+  String _heName = 'ÉL';
+  String _sheName = 'ELLA';
   bool _isHotMode = false;
-  int _bestOf = 3; // 3, 5, or 7
-  int _bombTimer = 5; // 5 or 7 seconds
+  int _bestOf = 3;
+  int _bombTimer = 5;
   
-  // Modifiers
   bool _optPanic = false;
   bool _optGold = false;
   bool _optWild = false;
@@ -97,6 +99,18 @@ class _BombStartScreenState extends State<BombStartScreen> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
+                      // Player names
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: PlayerNamesSection(
+                          onChanged: (he, she) => setState(() {
+                            _heName = he;
+                            _sheName = she;
+                          }),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
                       // Settings Container
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -291,6 +305,8 @@ class _BombStartScreenState extends State<BombStartScreen> {
                             optGold: _optGold,
                             optWild: _optWild,
                             optAccel: _optAccel,
+                            heName: _heName,
+                            sheName: _sheName,
                           ),
                         ),
                       );

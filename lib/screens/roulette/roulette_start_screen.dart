@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/storage/local_storage.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/neon_background.dart';
+import '../../widgets/player_names_section.dart';
 import 'dart:ui';
 
 class RouletteStartScreen extends StatefulWidget {
@@ -12,24 +13,9 @@ class RouletteStartScreen extends StatefulWidget {
 }
 
 class _RouletteStartScreenState extends State<RouletteStartScreen> {
-  final TextEditingController _heController = TextEditingController();
-  final TextEditingController _sheController = TextEditingController();
+  String _heName = 'ÉL';
+  String _sheName = 'ELLA';
   bool _isDareMode = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNames();
-  }
-
-  Future<void> _loadNames() async {
-    final he = await LocalStorage.getHeName();
-    final she = await LocalStorage.getSheName();
-    setState(() {
-      _heController.text = he;
-      _sheController.text = she;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,54 +38,13 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionTitle('Nombres de la Pareja', Icons.people),
+                      _buildSectionTitle('Jugadores', Icons.people),
                       const SizedBox(height: 15),
-                      _buildGlassCard(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('  ÉL', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-                                  const SizedBox(height: 5),
-                                  TextField(
-                                    controller: _heController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: 'Nombre...',
-                                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                                      prefixIcon: const Icon(Icons.male, color: Colors.blueAccent),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withOpacity(0.3))),
-                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('  ELLA', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.pinkAccent)),
-                                  const SizedBox(height: 5),
-                                  TextField(
-                                    controller: _sheController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: 'Nombre...',
-                                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                                      prefixIcon: const Icon(Icons.female, color: Colors.pinkAccent),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withOpacity(0.3))),
-                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                      PlayerNamesSection(
+                        onChanged: (he, she) => setState(() {
+                          _heName = he;
+                          _sheName = she;
+                        }),
                       ),
               const SizedBox(height: 30),
               _buildSectionTitle('Tipo de Ruleta', Icons.auto_awesome),
@@ -182,9 +127,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
     return _buildGlassCard(
       child: InkWell(
         onTap: () async {
-          final heName = _heController.text.trim();
-          final sheName = _sheController.text.trim();
-          await LocalStorage.saveNames(heName, sheName);
+          await LocalStorage.saveNames(_heName, _sheName);
 
           if (!context.mounted) return;
 
@@ -194,8 +137,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               builder: (context) => CoinFlipScreen(
                 maxRounds: 0,
                 categories: const [],
-                heName: heName,
-                sheName: sheName,
+                heName: _heName,
+                sheName: _sheName,
                 isRoulette: true,
                 isDareMode: _isDareMode,
               ),

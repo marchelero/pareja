@@ -6,19 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../core/models/bomb_category.dart';
-import '../../core/storage/local_storage.dart';
-import '../../widgets/neon_background.dart';
 
 class BombGameScreen extends StatefulWidget {
   final bool isHotMode;
   final int bestOf;
   final int timerSeconds;
-  
-  // Modifiers
   final bool optPanic;
   final bool optGold;
   final bool optWild;
   final bool optAccel;
+  final String heName;
+  final String sheName;
 
   const BombGameScreen({
     super.key,
@@ -29,6 +27,8 @@ class BombGameScreen extends StatefulWidget {
     required this.optGold,
     required this.optWild,
     required this.optAccel,
+    required this.heName,
+    required this.sheName,
   });
 
   @override
@@ -99,10 +99,8 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
   }
 
   Future<void> _initGame() async {
-    _heName = await LocalStorage.getHeName();
-    _sheName = await LocalStorage.getSheName();
-    if (_heName.isEmpty) _heName = 'ÉL';
-    if (_sheName.isEmpty) _sheName = 'ELLA';
+    _heName = widget.heName;
+    _sheName = widget.sheName;
 
     final String categoriesStr = await rootBundle.loadString('assets/data/bomb_categories.json');
     final List<dynamic> catData = json.decode(categoriesStr);

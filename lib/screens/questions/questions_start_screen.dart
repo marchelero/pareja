@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/storage/local_storage.dart';
 import 'coin_flip_screen.dart';
 import '../../widgets/neon_background.dart';
+import '../../widgets/player_names_section.dart';
 import 'dart:ui';
 
 class QuestionsStartScreen extends StatefulWidget {
@@ -12,8 +13,8 @@ class QuestionsStartScreen extends StatefulWidget {
 }
 
 class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
-  final TextEditingController _heController = TextEditingController();
-  final TextEditingController _sheController = TextEditingController();
+  String _heName = 'ÉL';
+  String _sheName = 'ELLA';
   int _selectedRounds = 10;
   final List<int> _roundOptions = [10, 20, 30, 40, 50];
   
@@ -32,21 +33,6 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
     {'name': 'Flirteo', 'icon': Icons.favorite_border, 'color': Colors.redAccent},
   ];
   final Set<String> _selectedCategories = {'General', 'Romántico'};
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNames();
-  }
-
-  Future<void> _loadNames() async {
-    final he = await LocalStorage.getHeName();
-    final she = await LocalStorage.getSheName();
-    setState(() {
-      _heController.text = he;
-      _sheController.text = she;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,54 +55,13 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionTitle('Nombres de la Pareja', Icons.people),
+                      _buildSectionTitle('Jugadores', Icons.people),
                       const SizedBox(height: 15),
-                      _buildGlassCard(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('  ÉL', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-                                  const SizedBox(height: 5),
-                                  TextField(
-                                    controller: _heController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: 'Nombre...',
-                                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                                      prefixIcon: const Icon(Icons.male, color: Colors.blueAccent),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withOpacity(0.3))),
-                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('  ELLA', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.pinkAccent)),
-                                  const SizedBox(height: 5),
-                                  TextField(
-                                    controller: _sheController,
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: 'Nombre...',
-                                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
-                                      prefixIcon: const Icon(Icons.female, color: Colors.pinkAccent),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withOpacity(0.3))),
-                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                      PlayerNamesSection(
+                        onChanged: (he, she) => setState(() {
+                          _heName = he;
+                          _sheName = she;
+                        }),
                       ),
               const SizedBox(height: 30),
               _buildSectionTitle('Número de Preguntas', Icons.timer),
@@ -228,15 +173,15 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
       child: InkWell(
         onTap: () async {
           final navigator = Navigator.of(context);
-          await LocalStorage.saveNames(_heController.text, _sheController.text);
+          await LocalStorage.saveNames(_heName, _sheName);
           if (!mounted) return;
           navigator.push(
             MaterialPageRoute(
               builder: (context) => CoinFlipScreen(
                 maxRounds: _selectedRounds,
                 categories: _selectedCategories.toList(),
-                heName: _heController.text,
-                sheName: _sheController.text,
+                heName: _heName,
+                sheName: _sheName,
               ),
             ),
           );
