@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import '../../core/storage/local_storage.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../widgets/neon_background.dart';
-import 'dart:ui';
 
 class RouletteGameScreen extends StatefulWidget {
   final bool isDareMode;
@@ -31,14 +30,17 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
   late bool _isDareMode;
   int _spinCount = 0;
   final int _maxSpinsForHot = 8;
-  
+
   late AnimationController _controller;
   late Animation<double> _animation;
   late AnimationController _resultController;
   late Animation<double> _resultScale;
-  
+  late AnimationController _cardFlipController;
+  late Animation<double> _cardFlipAnimation;
+
   double _currentRotation = 0;
   String? _result;
+  int _selectedIndex = -1;
 
   bool _isSpinning = false;
   int _lastHapticSection = -1;
@@ -58,7 +60,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     _isHeTurn = widget.startingPlayerIsHe;
     _isDareMode = widget.isDareMode;
     _initGame();
-    
+
     _controller = AnimationController(
       duration: const Duration(seconds: 5),
       vsync: this,
@@ -74,16 +76,25 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
       curve: Curves.elasticOut,
     );
 
+    _cardFlipController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _cardFlipAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _cardFlipController, curve: Curves.easeInOutBack),
+    );
+
     _controller.addListener(_handleHaptics);
   }
 
   void _handleHaptics() {
     if (!_isSpinning) return;
-    
+
     final double sectionAngle = 2 * pi / _options.length;
     final double currentRotation = _animation.value;
     final int currentSection = (currentRotation / sectionAngle).floor();
-    
+
     if (currentSection != _lastHapticSection) {
       LocalStorage.isVibrationEnabled().then((enabled) {
         if (enabled) HapticFeedback.lightImpact();
@@ -97,16 +108,16 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     _sheName = await LocalStorage.getSheName();
     if (_heName.isEmpty) _heName = 'ÉL';
     if (_sheName.isEmpty) _sheName = 'ELLA';
-    
+
     _currentPlayerName = _isHeTurn ? _heName : _sheName;
     _spinCount = await LocalStorage.getRouletteSpinCount();
 
     final String fileName = _isDareMode ? 'roulette_dare.json' : 'roulette_normal.json';
     final String response = await rootBundle.loadString('assets/data/$fileName');
     final List<dynamic> data = json.decode(response);
-    
+
     setState(() {
-      _options = data.cast<String>();
+      _options = data.cast<String>().take(10).toList();
       _isLoading = false;
     });
   }
@@ -116,7 +127,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
       _isLoading = true;
       _isDareMode = value;
       _result = null;
+      _selectedIndex = -1;
       _resultController.reset();
+      _cardFlipController.reset();
     });
     _initGame();
   }
@@ -125,9 +138,6 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     if (_isSpinning) return;
     _playSound();
 
-
-    // If a result is already showing, it means the previous turn finished.
-    // We automatically move to the next turn before spinning again.
     if (_result != null) {
       _nextTurn();
     }
@@ -135,7 +145,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     setState(() {
       _isSpinning = true;
       _result = null;
+      _selectedIndex = -1;
       _resultController.reset();
+      _cardFlipController.reset();
     });
 
     final random = Random();
@@ -152,38 +164,34 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
 
     _controller.reset();
     _controller.forward().then((_) {
+      final double sectionAngle = 2 * pi / _options.length;
+      final double finalRotation = _animation.value;
+
+      int foundIndex = 0;
+      double minDiff = double.infinity;
+
+      for (int i = 0; i < _options.length; i++) {
+        double currentCenter = i * sectionAngle - pi / 2 + finalRotation;
+        double diff = (currentCenter - (-pi / 2));
+        double normalizedDiff = (diff + pi) % (2 * pi) - pi;
+
+        if (normalizedDiff.abs() < minDiff) {
+          minDiff = normalizedDiff.abs();
+          foundIndex = i;
+        }
+      }
+
+      _cardFlipController.forward();
+
       setState(() {
         _isSpinning = false;
-        _currentRotation = targetRotation % (2 * pi);
-        
-        final double sectionAngle = 2 * pi / _options.length;
-        final double finalRotation = _animation.value;
-        
-        // Robust index calculation: find the section whose center is closest to the pointer (-pi/2)
-        int foundIndex = 0;
-        double minDiff = double.infinity;
-        
-        for (int i = 0; i < _options.length; i++) {
-          // Section i center in original wheel coordinates is i * sectionAngle - pi/2
-          // After rotation, its position is: (i * sectionAngle - pi/2 + finalRotation)
-          double currentCenter = i * sectionAngle - pi / 2 + finalRotation;
-          
-          // Difference between current center and pointer (-pi/2)
-          double diff = (currentCenter - (-pi / 2));
-          // Normalize difference to [-pi, pi]
-          double normalizedDiff = (diff + pi) % (2 * pi) - pi;
-          
-          if (normalizedDiff.abs() < minDiff) {
-            minDiff = normalizedDiff.abs();
-            foundIndex = i;
-          }
-        }
-        
+        _currentRotation = finalRotation % (2 * pi);
+        _selectedIndex = foundIndex;
         _result = _options[foundIndex];
         _resultController.forward();
         _spinCount++;
         LocalStorage.saveRouletteSpinCount(_spinCount);
-        
+
         LocalStorage.isVibrationEnabled().then((enabled) {
           if (enabled) HapticFeedback.vibrate();
         });
@@ -201,7 +209,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
       _isHeTurn = !_isHeTurn;
       _currentPlayerName = _isHeTurn ? _heName : _sheName;
       _result = null;
+      _selectedIndex = -1;
       _resultController.reset();
+      _cardFlipController.reset();
     });
   }
 
@@ -210,6 +220,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     _controller.removeListener(_handleHaptics);
     _controller.dispose();
     _resultController.dispose();
+    _cardFlipController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -236,7 +247,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
                         const SizedBox(height: 10),
                         _buildTurnIndicator(),
                         const Spacer(flex: 1),
-                        _buildRouletteWheel(constraints.maxHeight),
+                        _buildCardCarousel(constraints.maxHeight),
                         const Spacer(flex: 1),
                         _buildResultArea(),
                         const SizedBox(height: 20),
@@ -357,85 +368,207 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     );
   }
 
-  Widget _buildRouletteWheel(double maxHeight) {
-    // Adaptive size based on available height and width
+  Widget _buildCardCarousel(double maxHeight) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double size = min(screenWidth * 0.9, maxHeight * 0.45);
-    
+    final double ringSize = min(screenWidth * 0.92, maxHeight * 0.48);
+    final double radius = ringSize * 0.36;
+    final double cardWidth = ringSize * 0.22;
+    final double cardHeight = cardWidth * 1.4;
+
     return GestureDetector(
       onTap: _spin,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Outer glow and border
-          Container(
-            width: size + 10,
-            height: size + 10,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white24, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: (_isDareMode ? Colors.red : Colors.blue).withOpacity(0.2),
-                  blurRadius: 50,
-                  spreadRadius: 5,
-                ),
-              ],
-            ),
-          ),
-          // The Wheel
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Transform.rotate(
-                angle: _isSpinning ? _animation.value : _currentRotation,
-                child: CustomPaint(
-                  size: Size(size, size),
-                  painter: RoulettePainter(
-                    options: _options,
-                    isDareMode: _isDareMode,
-                    heName: _heName,
-                    sheName: _sheName,
-                    isHeTurn: _isHeTurn,
+      child: SizedBox(
+        width: ringSize,
+        height: ringSize,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer glow ring
+            Container(
+              width: ringSize,
+              height: ringSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: (_isDareMode ? Colors.red : Colors.blue).withOpacity(0.15),
+                    blurRadius: 40,
+                    spreadRadius: 5,
                   ),
-                ),
-              );
-            },
-          ),
-          // Center Pin
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 10)],
-              gradient: RadialGradient(
-                colors: [Colors.white, Colors.grey.shade300],
+                ],
               ),
             ),
-            child: Icon(
-              _isDareMode ? Icons.whatshot : Icons.star,
-              color: _isDareMode ? Colors.red : Colors.blue,
-              size: 28,
+            // Rotating cards
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                final double rotation = _isSpinning ? _animation.value : _currentRotation;
+                return Stack(
+                  children: List.generate(_options.length, (i) {
+                    final double a = i * 2 * pi / _options.length + rotation;
+                    final double x = radius * cos(a - pi / 2);
+                    final double y = radius * sin(a - pi / 2);
+                    return Positioned(
+                      left: ringSize / 2 + x - cardWidth / 2,
+                      top: ringSize / 2 + y - cardHeight / 2,
+                      child: _buildCard(i, cardWidth, cardHeight),
+                    );
+                  }),
+                );
+              },
             ),
-          ),
-          // Pointer (Top)
-          Positioned(
-            top: -15,
-            child: Column(
-              children: [
-                Icon(
-                  Icons.arrow_drop_down,
-                  size: 70,
-                  color: Colors.yellow.shade700,
-                  shadows: const [Shadow(color: Colors.black45, blurRadius: 5)],
+            // Center decorative heart
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: _isDareMode
+                    ? [Colors.red.shade500, Colors.orange.shade500]
+                    : [Colors.blue.shade500, Colors.cyan.shade500],
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: (_isDareMode ? Colors.red : Colors.blue).withOpacity(0.5),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.favorite, color: Colors.white, size: 26),
             ),
-          ),
-        ],
+            // Pointer
+            Positioned(
+              top: -8,
+              left: 0,
+              right: 0,
+              child: Icon(
+                Icons.arrow_drop_down,
+                size: 60,
+                color: Colors.yellow.shade600,
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildCard(int index, double cardWidth, double cardHeight) {
+    final bool isSelected = index == _selectedIndex && _result != null;
+    final ColorScheme colors = _isDareMode
+        ? ColorScheme(
+            brightness: Brightness.dark,
+            primary: Colors.red.shade600,
+            onPrimary: Colors.white,
+            secondary: Colors.orange.shade600,
+            onSecondary: Colors.white,
+            error: Colors.red,
+            onError: Colors.white,
+            surface: Colors.red.shade800,
+            onSurface: Colors.white,
+          )
+        : ColorScheme(
+            brightness: Brightness.dark,
+            primary: Colors.blue.shade600,
+            onPrimary: Colors.white,
+            secondary: Colors.cyan.shade600,
+            onSecondary: Colors.white,
+            error: Colors.red,
+            onError: Colors.white,
+            surface: Colors.blue.shade800,
+            onSurface: Colors.white,
+          );
+
+    return AnimatedBuilder(
+      animation: _cardFlipController,
+      builder: (context, child) {
+        final double flipValue = isSelected ? _cardFlipAnimation.value : 0;
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY(flipValue * pi),
+          child: Container(
+            width: cardWidth,
+            height: cardHeight,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: flipValue > 0.5
+                    ? [Colors.white, Colors.grey.shade100]
+                    : [colors.primary, colors.secondary],
+              ),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: isSelected ? Colors.yellow : Colors.white.withOpacity(0.25),
+                width: isSelected ? 2.5 : 1.2,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Colors.yellow.withOpacity(0.4),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
+            child: flipValue > 0.5
+                ? Center(
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, 0.001)
+                        ..rotateY(pi),
+                      child: Text(
+                        '?',
+                        style: TextStyle(
+                          color: _isDareMode ? Colors.red.shade400 : Colors.blue.shade400,
+                          fontSize: cardWidth * 0.45,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _isDareMode ? Icons.whatshot : Icons.star,
+                          size: cardWidth * 0.3,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${index + 1}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: cardWidth * 0.35,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+        );
+      },
     );
   }
 
@@ -447,9 +580,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
         child: const Text(
           '¡Girando...!',
           style: TextStyle(
-            color: Colors.white, 
-            fontSize: 28, 
-            fontWeight: FontWeight.bold, 
+            color: Colors.white,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
             fontStyle: FontStyle.italic,
             letterSpacing: 1.5,
           ),
@@ -512,7 +645,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
                 },
                 icon: const Icon(Icons.skip_next),
                 label: const Text(
-                  'SIGUIENTE TURNO', 
+                  'SIGUIENTE TURNO',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -532,125 +665,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
       height: 120,
       alignment: Alignment.center,
       child: const Text(
-        '¡Toca la ruleta para girar!',
+        '¡Toca el carrusel para girar!',
         style: TextStyle(color: Colors.white54, fontSize: 20, fontWeight: FontWeight.w500),
       ),
     );
-  }
-}
-
-class RoulettePainter extends CustomPainter {
-  final List<String> options;
-  final bool isDareMode;
-  final String heName;
-  final String sheName;
-  final bool isHeTurn;
-
-  RoulettePainter({
-    required this.options,
-    required this.isDareMode,
-    required this.heName,
-    required this.sheName,
-    required this.isHeTurn,
-  });
-
-  String _formatText(String text) {
-    final String targetName = isHeTurn ? sheName : heName;
-    return text.replaceAll('{PAREJA}', targetName);
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    final sectionAngle = 2 * pi / options.length;
-
-    final List<Color> colors = isDareMode
-        ? [Colors.red.shade700, Colors.red.shade400, Colors.orange.shade800, Colors.orange.shade500]
-        : [Colors.blue.shade800, Colors.blue.shade500, Colors.cyan.shade700, Colors.cyan.shade400];
-
-    for (int i = 0; i < options.length; i++) {
-      // Draw Section
-      final paint = Paint()
-        ..shader = RadialGradient(
-          colors: [colors[i % colors.length], colors[i % colors.length].withOpacity(0.8)],
-        ).createShader(rect)
-        ..style = PaintingStyle.fill;
-
-      // Center Section i such that Section 0 is centered at -pi/2
-      final double startAngle = i * sectionAngle - pi / 2 - sectionAngle / 2;
-      canvas.drawArc(rect, startAngle, sectionAngle, true, paint);
-
-      // Draw lines between sections
-      final linePaint = Paint()
-        ..color = Colors.white.withOpacity(0.2)
-        ..strokeWidth = 1
-        ..style = PaintingStyle.stroke;
-      
-      canvas.drawLine(
-        center,
-        Offset(center.dx + radius * cos(startAngle), center.dy + radius * sin(startAngle)),
-        linePaint,
-      );
-
-      // Draw Text (centered in section)
-      _drawText(canvas, center, radius, startAngle + sectionAngle / 2, _formatText(options[i]));
-    }
-
-    // Outer Border
-    final borderPaint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
-      ..strokeWidth = 8
-      ..style = PaintingStyle.stroke;
-    canvas.drawCircle(center, radius, borderPaint);
-    
-    // Inner Border
-    final innerBorderPaint = Paint()
-      ..color = Colors.black26
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    canvas.drawCircle(center, radius - 4, innerBorderPaint);
-  }
-
-  void _drawText(Canvas canvas, Offset center, double radius, double angle, String text) {
-    canvas.save();
-    canvas.translate(center.dx, center.dy);
-    canvas.rotate(angle);
-
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 10, // Slightly smaller to fit more words
-          fontWeight: FontWeight.bold,
-          shadows: [Shadow(color: Colors.black54, blurRadius: 2)],
-        ),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
-      maxLines: 1,
-      ellipsis: '...',
-    );
-
-    // maxWidth is limited to ensure it doesn't go outside the wheel
-    textPainter.layout(maxWidth: radius * 0.6);
-    
-    // Position text starting at 30% of radius to leave room for center pin
-    // and ending around 90% of radius
-    textPainter.paint(
-      canvas,
-      Offset(radius * 0.3, -textPainter.height / 2),
-    );
-    
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant RoulettePainter oldDelegate) {
-    return oldDelegate.isDareMode != isDareMode || 
-           oldDelegate.options != options ||
-           oldDelegate.isHeTurn != isHeTurn;
   }
 }

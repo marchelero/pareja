@@ -24,7 +24,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
         child: Column(
           children: [
             AppBar(
-              title: const Text('CONFIGURAR RULETA', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2)),
+              title: const Text('CARTAS - CONFIGURAR', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2)),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,

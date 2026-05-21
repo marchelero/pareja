@@ -40,7 +40,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
           children: [
             AppBar(
               title: const Text(
-                'LOVEPLAY - JUEGOS',
+                'DATE GAMES \u{1F319} JUEGOS',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,

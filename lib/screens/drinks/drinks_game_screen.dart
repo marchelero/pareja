@@ -395,16 +395,23 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
     return Scaffold(
       body: NeonBackground(
         child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 20),
-              _buildGlassesArea(),
-              const Spacer(),
-              if (_currentTask != null) _buildTaskCard(),
-              const Spacer(),
-              _buildActionButtons(),
-              const SizedBox(height: 20),
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 20),
+                    _buildGlassesArea(),
+                    const Spacer(),
+                    if (_currentTask != null) _buildTaskCard(),
+                    const Spacer(),
+                    _buildActionButtons(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
