@@ -3,6 +3,7 @@ import 'questions/questions_start_screen.dart';
 import 'roulette/roulette_start_screen.dart';
 import 'drinks/drinks_start_screen.dart';
 import 'bomb/bomb_start_screen.dart';
+import 'most_likely/most_likely_start_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../widgets/neon_background.dart';
 import 'dart:ui';
@@ -97,11 +98,16 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
             },
           ),
           _GameCard(
-            title: 'Hot',
-            icon: Icons.whatshot,
-            color: Colors.purple,
-            onTap: () {},
-            enabled: false,
+            title: 'Lo Más Probable',
+            icon: Icons.psychology,
+            color: Colors.teal,
+            onTap: () {
+              _playSound();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MostLikelyStartScreen()),
+              );
+            },
           ),
           _GameCard(
             title: 'Bomba',

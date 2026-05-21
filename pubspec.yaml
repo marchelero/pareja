@@ -66,6 +66,7 @@ flutter:
     - assets/data/roulette_dare.json
     - assets/data/drinks_tasks.json
     - assets/data/bomb_categories.json
+    - assets/data/most_likely_questions.json
     - assets/images/man_drinking.png
     - assets/images/woman_drinking.png
     - assets/sounds/
