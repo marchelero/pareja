@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/models/player.dart';
+import '../../services/audio_service.dart';
 import '../games_menu_screen.dart';
 import 'questions_start_screen.dart';
-
-import 'package:audioplayers/audioplayers.dart';
 
 class QuestionsResultScreen extends StatefulWidget {
   final Player playerHe;
@@ -20,26 +20,10 @@ class QuestionsResultScreen extends StatefulWidget {
 }
 
 class _QuestionsResultScreenState extends State<QuestionsResultScreen> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-
   @override
   void initState() {
     super.initState();
-    _playSound('game_over.mp3');
-  }
-
-  Future<void> _playSound(String fileName) async {
-    try {
-      await _audioPlayer.play(AssetSource('sounds/$fileName'));
-    } catch (e) {
-      // Ignore
-    }
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AudioService>().playGameOver());
   }
 
   @override
@@ -91,7 +75,7 @@ class _QuestionsResultScreenState extends State<QuestionsResultScreen> {
                     fontWeight: FontWeight.bold,
                     color: winner == widget.playerHe ? Colors.blue : Colors.pink,
                     shadows: [
-                      Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5)),
+                      Shadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 5)),
                     ],
                   ),
                 ),
@@ -113,7 +97,7 @@ class _QuestionsResultScreenState extends State<QuestionsResultScreen> {
                 color: Colors.green,
                 icon: Icons.replay,
                 onPressed: () {
-                  _playSound('clic.mp3');
+                  context.read<AudioService>().playClick();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const QuestionsStartScreen()),
@@ -126,7 +110,7 @@ class _QuestionsResultScreenState extends State<QuestionsResultScreen> {
                 color: Colors.blueGrey,
                 icon: Icons.menu,
                 onPressed: () {
-                  _playSound('clic.mp3');
+                  context.read<AudioService>().playClick();
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const GamesMenuScreen()),
@@ -157,9 +141,9 @@ class _PlayerStatsCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
-          BoxShadow(color: color.withOpacity(0.1), blurRadius: 15, offset: const Offset(0, 5)),
+          BoxShadow(color: color.withValues(alpha: 0.1), blurRadius: 15, offset: const Offset(0, 5)),
         ],
-        border: Border.all(color: color.withOpacity(0.2), width: 2),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 2),
       ),
       child: Column(
         children: [

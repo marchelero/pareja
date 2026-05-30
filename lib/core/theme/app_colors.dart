@@ -20,8 +20,8 @@ class AppColors {
   static const Color modeMostLikely = Color(0xFF009688);
   static const Color modeDuel = Color(0xFFE91E63);
 
-  static Color glassBackground(double opacity) => Colors.white.withOpacity(opacity);
-  static Color glassBorder(double opacity) => Colors.white.withOpacity(opacity);
+  static Color glassBackground(double opacity) => Colors.white.withValues(alpha: opacity);
+  static Color glassBorder(double opacity) => Colors.white.withValues(alpha: opacity);
 
   static const Color scoreWin = Colors.greenAccent;
   static const Color scoreLose = Colors.redAccent;

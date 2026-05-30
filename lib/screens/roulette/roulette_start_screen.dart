@@ -1,9 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../core/storage/local_storage.dart';
+import 'package:provider/provider.dart';
+import '../../providers/settings_provider.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
-import 'dart:ui';
 
 class RouletteStartScreen extends StatefulWidget {
   const RouletteStartScreen({super.key});
@@ -16,6 +17,14 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
   String _heName = 'ÉL';
   String _sheName = 'ELLA';
   bool _isDareMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<SettingsProvider>();
+    _heName = settings.heName;
+    _sheName = settings.sheName;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,9 +122,9 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,
         ),
@@ -127,7 +136,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
     return _buildGlassCard(
       child: InkWell(
         onTap: () async {
-          await LocalStorage.saveNames(_heName, _sheName);
+          await context.read<SettingsProvider>().saveNames(_heName, _sheName);
 
           if (!context.mounted) return;
 
@@ -151,7 +160,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.pink.withOpacity(0.6), Colors.purple.withOpacity(0.4)],
+              colors: [Colors.pink.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.4)],
             ),
             borderRadius: BorderRadius.circular(15),
           ),
@@ -190,9 +199,9 @@ class _ModeCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.6) : Colors.white.withOpacity(0.05),
+          color: isSelected ? color.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: isSelected ? color : Colors.white.withOpacity(0.1), width: 2),
+          border: Border.all(color: isSelected ? color : Colors.white.withValues(alpha: 0.1), width: 2),
         ),
         child: Column(
           children: [

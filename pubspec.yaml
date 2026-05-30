@@ -68,8 +68,8 @@ flutter:
     - assets/data/roulette_dare.json
     - assets/data/drinks_tasks.json
     - assets/data/bomb_categories.json
-    - assets/data/most_likely_questions.json
-    - assets/data/duel_questions.json
+    - assets/data/never_have_i_ever.json
+    - assets/data/charades_words.json
     - assets/images/man_drinking.png
     - assets/images/woman_drinking.png
     - assets/sounds/

@@ -2,28 +2,24 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
-import '../../controllers/bomb_controller.dart';
+import '../../controllers/never_have_i_ever_controller.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
-import 'bomb_game_screen.dart';
+import 'never_have_i_ever_game_screen.dart';
 
-class BombStartScreen extends StatefulWidget {
-  const BombStartScreen({super.key});
+class NeverHaveIEverStartScreen extends StatefulWidget {
+  const NeverHaveIEverStartScreen({super.key});
 
   @override
-  State<BombStartScreen> createState() => _BombStartScreenState();
+  State<NeverHaveIEverStartScreen> createState() => _NeverHaveIEverStartScreenState();
 }
 
-class _BombStartScreenState extends State<BombStartScreen> {
+class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
+  int _rounds = 10;
+  int _pointsToWin = 5;
+  int _strikesForPenance = 3;
   bool _isHotMode = false;
-  int _bestOf = 3;
-  int _bombTimer = 5;
-
-  bool _optPanic = false;
-  bool _optGold = false;
-  bool _optWild = false;
-  bool _optAccel = false;
 
   void _playSound() {
     context.read<AudioService>().playClick();
@@ -48,7 +44,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
                       },
                     ),
                     const Expanded(
-                      child: Text('LA BOMBA', textAlign: TextAlign.center,
+                      child: Text('YO NUNCA \u{1F48B}', textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 3)),
                     ),
                     const SizedBox(width: 48),
@@ -58,7 +54,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
               const SizedBox(height: 5),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
-                child: Text('El primero en quedarse sin respuestas le da 1 punto al rival.',
+                child: Text('Responde YO o NUNCA. Si hay disparidad, quien dijo YO recibe un strike.',
                   textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
               ),
               const SizedBox(height: 15),
@@ -92,17 +88,18 @@ class _BombStartScreenState extends State<BombStartScreen> {
                               child: Column(
                                 children: [
                                   _buildSettingRow(
-                                    icon: Icons.emoji_events, title: 'Formato:',
+                                    icon: Icons.repeat, title: 'Rondas:',
                                     child: DropdownButton<int>(
-                                      value: _bestOf, dropdownColor: Colors.black87,
+                                      value: _rounds,
+                                      dropdownColor: Colors.black87,
                                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                                       underline: const SizedBox(),
                                       icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-                                      items: [3, 5, 7].map((int value) {
-                                        return DropdownMenuItem<int>(value: value, child: Text('Al mejor de $value'));
+                                      items: [5, 10, 15, 20].map((int value) {
+                                        return DropdownMenuItem<int>(value: value, child: Text('$value rondas'));
                                       }).toList(),
                                       onChanged: (int? newValue) {
-                                        if (newValue != null) { _playSound(); setState(() => _bestOf = newValue); }
+                                        if (newValue != null) { _playSound(); setState(() => _rounds = newValue); }
                                       },
                                     ),
                                   ),
@@ -111,17 +108,38 @@ class _BombStartScreenState extends State<BombStartScreen> {
                                     child: Divider(color: Colors.white12, height: 1),
                                   ),
                                   _buildSettingRow(
-                                    icon: Icons.hourglass_bottom, title: 'Tiempo:',
+                                    icon: Icons.emoji_events, title: 'Puntos para ganar:',
                                     child: DropdownButton<int>(
-                                      value: _bombTimer, dropdownColor: Colors.black87,
+                                      value: _pointsToWin,
+                                      dropdownColor: Colors.black87,
                                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                                       underline: const SizedBox(),
                                       icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-                                      items: [5, 7].map((int value) {
-                                        return DropdownMenuItem<int>(value: value, child: Text('$value Segundos'));
+                                      items: [3, 5, 7].map((int value) {
+                                        return DropdownMenuItem<int>(value: value, child: Text('$value puntos'));
                                       }).toList(),
                                       onChanged: (int? newValue) {
-                                        if (newValue != null) { _playSound(); setState(() => _bombTimer = newValue); }
+                                        if (newValue != null) { _playSound(); setState(() => _pointsToWin = newValue); }
+                                      },
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    child: Divider(color: Colors.white12, height: 1),
+                                  ),
+                                  _buildSettingRow(
+                                    icon: Icons.bolt, title: 'Strikes por penitencia:',
+                                    child: DropdownButton<int>(
+                                      value: _strikesForPenance,
+                                      dropdownColor: Colors.black87,
+                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                      underline: const SizedBox(),
+                                      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                                      items: [3, 5].map((int value) {
+                                        return DropdownMenuItem<int>(value: value, child: Text('$value strikes'));
+                                      }).toList(),
+                                      onChanged: (int? newValue) {
+                                        if (newValue != null) { _playSound(); setState(() => _strikesForPenance = newValue); }
                                       },
                                     ),
                                   ),
@@ -145,56 +163,6 @@ class _BombStartScreenState extends State<BombStartScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Text('REGLAS GLOBALES (Toda la partida)',
-                        style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, letterSpacing: 1, fontSize: 11)),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildModifierBtn('Pánico', Icons.visibility_off, _optPanic, (val) => setState(() => _optPanic = val)),
-                          const SizedBox(width: 20),
-                          _buildModifierBtn('Acelerar', Icons.speed, _optAccel, (val) => setState(() => _optAccel = val)),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      const Text('EVENTOS (Turnos específicos)',
-                        style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, letterSpacing: 1, fontSize: 11)),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildModifierBtn('Dorado', Icons.star, _optGold, (val) => setState(() => _optGold = val)),
-                          const SizedBox(width: 20),
-                          _buildModifierBtn('Comodín', Icons.style, _optWild, (val) => setState(() => _optWild = val)),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      if (_optPanic || _optGold || _optWild || _optAccel)
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 30),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.black26,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (_optPanic) _buildExplanationRow(Icons.visibility_off, 'Pánico: Oculta los números del reloj', Colors.white70),
-                              if (_optGold) _buildExplanationRow(Icons.star, 'Dorado: Rondas al azar valen 2 puntos', Colors.amber),
-                              if (_optWild) _buildExplanationRow(Icons.style, 'Comodín: 1 uso por partida para cambiar categoría', Colors.white70),
-                              if (_optAccel) _buildExplanationRow(Icons.speed, 'Acelerar: El tiempo baja con cada toque', Colors.white70),
-                            ],
-                          ),
-                        )
-                      else
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 40),
-                          child: Text('Selecciona modificadores arriba para ver qué hacen.',
-                            textAlign: TextAlign.center, style: TextStyle(color: Colors.white30, fontSize: 12, fontStyle: FontStyle.italic)),
-                        ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -208,31 +176,28 @@ class _BombStartScreenState extends State<BombStartScreen> {
                       _playSound();
                       final audioService = context.read<AudioService>();
                       final settingsProvider = context.read<SettingsProvider>();
-                      final controller = BombController(
+                      final controller = NeverHaveIEverController(
                         audioService: audioService,
                         settingsProvider: settingsProvider,
+                        rounds: _rounds,
+                        pointsToWin: _pointsToWin,
+                        strikesForPenance: _strikesForPenance,
                         isHotMode: _isHotMode,
-                        bestOf: _bestOf,
-                        timerSeconds: _bombTimer,
-                        optPanic: _optPanic,
-                        optGold: _optGold,
-                        optWild: _optWild,
-                        optAccel: _optAccel,
                       );
                       await controller.initGame();
                       if (!context.mounted) return;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => BombGameScreen(controller: controller)),
+                        MaterialPageRoute(builder: (context) => NeverHaveIEverGameScreen(controller: controller)),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _isHotMode ? Colors.pink : Colors.deepOrange,
+                      backgroundColor: _isHotMode ? Colors.pink : const Color(0xFFFF416C),
                       foregroundColor: Colors.white, elevation: 10,
-                      shadowColor: _isHotMode ? Colors.pink : Colors.deepOrange,
+                      shadowColor: _isHotMode ? Colors.pink : const Color(0xFFFF416C),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),
-                    child: const Text('¡EMPEZAR PARTIDA!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    child: const Text('\u{1F680} \u{A1}EMPEZAR!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
                   ),
                 ),
               ),
@@ -256,43 +221,6 @@ class _BombStartScreenState extends State<BombStartScreen> {
         ),
         child,
       ],
-    );
-  }
-
-  Widget _buildModifierBtn(String label, IconData icon, bool isActive, Function(bool) onChanged) {
-    return GestureDetector(
-      onTap: () { _playSound(); onChanged(!isActive); },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 70, height: 75,
-        decoration: BoxDecoration(
-          color: isActive ? Colors.deepOrange.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: isActive ? Colors.deepOrange : Colors.white12, width: 2),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: isActive ? Colors.amber : Colors.white54, size: 28),
-            const SizedBox(height: 5),
-            Text(label, style: TextStyle(color: isActive ? Colors.white : Colors.white54, fontSize: 10, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExplanationRow(IconData icon, String text, Color color) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 14),
-          const SizedBox(width: 6),
-          Expanded(child: Text(text, style: TextStyle(color: color, fontSize: 11))),
-        ],
-      ),
     );
   }
 }

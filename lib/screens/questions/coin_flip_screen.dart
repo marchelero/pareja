@@ -1,7 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'questions_game_screen.dart';
+import 'package:provider/provider.dart';
+import '../../controllers/roulette_controller.dart';
+import '../../controllers/questions_controller.dart';
+import '../../data/questions_repository.dart';
+import '../../services/audio_service.dart';
+import '../../providers/settings_provider.dart';
 import '../roulette/roulette_game_screen.dart';
+import 'questions_game_screen.dart';
 
 class CoinFlipScreen extends StatefulWidget {
   final int maxRounds;
@@ -35,47 +41,61 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with SingleTickerProvid
   void initState() {
     super.initState();
     _isHeWinner = Random().nextBool();
-    
+
     _controller = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
 
-    // 5 full rotations + final position
     double endValue = 5 * 2 * pi + (_isHeWinner ? 0 : pi);
-    
+
     _animation = Tween<double>(begin: 0, end: endValue).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
     );
 
     _controller.forward().then((value) {
+      if (!mounted) return;
       setState(() {
         _showResult = true;
       });
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          if (widget.isRoulette) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RouletteGameScreen(
-                  isDareMode: widget.isDareMode,
-                  startingPlayerIsHe: _isHeWinner,
-                ),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => QuestionsGameScreen(
-                  maxRounds: widget.maxRounds,
-                  categories: widget.categories,
-                  startingPlayerIsHe: _isHeWinner,
-                ),
-              ),
-            );
-          }
+      Future.delayed(const Duration(seconds: 2), () async {
+        if (!mounted) return;
+        if (widget.isRoulette) {
+          final audioService = context.read<AudioService>();
+          final settingsProvider = context.read<SettingsProvider>();
+          final controller = RouletteController(
+            audioService: audioService,
+            settingsProvider: settingsProvider,
+            isDareMode: widget.isDareMode,
+            startingPlayerIsHe: _isHeWinner,
+          );
+          await controller.initGame();
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RouletteGameScreen(controller: controller),
+            ),
+          );
+        } else {
+          final audioService = context.read<AudioService>();
+          final settingsProvider = context.read<SettingsProvider>();
+          final controller = QuestionsController(
+            repository: QuestionsRepository(),
+            audioService: audioService,
+            settingsProvider: settingsProvider,
+            maxRounds: widget.maxRounds,
+            categories: widget.categories,
+            startingPlayerIsHe: _isHeWinner,
+          );
+          await controller.initGame();
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QuestionsGameScreen(controller: controller),
+            ),
+          );
         }
       });
     });
@@ -102,17 +122,14 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with SingleTickerProvid
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '¿Quién empieza?',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.orange),
-            ),
+            const Text('¿Quién empieza?', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.orange)),
             const SizedBox(height: 60),
             AnimatedBuilder(
               animation: _animation,
               builder: (context, child) {
                 final angle = _animation.value;
                 final isFront = (angle % (2 * pi)) < pi / 2 || (angle % (2 * pi)) > 3 * pi / 2;
-                
+
                 return Transform(
                   transform: Matrix4.identity()
                     ..setEntry(3, 2, 0.002)
@@ -134,11 +151,8 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with SingleTickerProvid
                       children: [
                         Text(
                           '¡Empieza ${_isHeWinner ? (widget.heName.isEmpty ? 'ÉL' : widget.heName) : (widget.sheName.isEmpty ? 'ELLA' : widget.sheName)}!',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w900,
-                            color: _isHeWinner ? Colors.blue : Colors.pink,
-                          ),
+                          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900,
+                            color: _isHeWinner ? Colors.blue : Colors.pink),
                         ),
                         const SizedBox(height: 10),
                         const Text('Preparando preguntas...', style: TextStyle(color: Colors.grey)),
@@ -155,17 +169,12 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with SingleTickerProvid
 
   Widget _buildCoinFace(bool isHe) {
     return Container(
-      width: 180,
-      height: 180,
+      width: 180, height: 180,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.amber,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 10),
-          ),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 10)),
         ],
         border: Border.all(color: Colors.amber.shade700, width: 8),
         gradient: RadialGradient(

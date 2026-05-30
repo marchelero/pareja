@@ -58,7 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.purple.shade900.withOpacity(0.2)],
+            colors: [Colors.black, Colors.purple.shade900.withValues(alpha: 0.2)],
           ),
         ),
         child: ListView(
@@ -101,7 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   await LocalStorage.setSoundEnabled(val);
                   setState(() => _soundEnabled = val);
                 },
-                activeColor: Colors.pink,
+                activeThumbColor: Colors.pink,
               ),
               const Divider(color: Colors.white10),
               SwitchListTile(
@@ -112,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   await LocalStorage.setVibrationEnabled(val);
                   setState(() => _vibrationEnabled = val);
                 },
-                activeColor: Colors.pink,
+                activeThumbColor: Colors.pink,
               ),
             ]),
             const SizedBox(height: 30),
@@ -163,9 +163,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

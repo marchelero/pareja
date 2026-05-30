@@ -106,10 +106,10 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(_isExpanded ? 0.08 : 0.05),
+            color: Colors.white.withValues(alpha: _isExpanded ? 0.08 : 0.05),
             borderRadius: BorderRadius.circular(25),
             border: Border.all(
-              color: _isExpanded ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.1),
+              color: _isExpanded ? Colors.white.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.1),
             ),
           ),
           child: Column(
@@ -126,7 +126,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: Colors.blueAccent.withOpacity(0.15),
+                              color: Colors.blueAccent.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(Icons.male, color: Colors.blueAccent, size: 22),
@@ -152,7 +152,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                       child: Text(
                         '&',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           fontSize: _isExpanded ? 14 : 18,
                           fontWeight: FontWeight.w300,
                         ),
@@ -178,7 +178,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: Colors.pinkAccent.withOpacity(0.15),
+                              color: Colors.pinkAccent.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(Icons.female, color: Colors.pinkAccent, size: 22),
@@ -190,7 +190,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -224,11 +224,11 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                                 style: const TextStyle(color: Colors.white, fontSize: 15),
                                 decoration: InputDecoration(
                                   hintText: 'Nombre...',
-                                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                                   prefixIcon: const Icon(Icons.male, color: Colors.blueAccent, size: 20),
                                   isDense: true,
                                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withOpacity(0.3))),
+                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withValues(alpha: 0.3))),
                                   focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
                                 ),
                               ),
@@ -247,11 +247,11 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                                 style: const TextStyle(color: Colors.white, fontSize: 15),
                                 decoration: InputDecoration(
                                   hintText: 'Nombre...',
-                                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                                   prefixIcon: const Icon(Icons.female, color: Colors.pinkAccent, size: 20),
                                   isDense: true,
                                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withOpacity(0.3))),
+                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withValues(alpha: 0.3))),
                                   focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
                                 ),
                               ),
@@ -269,7 +269,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                             child: ElevatedButton(
                               onPressed: _cancel,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.1),
+                                backgroundColor: Colors.white.withValues(alpha: 0.1),
                                 foregroundColor: Colors.white70,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -285,7 +285,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                             child: ElevatedButton(
                               onPressed: _save,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.greenAccent.withOpacity(0.2),
+                                backgroundColor: Colors.greenAccent.withValues(alpha: 0.2),
                                 foregroundColor: Colors.greenAccent,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 padding: const EdgeInsets.symmetric(vertical: 8),

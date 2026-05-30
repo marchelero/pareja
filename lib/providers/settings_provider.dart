@@ -59,4 +59,18 @@ class SettingsProvider extends ChangeNotifier {
     await LocalStorage.resetRouletteProgress();
     notifyListeners();
   }
+
+  Future<Set<String>> getUsedDrinkTasks() async {
+    return (await LocalStorage.getUsedDrinkTasks()).toSet();
+  }
+
+  Future<void> addUsedDrinkTask(String id) async {
+    await LocalStorage.addUsedDrinkTask(id);
+    notifyListeners();
+  }
+
+  Future<void> clearUsedDrinkTasks() async {
+    await LocalStorage.clearUsedDrinkTasks();
+    notifyListeners();
+  }
 }

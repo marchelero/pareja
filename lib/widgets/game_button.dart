@@ -81,11 +81,11 @@ class _GameButtonState extends State<GameButton>
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Colors.white.withOpacity(0.0),
-                                      Colors.white.withOpacity(0.0),
-                                      Colors.white.withOpacity(0.18),
-                                      Colors.white.withOpacity(0.0),
-                                      Colors.white.withOpacity(0.0),
+                                      Colors.white.withValues(alpha: 0.0),
+                                      Colors.white.withValues(alpha: 0.0),
+                                      Colors.white.withValues(alpha: 0.18),
+                                      Colors.white.withValues(alpha: 0.0),
+                                      Colors.white.withValues(alpha: 0.0),
                                     ],
                                     stops: const [0.0, 0.4, 0.5, 0.6, 1.0],
                                   ),
@@ -131,18 +131,18 @@ class _GameButtonState extends State<GameButton>
         return BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primary.withOpacity(0.85),
-              AppColors.primaryGradient.withOpacity(0.55),
+              AppColors.primary.withValues(alpha: 0.85),
+              AppColors.primaryGradient.withValues(alpha: 0.55),
             ],
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.6),
+            color: AppColors.primary.withValues(alpha: 0.6),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.35),
+              color: AppColors.primary.withValues(alpha: 0.35),
               blurRadius: 15,
               spreadRadius: 1,
             ),
@@ -150,18 +150,18 @@ class _GameButtonState extends State<GameButton>
         );
       case GameButtonStyle.secondary:
         return BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
           ),
         );
       case GameButtonStyle.danger:
         return BoxDecoration(
-          color: AppColors.scoreLose.withOpacity(0.3),
+          color: AppColors.scoreLose.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.scoreLose.withOpacity(0.5),
+            color: AppColors.scoreLose.withValues(alpha: 0.5),
           ),
         );
     }

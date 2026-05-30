@@ -1,9 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../core/storage/local_storage.dart';
+import 'package:provider/provider.dart';
+import '../../providers/settings_provider.dart';
 import 'coin_flip_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
-import 'dart:ui';
 
 class QuestionsStartScreen extends StatefulWidget {
   const QuestionsStartScreen({super.key});
@@ -17,6 +18,14 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
   String _sheName = 'ELLA';
   int _selectedRounds = 10;
   final List<int> _roundOptions = [10, 20, 30, 40, 50];
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<SettingsProvider>();
+    _heName = settings.heName;
+    _sheName = settings.sheName;
+  }
   
   final List<Map<String, dynamic>> _categories = [
     {'name': 'General', 'icon': Icons.all_inclusive, 'color': Colors.blue},
@@ -140,9 +149,9 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,
         ),
@@ -173,7 +182,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
       child: InkWell(
         onTap: () async {
           final navigator = Navigator.of(context);
-          await LocalStorage.saveNames(_heName, _sheName);
+          await context.read<SettingsProvider>().saveNames(_heName, _sheName);
           if (!mounted) return;
           navigator.push(
             MaterialPageRoute(
@@ -192,7 +201,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.pink.withOpacity(0.6), Colors.purple.withOpacity(0.4)],
+              colors: [Colors.pink.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.4)],
             ),
             borderRadius: BorderRadius.circular(15),
           ),
@@ -233,7 +242,7 @@ class _RoundCard extends StatelessWidget {
             width: 2,
           ),
           boxShadow: isSelected
-              ? [BoxShadow(color: Colors.orange.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))]
+              ? [BoxShadow(color: Colors.orange.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))]
               : [],
         ),
         child: Column(
@@ -292,7 +301,7 @@ class _CategoryCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: isSelected ? color.withOpacity(0.3) : Colors.black.withOpacity(0.05),
+              color: isSelected ? color.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

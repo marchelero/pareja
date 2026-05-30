@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../core/storage/local_storage.dart';
+import 'package:provider/provider.dart';
+import '../../providers/settings_provider.dart';
+import '../../controllers/drinks_controller.dart';
+import '../../services/audio_service.dart';
 import '../../widgets/player_names_section.dart';
 import 'drinks_game_screen.dart';
 import '../../widgets/neon_background.dart';
@@ -19,6 +22,14 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
   int _initialLevel = 1;
   int _levelingSpeed = 7;
   bool _isHotMode = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<SettingsProvider>();
+    _heName = settings.heName;
+    _sheName = settings.sheName;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +134,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                     title: const Text('Modo Hot', style: TextStyle(color: Colors.white)),
                     subtitle: const Text('Incluye retos picantes', style: TextStyle(color: Colors.white54, fontSize: 12)),
                     value: _isHotMode,
-                    activeColor: Colors.pink,
+                    activeThumbColor: Colors.pink,
                     onChanged: (val) => setState(() => _isHotMode = val),
                   ),
                 ],
@@ -149,27 +160,34 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           height: 65,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.pink.withOpacity(0.6), Colors.purple.withOpacity(0.4)],
+              colors: [Colors.pink.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.4)],
             ),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.3)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
             boxShadow: [
-              BoxShadow(color: Colors.pink.withOpacity(0.3), blurRadius: 15, spreadRadius: 2),
+              BoxShadow(color: Colors.pink.withValues(alpha: 0.3), blurRadius: 15, spreadRadius: 2),
             ],
           ),
           child: InkWell(
             onTap: () async {
-              await LocalStorage.saveNames(_heName, _sheName);
+              await context.read<SettingsProvider>().saveNames(_heName, _sheName);
+              if (!mounted) return;
+              final audioService = context.read<AudioService>();
+              final settingsProvider = context.read<SettingsProvider>();
+              final controller = DrinksController(
+                audioService: audioService,
+                settingsProvider: settingsProvider,
+                sipsPerGlass: _sipsPerGlass,
+                initialLevel: _initialLevel,
+                levelingSpeed: _levelingSpeed,
+                isHotMode: _isHotMode,
+              );
+              await controller.initGame();
               if (!mounted) return;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DrinksGameScreen(
-                    sipsPerGlass: _sipsPerGlass,
-                    initialLevel: _initialLevel,
-                    levelingSpeed: _levelingSpeed,
-                    isHotMode: _isHotMode,
-                  ),
+                  builder: (context) => DrinksGameScreen(controller: controller),
                 ),
               );
             },
@@ -214,9 +232,9 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,
         ),
@@ -232,10 +250,10 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? color.withOpacity(0.3) : Colors.white.withOpacity(0.05),
+            color: isSelected ? color.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(15),
             border: Border.all(color: isSelected ? color : Colors.white10),
-            boxShadow: isSelected ? [BoxShadow(color: color.withOpacity(0.2), blurRadius: 10)] : null,
+            boxShadow: isSelected ? [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 10)] : null,
           ),
           child: Text(
             label,
