@@ -4,6 +4,7 @@ import 'roulette/roulette_start_screen.dart';
 import 'drinks/drinks_start_screen.dart';
 import 'bomb/bomb_start_screen.dart';
 import 'most_likely/most_likely_start_screen.dart';
+import 'duel/duel_start_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../widgets/neon_background.dart';
 import 'dart:ui';
@@ -122,11 +123,16 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
             },
           ),
           _GameCard(
-            title: 'Otros',
-            icon: Icons.more_horiz,
-            color: Colors.blueGrey,
-            onTap: () {},
-            enabled: false,
+            title: 'Duelo',
+            icon: Icons.gps_fixed,
+            color: Colors.pink.shade700,
+            onTap: () {
+              _playSound();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DuelStartScreen()),
+              );
+            },
           ),
                 ],
               ),
