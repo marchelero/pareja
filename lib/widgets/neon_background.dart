@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../core/constants/app_constants.dart';
 
 class NeonBackground extends StatelessWidget {
   final Widget? child;
@@ -39,7 +40,7 @@ class NeonBackground extends StatelessWidget {
         ),
 
         // 2. Floating Icons (Fire, Kisses, Drinks)
-        if (showIcons) const _FloatingIconsBackground(),
+        if (showIcons) const RepaintBoundary(child: _FloatingIconsBackground()),
 
         // 3. Child Content
         if (child != null) child!,
@@ -68,8 +69,8 @@ class _FloatingIconsBackgroundState extends State<_FloatingIconsBackground> with
       duration: const Duration(seconds: 15),
     )..repeat();
 
-    // Create 15 floating icons
-    for (int i = 0; i < 15; i++) {
+    // Create floating icons
+    for (int i = 0; i < AppConstants.maxIconsNeonBackground; i++) {
       _icons.add(_FloatingIcon(
         icon: _getRandomIcon(),
         position: Offset(_random.nextDouble(), _random.nextDouble()),

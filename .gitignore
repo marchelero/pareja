@@ -41,3 +41,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Node / JS (used by AI tools like opencode)
+node_modules/
+.opencode/
+
+# IDEs and editors
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
