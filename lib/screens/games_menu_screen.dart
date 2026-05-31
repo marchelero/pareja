@@ -45,9 +45,10 @@ class GamesMenuScreen extends StatelessWidget {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                padding: const EdgeInsets.all(20),
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 20,
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 10,
+                childAspectRatio: 1.3,
                 children: [
                   GameCard(
                     title: 'Preguntas',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'glass_card.dart';
 
 class GameCard extends StatelessWidget {
   final String title;
@@ -21,7 +20,7 @@ class GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 400 + animationDelay),
+      duration: Duration(milliseconds: 500 + animationDelay),
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Opacity(
@@ -32,26 +31,87 @@ class GameCard extends StatelessWidget {
           ),
         );
       },
-      child: GlassCard(
-        accentColor: accentColor,
-        padding: const EdgeInsets.all(20),
-        child: InkWell(
-          onTap: onTap,
-          splashColor: accentColor.withValues(alpha: 0.2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 60, color: Colors.white),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              accentColor.withValues(alpha: 0.22),
+              Colors.white.withValues(alpha: 0.06),
+              accentColor.withValues(alpha: 0.10),
             ],
+          ),
+          border: Border.all(
+            color: accentColor.withValues(alpha: 0.35),
+            width: 1.5,
+          ),
+          boxShadow: [
+            // Brillo exterior del color del juego
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.25),
+              blurRadius: 18,
+              spreadRadius: 1,
+            ),
+            // Sombra de profundidad
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+            splashColor: accentColor.withValues(alpha: 0.25),
+            highlightColor: accentColor.withValues(alpha: 0.10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Icono con el color del juego y brillo
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: accentColor.withValues(alpha: 0.3),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
+                    child: Icon(icon, size: 44, color: accentColor),
+                  ),
+                  const SizedBox(height: 6),
+                  // Título con leve brillo neón
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.95),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                      shadows: [
+                        Shadow(
+                          color: accentColor.withValues(alpha: 0.4),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
