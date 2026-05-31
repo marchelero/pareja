@@ -170,8 +170,9 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
         SizedBox(
           width: 140,
           height: 220,
-          child: CustomPaint(
-            painter: GlassPainter(fillPercent: fillPercent, color: color),
+          child: ShotGlassWidget(
+            fillPercent: fillPercent,
+            color: color,
           ),
         ),
         const SizedBox(height: 15),
@@ -434,11 +435,101 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
   }
 }
 
-class GlassPainter extends CustomPainter {
+class ShotGlassWidget extends StatefulWidget {
   final double fillPercent;
   final Color color;
 
-  GlassPainter({required this.fillPercent, required this.color});
+  const ShotGlassWidget({
+    super.key,
+    required this.fillPercent,
+    required this.color,
+  });
+
+  @override
+  State<ShotGlassWidget> createState() => _ShotGlassWidgetState();
+}
+
+class _ShotGlassWidgetState extends State<ShotGlassWidget> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<_GlassBubble> _bubbles;
+  final Random _random = Random();
+
+  @override
+  void initState() {
+    super.initState();
+    // A slow, smooth animation that repeats for the bubble rise effect
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 12),
+    )..repeat();
+
+    // Generate persistent bubbles with varied speeds and starting heights
+    _bubbles = List.generate(8, (index) {
+      return _GlassBubble(
+        xRel: 0.35 + _random.nextDouble() * 0.3,
+        yStart: _random.nextDouble(),
+        speed: 0.4 + _random.nextDouble() * 0.4, // Reduced speed factor
+        size: 1.0 + _random.nextDouble() * 2.0,
+        wobbleSpeed: 1.5 + _random.nextDouble() * 2.0,
+        wobbleScale: 0.015 + _random.nextDouble() * 0.015,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: GlassPainter(
+            fillPercent: widget.fillPercent,
+            color: widget.color,
+            animationValue: _controller.value,
+            bubbles: _bubbles,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _GlassBubble {
+  final double xRel;       // Base horizontal percentage
+  final double yStart;     // Starting vertical percentage (0 to 1)
+  final double speed;      // Rising speed factor
+  final double size;       // Bubble size in pixels
+  final double wobbleSpeed;// Frequency of horizontal wobble
+  final double wobbleScale;// Amplitude of horizontal wobble
+
+  _GlassBubble({
+    required this.xRel,
+    required this.yStart,
+    required this.speed,
+    required this.size,
+    required this.wobbleSpeed,
+    required this.wobbleScale,
+  });
+}
+
+class GlassPainter extends CustomPainter {
+  final double fillPercent;
+  final Color color;
+  final double animationValue;
+  final List<_GlassBubble> bubbles;
+
+  GlassPainter({
+    required this.fillPercent,
+    required this.color,
+    required this.animationValue,
+    required this.bubbles,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -516,15 +607,25 @@ class GlassPainter extends CustomPainter {
         surfacePaint,
       );
 
-      final random = Random();
-      for (int i = 0; i < 8; i++) {
-        final bubbleX = size.width * (0.3 + random.nextDouble() * 0.4);
-        final bubbleY = liquidTop + random.nextDouble() * liquidHeight;
-        final bubbleSize = 1.0 + random.nextDouble() * 2.5;
+      // Draw slowly rising bubbles
+      for (final bubble in bubbles) {
+        // Calculate vertical position (rising from 1.0 to 0.0)
+        double progress = (bubble.yStart - animationValue * bubble.speed) % 1.0;
+        if (progress < 0) progress += 1.0;
+
+        final bubbleY = liquidTop + progress * liquidHeight;
+
+        // Subtle horizontal wiggle
+        final wobble = sin(animationValue * bubble.wobbleSpeed * 2 * pi) * bubble.wobbleScale * size.width;
+        final bubbleX = size.width * bubble.xRel + wobble;
+
+        // Fade out when getting very close to the liquid surface
+        final opacity = progress < 0.1 ? (progress / 0.1) * 0.35 : 0.35;
+
         canvas.drawCircle(
           Offset(bubbleX, bubbleY),
-          bubbleSize,
-          Paint()..color = Colors.white.withValues(alpha: 0.3),
+          bubble.size,
+          Paint()..color = Colors.white.withValues(alpha: opacity),
         );
       }
     }
@@ -550,5 +651,7 @@ class GlassPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant GlassPainter oldDelegate) =>
-      oldDelegate.fillPercent != fillPercent || oldDelegate.color != color;
+      oldDelegate.fillPercent != fillPercent ||
+      oldDelegate.color != color ||
+      oldDelegate.animationValue != animationValue;
 }
