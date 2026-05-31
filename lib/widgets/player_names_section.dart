@@ -204,7 +204,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
               ),
               SizeTransition(
                 sizeFactor: _expandAnimation,
-                axisAlignment: -1.0,
+                alignment: Alignment.topCenter,
                 child: Column(
                   children: [
                     const Padding(

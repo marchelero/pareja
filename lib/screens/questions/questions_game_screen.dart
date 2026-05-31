@@ -51,7 +51,6 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.6,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -63,67 +62,71 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
             BoxShadow(color: Colors.yellow.withValues(alpha: 0.2), blurRadius: 20, spreadRadius: 5),
           ],
         ),
-        child: Column(
-          children: [
-            const SizedBox(height: 15),
-            Container(
-              width: 50, height: 5,
-              decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10)),
-            ),
-            const SizedBox(height: 40),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.yellow.withValues(alpha: 0.1), shape: BoxShape.circle,
-                border: Border.all(color: Colors.yellow.withValues(alpha: 0.3), width: 2),
-              ),
-              child: const Icon(Icons.flash_on, color: Colors.yellow, size: 80),
-            ),
-            const SizedBox(height: 30),
-            const Text('MUERTE SÚBITA', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 3)),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                'Habrá una sola pregunta para cada uno.\n\nSi responden correctamente, ganarán 7 puntos.\n\n¿Están listos para el desafío final?',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 18, height: 1.5),
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(30),
-              child: Row(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('CANCELAR', style: TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.bold)),
+                  Container(
+                    width: 50, height: 5,
+                    decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10)),
+                  ),
+                  const SizedBox(height: 30),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.yellow.withValues(alpha: 0.1), shape: BoxShape.circle,
+                      border: Border.all(color: Colors.yellow.withValues(alpha: 0.3), width: 2),
+                    ),
+                    child: const Icon(Icons.flash_on, color: Colors.yellow, size: 80),
+                  ),
+                  const SizedBox(height: 25),
+                  const Text('MUERTE SÚBITA', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 3)),
+                  const SizedBox(height: 15),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Habrá una sola pregunta para cada uno.\n\nSi responden correctamente, ganarán 7 puntos.\n\n¿Están listos para el desafío final?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.4),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: SizedBox(
-                      height: 60,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          widget.controller.activateSuddenDeath();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.yellow.shade700,
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          elevation: 10,
+                  const SizedBox(height: 40),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('CANCELAR', style: TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
-                        child: const Text('¡EMPEZAR!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
                       ),
-                    ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: SizedBox(
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              widget.controller.activateSuddenDeath();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.yellow.shade700,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              elevation: 10,
+                            ),
+                            child: const Text('¡EMPEZAR!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -140,137 +143,144 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
       body: NeonBackground(
         backgroundColor: c.backgroundColor,
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Ronda ${c.currentRound}/${c.maxRounds}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white70),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Column(
-                  children: [
-                    const Text('Turno de', style: TextStyle(color: Colors.white70, fontSize: 18, letterSpacing: 2, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 5),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${c.currentPlayer?.name}'.toUpperCase(),
-                        style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: 1.5,
-                          shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))]),
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        otherPlayer.name.toUpperCase(),
-                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1.0,
-                          shadows: [Shadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 2))]),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Text('PREGUNTA:', style: TextStyle(color: Colors.white70, fontSize: 18, letterSpacing: 2, fontWeight: FontWeight.w500)),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  c.formatQuestionText(c.currentQuestion?.text ?? ''),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold, height: 1.2),
-                ),
-                const Spacer(),
-                if (c.isSuddenDeath)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SuddenDeathButton(
-                          icon: Icons.sentiment_very_dissatisfied,
-                          label: 'Falló',
-                          color: Colors.black.withValues(alpha: 0.7),
-                          iconColor: Colors.white,
-                          onPressed: () => c.addPoints(0),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: _SuddenDeathButton(
-                          icon: Icons.star,
-                          label: '+7 puntos',
-                          color: Colors.yellow.shade700,
-                          iconColor: Colors.amber.shade900,
-                          onPressed: () => c.addPoints(7),
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  Column(
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                  child: Column(
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: _ScoreButton(
-                              icon: Icons.close, label: 'Nada',
-                              color: Colors.redAccent.withValues(alpha: 0.3),
-                              onPressed: () => c.addPoints(0),
-                            ),
+                          Text('Ronda ${c.currentRound}/${c.maxRounds}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white70),
+                            onPressed: () => Navigator.pop(context),
                           ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: _ScoreButton(
-                              icon: Icons.star_half, label: 'Medio',
-                              color: Colors.orangeAccent.withValues(alpha: 0.3),
-                              onPressed: () => c.addPoints(1),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Column(
+                        children: [
+                          const Text('Turno de', style: TextStyle(color: Colors.white70, fontSize: 18, letterSpacing: 2, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 5),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: _ScoreButton(
-                              icon: Icons.star, label: '¡Bien!',
-                              color: Colors.greenAccent.withValues(alpha: 0.3),
-                              onPressed: () => c.addPoints(2),
+                            child: Text(
+                              '${c.currentPlayer?.name}'.toUpperCase(),
+                              style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: 1.5,
+                                shadows: [Shadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))]),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55,
-                        child: OutlinedButton.icon(
-                          onPressed: _activateSuddenDeath,
-                          icon: const Icon(Icons.flash_on, color: Colors.yellow),
-                          label: const Text('MUERTE SÚBITA', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.white, width: 2),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      const Spacer(),
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Text(
+                              otherPlayer.name.toUpperCase(),
+                              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1.0,
+                                shadows: [Shadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 2))]),
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 5),
+                          const Text('PREGUNTA:', style: TextStyle(color: Colors.white70, fontSize: 18, letterSpacing: 2, fontWeight: FontWeight.w500)),
+                        ],
                       ),
+                      const SizedBox(height: 20),
+                      Text(
+                        c.formatQuestionText(c.currentQuestion?.text ?? ''),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold, height: 1.2),
+                      ),
+                      const Spacer(),
+                      if (c.isSuddenDeath)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _SuddenDeathButton(
+                                icon: Icons.sentiment_very_dissatisfied,
+                                label: 'Falló',
+                                color: Colors.black.withValues(alpha: 0.7),
+                                iconColor: Colors.white,
+                                onPressed: () => c.addPoints(0),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: _SuddenDeathButton(
+                                icon: Icons.star,
+                                label: '+7 puntos',
+                                color: Colors.yellow.shade700,
+                                iconColor: Colors.amber.shade900,
+                                onPressed: () => c.addPoints(7),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _ScoreButton(
+                                    icon: Icons.close, label: 'Nada',
+                                    color: Colors.redAccent.withValues(alpha: 0.3),
+                                    onPressed: () => c.addPoints(0),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: _ScoreButton(
+                                    icon: Icons.star_half, label: 'Medio',
+                                    color: Colors.orangeAccent.withValues(alpha: 0.3),
+                                    onPressed: () => c.addPoints(1),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: _ScoreButton(
+                                    icon: Icons.star, label: '¡Bien!',
+                                    color: Colors.greenAccent.withValues(alpha: 0.3),
+                                    onPressed: () => c.addPoints(2),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 30),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 55,
+                              child: OutlinedButton.icon(
+                                onPressed: _activateSuddenDeath,
+                                icon: const Icon(Icons.flash_on, color: Colors.yellow),
+                                label: const Text('MUERTE SÚBITA', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: Colors.white, width: 2),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

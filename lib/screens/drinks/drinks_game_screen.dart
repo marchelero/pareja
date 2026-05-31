@@ -451,7 +451,7 @@ class ShotGlassWidget extends StatefulWidget {
 
 class _ShotGlassWidgetState extends State<ShotGlassWidget> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late List<_GlassBubble> _bubbles;
+  late List<GlassBubble> _bubbles;
   final Random _random = Random();
 
   @override
@@ -465,7 +465,7 @@ class _ShotGlassWidgetState extends State<ShotGlassWidget> with SingleTickerProv
 
     // Generate persistent bubbles with varied speeds and starting heights
     _bubbles = List.generate(8, (index) {
-      return _GlassBubble(
+      return GlassBubble(
         xRel: 0.35 + _random.nextDouble() * 0.3,
         yStart: _random.nextDouble(),
         speed: 0.4 + _random.nextDouble() * 0.4, // Reduced speed factor
@@ -500,7 +500,7 @@ class _ShotGlassWidgetState extends State<ShotGlassWidget> with SingleTickerProv
   }
 }
 
-class _GlassBubble {
+class GlassBubble {
   final double xRel;       // Base horizontal percentage
   final double yStart;     // Starting vertical percentage (0 to 1)
   final double speed;      // Rising speed factor
@@ -508,7 +508,7 @@ class _GlassBubble {
   final double wobbleSpeed;// Frequency of horizontal wobble
   final double wobbleScale;// Amplitude of horizontal wobble
 
-  _GlassBubble({
+  GlassBubble({
     required this.xRel,
     required this.yStart,
     required this.speed,
@@ -522,7 +522,7 @@ class GlassPainter extends CustomPainter {
   final double fillPercent;
   final Color color;
   final double animationValue;
-  final List<_GlassBubble> bubbles;
+  final List<GlassBubble> bubbles;
 
   GlassPainter({
     required this.fillPercent,

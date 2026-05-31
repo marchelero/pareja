@@ -23,7 +23,12 @@ class AudioService extends ChangeNotifier {
   Future<void> _play(String fileName) async {
     if (!_enabled) return;
     try {
-      await _player.play(AssetSource('sounds/$fileName'));
+      if (kIsWeb) {
+        // On Web, use UrlSource to load assets directly via HTTP and bypass dart:io Namespace checks
+        await _player.play(UrlSource('assets/sounds/$fileName'));
+      } else {
+        await _player.play(AssetSource('sounds/$fileName'));
+      }
     } catch (e) {
       debugPrint('AudioService error: $e');
     }

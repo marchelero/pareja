@@ -130,12 +130,15 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                     ),
                   ),
                   const Divider(color: Colors.white10),
-                  SwitchListTile(
-                    title: const Text('Modo Hot', style: TextStyle(color: Colors.white)),
-                    subtitle: const Text('Incluye retos picantes', style: TextStyle(color: Colors.white54, fontSize: 12)),
-                    value: _isHotMode,
-                    activeThumbColor: Colors.pink,
-                    onChanged: (val) => setState(() => _isHotMode = val),
+                  Material(
+                    color: Colors.transparent,
+                    child: SwitchListTile(
+                      title: const Text('Modo Hot', style: TextStyle(color: Colors.white)),
+                      subtitle: const Text('Incluye retos picantes', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                      value: _isHotMode,
+                      activeThumbColor: Colors.pink,
+                      onChanged: (val) => setState(() => _isHotMode = val),
+                    ),
                   ),
                 ],
               ),
