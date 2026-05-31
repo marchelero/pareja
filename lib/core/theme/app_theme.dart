@@ -11,9 +11,9 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColors.backgroundDark,
       colorScheme: ColorScheme.dark(
-        primary: AppColors.primary,
-        secondary: AppColors.accent,
-        surface: AppColors.surfaceDark,
+        primary: AppColors.primaryNeon,
+        secondary: AppColors.tertiaryPurple,
+        surface: AppColors.surfacePurple,
       ),
       useMaterial3: true,
       textTheme: GoogleFonts.montserratTextTheme().copyWith(
@@ -28,6 +28,11 @@ class AppTheme {
           color: AppColors.textPrimary,
           letterSpacing: 28,
         ),
+        displaySmall: GoogleFonts.playfairDisplay(
+          fontSize: 48,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
         headlineLarge: GoogleFonts.montserrat(
           fontSize: 36,
           fontWeight: FontWeight.w900,
@@ -37,6 +42,12 @@ class AppTheme {
         headlineMedium: GoogleFonts.montserrat(
           fontSize: 24,
           fontWeight: FontWeight.w900,
+          color: AppColors.textPrimary,
+          letterSpacing: 1.5,
+        ),
+        headlineSmall: GoogleFonts.montserrat(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
           color: AppColors.textPrimary,
           letterSpacing: 1.5,
         ),

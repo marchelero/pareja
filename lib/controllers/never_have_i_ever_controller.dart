@@ -138,18 +138,19 @@ class NeverHaveIEverController extends ChangeNotifier {
     _disparity = _heSaidYo != _sheSaidYo;
 
     if (_disparity) {
+      // Quien dijo YO (lo ha hecho) recibe strike
+      // Quien dijo NUNCA (no lo ha hecho) suma punto por ganar la ronda
       if (_heSaidYo == true && _sheSaidYo == false) {
         _strikesHe++;
         _strikePlayerName = heName;
+        _scoreShe++; // Ella gana la ronda
       } else {
         _strikesShe++;
         _strikePlayerName = sheName;
+        _scoreHe++; // Él gana la ronda
       }
-    } else {
-      _scoreHe++;
-      _scoreShe++;
-      _strikePlayerName = null;
     }
+    // Si hay paridad (ambos YO o ambos NUNCA), nadie suma puntos
 
     _isRevealed = true;
     notifyListeners();

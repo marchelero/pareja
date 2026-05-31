@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
-import '../core/storage/local_storage.dart';
+import 'package:provider/provider.dart';
+import '../core/theme/app_colors.dart';
+import '../providers/settings_provider.dart';
+import '../widgets/neon_background.dart';
+import '../widgets/glass_card.dart';
+import '../widgets/section_title.dart';
+import '../widgets/neon_toggle.dart';
+import '../widgets/neon_button.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,184 +18,241 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController _heController = TextEditingController();
   final TextEditingController _sheController = TextEditingController();
-  bool _soundEnabled = true;
-  bool _vibrationEnabled = true;
 
   @override
   void initState() {
     super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final he = await LocalStorage.getHeName();
-    final she = await LocalStorage.getSheName();
-    final sound = await LocalStorage.isSoundEnabled();
-    final vibration = await LocalStorage.isVibrationEnabled();
-    
-    setState(() {
-      _heController.text = he;
-      _sheController.text = she;
-      _soundEnabled = sound;
-      _vibrationEnabled = vibration;
-    });
-  }
-
-  Future<void> _saveNames() async {
-    await LocalStorage.saveNames(_heController.text, _sheController.text);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nombres guardados')),
-      );
+    final settings = context.read<SettingsProvider>();
+    if (!settings.isLoaded) {
+      settings.load().then((_) {
+        if (mounted) {
+          _heController.text = settings.heName;
+          _sheController.text = settings.sheName;
+        }
+      });
+    } else {
+      _heController.text = settings.heName;
+      _sheController.text = settings.sheName;
     }
   }
 
   @override
+  void dispose() {
+    _heController.dispose();
+    _sheController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('CONFIGURACIÓN', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        foregroundColor: Colors.white,
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.purple.shade900.withValues(alpha: 0.2)],
+      body: NeonBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              AppBar(
+                title: const Text(
+                  'CONFIGURACIÓN',
+                  style: TextStyle(
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                  ),
+                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                centerTitle: true,
+                iconTheme: const IconThemeData(color: Colors.white),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    SectionTitle(
+                      text: 'NOMBRES DE LA PAREJA',
+                      icon: Icons.favorite,
+                      color: AppColors.primaryNeon,
+                    ),
+                    const SizedBox(height: 10),
+                    GlassCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            controller: _heController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              labelText: 'Nombre de ÉL',
+                              labelStyle:
+                                  const TextStyle(color: Colors.white54),
+                              prefixIcon: const Icon(Icons.male,
+                                  color: Colors.blueAccent),
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.2)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.2)),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.primaryNeon),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 15),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          TextField(
+                            controller: _sheController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              labelText: 'Nombre de ELLA',
+                              labelStyle:
+                                  const TextStyle(color: Colors.white54),
+                              prefixIcon: const Icon(Icons.female,
+                                  color: Colors.pinkAccent),
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.2)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.2)),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: AppColors.primaryNeon),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 15),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          NeonButton(
+                            text: 'GUARDAR NOMBRES',
+                            onPressed: () async {
+                              await settings.saveNames(
+                                  _heController.text, _sheController.text);
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Nombres guardados')),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    SectionTitle(
+                      text: 'AJUSTES DE JUEGO',
+                      icon: Icons.tune,
+                      color: AppColors.primaryNeon,
+                    ),
+                    const SizedBox(height: 10),
+                    GlassCard(
+                      child: Column(
+                        children: [
+                          NeonToggle(
+                            value: settings.soundEnabled,
+                            onChanged: (_) => settings.toggleSound(),
+                            icon: Icons.volume_up,
+                            activeColor: AppColors.primaryNeon,
+                          ),
+                          const Divider(
+                              color: Colors.white10, height: 24),
+                          NeonToggle(
+                            value: settings.vibrationEnabled,
+                            onChanged: (_) => settings.toggleVibration(),
+                            icon: Icons.vibration,
+                            activeColor: AppColors.primaryNeon,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    SectionTitle(
+                      text: 'PROGRESO',
+                      icon: Icons.analytics,
+                      color: AppColors.primaryNeon,
+                    ),
+                    const SizedBox(height: 10),
+                    GlassCard(
+                      child: ListTile(
+                        title: const Text(
+                          'Reiniciar Progreso de Ruleta',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        subtitle: const Text(
+                          'Vuelve a empezar desde el giro 0',
+                          style: TextStyle(color: Colors.white54),
+                        ),
+                        leading: const Icon(Icons.refresh,
+                            color: Colors.redAccent),
+                        onTap: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: AppColors.surfacePurple,
+                              title: const Text(
+                                'Reiniciar progreso',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              content: const Text(
+                                '¿Estás seguro de que quieres reiniciar el progreso de la ruleta?',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text('Cancelar',
+                                      style:
+                                          TextStyle(color: Colors.white54)),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, true),
+                                  child: const Text('Reiniciar',
+                                      style: TextStyle(
+                                          color: AppColors.primaryNeon)),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            await settings.resetRouletteProgress();
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Progreso de ruleta reiniciado')),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    const Center(
+                      child: Text(
+                        'Pareja v1.0.0',
+                        style: TextStyle(
+                            color: Colors.white24, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            _buildSectionTitle('NOMBRES DE LA PAREJA'),
-            _buildCard([
-              _buildTextField(
-                controller: _heController,
-                label: 'Nombre de Él',
-                icon: Icons.male,
-                color: Colors.blue,
-              ),
-              const Divider(color: Colors.white10),
-              _buildTextField(
-                controller: _sheController,
-                label: 'Nombre de Ella',
-                icon: Icons.female,
-                color: Colors.pink,
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _saveNames,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink.shade700,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text('GUARDAR NOMBRES'),
-              ),
-            ]),
-            const SizedBox(height: 30),
-            _buildSectionTitle('AJUSTES DE JUEGO'),
-            _buildCard([
-              SwitchListTile(
-                title: const Text('Sonido', style: TextStyle(color: Colors.white)),
-                secondary: const Icon(Icons.volume_up, color: Colors.blueAccent),
-                value: _soundEnabled,
-                onChanged: (val) async {
-                  await LocalStorage.setSoundEnabled(val);
-                  setState(() => _soundEnabled = val);
-                },
-                activeThumbColor: Colors.pink,
-              ),
-              const Divider(color: Colors.white10),
-              SwitchListTile(
-                title: const Text('Vibración', style: TextStyle(color: Colors.white)),
-                secondary: const Icon(Icons.vibration, color: Colors.orangeAccent),
-                value: _vibrationEnabled,
-                onChanged: (val) async {
-                  await LocalStorage.setVibrationEnabled(val);
-                  setState(() => _vibrationEnabled = val);
-                },
-                activeThumbColor: Colors.pink,
-              ),
-            ]),
-            const SizedBox(height: 30),
-            _buildSectionTitle('PROGRESO'),
-            _buildCard([
-              ListTile(
-                title: const Text('Reiniciar Progreso de Ruleta', style: TextStyle(color: Colors.white)),
-                subtitle: const Text('Vuelve a empezar desde el giro 0', style: TextStyle(color: Colors.white54)),
-                leading: const Icon(Icons.refresh, color: Colors.redAccent),
-                onTap: () async {
-                  await LocalStorage.resetRouletteProgress();
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Progreso de ruleta reiniciado')),
-                  );
-                },
-              ),
-            ]),
-            const SizedBox(height: 40),
-            const Center(
-              child: Text(
-                'Pareja v1.0.0',
-                style: TextStyle(color: Colors.white24, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, bottom: 10),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Colors.pink.shade300,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 2,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCard(List<Widget> children) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    required Color color,
-  }) {
-    return TextField(
-      controller: controller,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.white54),
-        prefixIcon: Icon(icon, color: color),
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(vertical: 15),
       ),
     );
   }

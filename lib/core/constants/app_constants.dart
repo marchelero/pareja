@@ -16,13 +16,13 @@ class AppConstants {
   static const String soundDrink = 'drink.mp3';
 
   static const int rouletteMaxSpinsForHot = 8;
-  static const int maxIconsNeonBackground = 10;
+  static const int maxIconsNeonBackground = 15;
   static const int neonAnimationDurationSeconds = 15;
 
   static const Duration animFast = Duration(milliseconds: 200);
   static const Duration animNormal = Duration(milliseconds: 300);
   static const Duration animSlow = Duration(milliseconds: 500);
 
-  static const double glassBorderRadius = 25.0;
-  static const double glassBlurSigma = 10.0;
+  static const double glassBorderRadius = 20.0;
+  static const double glassBlurSigma = 15.0;
 }

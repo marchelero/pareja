@@ -11,6 +11,7 @@ class GlassCard extends StatelessWidget {
   final Color? backgroundColor;
   final double blurSigma;
   final EdgeInsetsGeometry? margin;
+  final Color? accentColor;
 
   const GlassCard({
     super.key,
@@ -21,6 +22,7 @@ class GlassCard extends StatelessWidget {
     this.backgroundColor,
     this.blurSigma = AppConstants.glassBlurSigma,
     this.margin,
+    this.accentColor,
   });
 
   @override
@@ -39,6 +41,19 @@ class GlassCard extends StatelessWidget {
               border: Border.all(
                 color: borderColor ?? AppColors.glassBorder(0.2),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                ),
+                if (accentColor != null)
+                  BoxShadow(
+                    color: accentColor!.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+              ],
             ),
             child: child,
           ),

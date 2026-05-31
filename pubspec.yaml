@@ -72,6 +72,7 @@ flutter:
     - assets/data/charades_words.json
     - assets/images/man_drinking.png
     - assets/images/woman_drinking.png
+    - assets/images/logo.png
     - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
