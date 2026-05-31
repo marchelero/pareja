@@ -5,7 +5,7 @@
 
 ## Resumen
 
-Se aplicaron 11 pasos de corrección sobre la Capa 4 del proyecto LovePlay.
+Se aplicaron 11 pasos de corrección sobre la Capa 4 del proyecto TWO PLAYERS.
 
 ## Pasos Ejecutados
 

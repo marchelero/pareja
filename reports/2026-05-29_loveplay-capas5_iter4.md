@@ -1,7 +1,7 @@
 # Reporte: Capa 5 — Estandarización Visual
 
 **Fecha:** 2026-05-29  
-**Plan:** loveplay-capas5_iter4  
+**Plan:** TWO PLAYERS-capas5_iter4  
 **Estado:** ✅ COMPLETADO
 
 ---
@@ -94,8 +94,8 @@ Los 40 issues restantes son:
 ## Auditoría — Agente Auditor
 
 **Fecha:** 2026-05-30  
-**Plan auditado:** loveplay-capas5_iter4  
-**Documento base:** `reports/2026-05-29_loveplay-capas5_iter4.md`
+**Plan auditado:** TWO PLAYERS-capas5_iter4  
+**Documento base:** `reports/2026-05-29_TWO PLAYERS-capas5_iter4.md`
 
 ---
 

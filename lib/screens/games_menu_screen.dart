@@ -25,7 +25,7 @@ class GamesMenuScreen extends StatelessWidget {
           children: [
             AppBar(
               title: const Text(
-                'DATE GAMES \u{1F319} JUEGOS',
+                'TWO PLAYERS • JUEGOS',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,

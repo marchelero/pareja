@@ -1,10 +1,10 @@
-# LOVEPLAY ❤️🔥
+# TWO PLAYERS ❤️🔥
 
-¡Bienvenido a **LOVEPLAY**! La app definitiva para romper el hielo, encender la chispa y pasar un rato inolvidable en pareja (o en una previa que se salga de control 😉).
+¡Bienvenido a **TWO PLAYERS**! La app definitiva para romper el hielo, encender la chispa y pasar un rato inolvidable en pareja (o en una previa que se salga de control 😉).
 
-## 🚀 ¿Qué es LOVEPLAY?
+## 🚀 ¿Qué es TWO PLAYERS?
 
-LOVEPLAY es una aplicación móvil diseñada exclusivamente para parejas y amigos con derechos. Cuenta con diferentes minijuegos interactivos que combinan diversión, preguntas incómodas y dinámicas picantes.
+TWO PLAYERS es una aplicación móvil diseñada exclusivamente para parejas y amigos con derechos. Cuenta con diferentes minijuegos interactivos que combinan diversión, preguntas incómodas y dinámicas picantes.
 
 Introduce tu nombre y el de tu acompañante... ¡y que empiece el juego!
 

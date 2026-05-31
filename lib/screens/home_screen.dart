@@ -192,13 +192,16 @@ class _HomeScreenState extends State<HomeScreen>
         final double g = _glowController.value;
         return Column(
           children: [
+            // ── TWO PLAYERS (Montserrat Black) ──
             Text(
-              'Date',
-              style: GoogleFonts.dancingScript(
-                fontSize: 86,
-                fontWeight: FontWeight.w700,
+              'TWO\nPLAYERS',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 50,
+                fontWeight: FontWeight.w900,
                 color: Colors.white,
                 height: 1.0,
+                letterSpacing: 6,
                 shadows: [
                   Shadow(
                     color: AppColors.primaryNeon
@@ -213,31 +216,23 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ),
             ),
-            Transform.translate(
-              offset: const Offset(0, -5),
-              child: ShaderMask(
-                shaderCallback: (bounds) => LinearGradient(
-                  colors: [
-                    AppColors.primaryNeon,
-                    AppColors.secondaryNeon,
-                    AppColors.primaryNeon,
-                  ],
-                ).createShader(bounds),
-                child: Text(
-                  'GAMES',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: 28,
-                    shadows: [
-                      Shadow(
-                        color: AppColors.primaryNeon
-                            .withValues(alpha: 0.4 + g * 0.2),
-                        blurRadius: 15 + g * 10,
-                      ),
-                    ],
-                  ),
+            const SizedBox(height: 20),
+            // ── COUPLE GAMES (Montserrat Light) ──
+            ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                colors: [
+                  AppColors.primaryNeon.withValues(alpha: 0.5),
+                  AppColors.secondaryNeon,
+                  AppColors.primaryNeon.withValues(alpha: 0.5),
+                ],
+              ).createShader(bounds),
+              child: Text(
+                'COUPLE GAMES',
+                style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.white,
+                  letterSpacing: 12,
                 ),
               ),
             ),

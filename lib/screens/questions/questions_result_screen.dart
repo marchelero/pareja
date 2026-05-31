@@ -552,7 +552,7 @@ class _ResultButton extends StatelessWidget {
                 text,
                 style: GoogleFonts.montserrat(
                   fontSize: 16,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                   letterSpacing: 2,
                 ),

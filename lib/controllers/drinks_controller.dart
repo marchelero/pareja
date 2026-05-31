@@ -206,7 +206,9 @@ class DrinksController extends ChangeNotifier {
 
     notifyListeners();
 
+    // Reproducir sonido cuando un vaso se vacía
     if (_heSipsLeft <= 0 || _sheSipsLeft <= 0) {
+      audioService.playDrink();
       _checkGameOver();
     }
   }

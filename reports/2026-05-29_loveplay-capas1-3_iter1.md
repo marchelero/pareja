@@ -1,4 +1,4 @@
-# Reporte de Iteración — Capas 1-3 LOVEPLAY
+# Reporte de Iteración — Capas 1-3 TWO PLAYERS
 
 **Fecha:** 2026-05-29  
 **Iteración:** 1  

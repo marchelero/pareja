@@ -18,22 +18,44 @@ class CharadesStartScreen extends StatefulWidget {
 class _CharadesStartScreenState extends State<CharadesStartScreen> {
   static const Map<String, String> _categoryLabels = {
     'peliculas': 'Pel\u00edculas',
-    'acciones': 'Acciones Cotidianas',
-    'animales': 'Animales',
-    'comidas': 'Comidas',
-    'profesiones': 'Profesiones',
+    'canciones': 'Canciones',
+    'series': 'Series',
+    'personajes': 'Personajes',
     'celebridades': 'Celebridades',
+    'animales': 'Animales',
+    'profesiones': 'Profesiones',
+    'comidas': 'Comidas',
+    'acciones': 'Acciones Cotidianas',
+    'lugares': 'Lugares',
+    'deportes': 'Deportes',
+    'superheroes': 'Superh\u00e9roes',
+    'disney': 'Disney',
+    'videojuegos': 'Videojuegos',
     'posiciones_sexuales': 'Posiciones Sexuales',
+    'libros': 'Libros',
+    'marcas': 'Marcas',
+    'bailes': 'Bailes',
   };
 
   static const Map<String, IconData> _categoryIcons = {
     'peliculas': Icons.movie,
-    'acciones': Icons.directions_run,
-    'animales': Icons.pets,
-    'comidas': Icons.restaurant,
-    'profesiones': Icons.work,
+    'canciones': Icons.music_note,
+    'series': Icons.tv,
+    'personajes': Icons.face,
     'celebridades': Icons.star,
+    'animales': Icons.pets,
+    'profesiones': Icons.work,
+    'comidas': Icons.restaurant,
+    'acciones': Icons.directions_run,
+    'lugares': Icons.public,
+    'deportes': Icons.sports_soccer,
+    'superheroes': Icons.flash_on,
+    'disney': Icons.castle,
+    'videojuegos': Icons.videogame_asset,
     'posiciones_sexuales': Icons.favorite,
+    'libros': Icons.menu_book,
+    'marcas': Icons.local_offer,
+    'bailes': Icons.redeem,
   };
 
   final Set<String> _selectedCategories = {'peliculas'};
@@ -41,6 +63,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
   int _pointsToWin = 3;
   int _strikesForPenance = 5;
   bool _isHotMode = false;
+  bool _singleCategoryMode = false;
 
   @override
   void initState() {
@@ -126,6 +149,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                               audioService: audioService,
                               settingsProvider: settingsProvider,
                               selectedCategories: _selectedCategories.toList(),
+                              singleCategoryMode: _singleCategoryMode,
                               timerSeconds: _timerSeconds,
                               pointsToWin: _pointsToWin,
                               strikesForPenance: _strikesForPenance,
@@ -176,6 +200,18 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                 _buildSectionLabel('CATEGOR\u00cdAS'),
                 const SizedBox(height: 12),
                 _buildCategoriesGrid(),
+                const SizedBox(height: 8),
+                _buildSettingRow(
+                  icon: Icons.shuffle,
+                  iconColor: Colors.amberAccent,
+                  title: _singleCategoryMode ? 'Categor\u00eda \u00fanica (al azar)' : 'Varias categor\u00edas',
+                  child: Switch(
+                    value: _singleCategoryMode,
+                    onChanged: (value) { _playSound(); setState(() => _singleCategoryMode = value); },
+                    activeThumbColor: Colors.amberAccent,
+                    activeTrackColor: Colors.amberAccent.withValues(alpha: 0.5),
+                  ),
+                ),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Divider(color: Colors.white12, height: 1),

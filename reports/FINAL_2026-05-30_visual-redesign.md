@@ -1,8 +1,8 @@
 # Reporte Técnico Final
-## Rediseño Visual — LOVEPLAY (Pareja)
+## Rediseño Visual — TWO PLAYERS (Pareja)
 
 > **Generado:** 2026-05-30
-> **Proyecto:** LOVEPLAY (pareja)
+> **Proyecto:** TWO PLAYERS (pareja)
 > **Stack:** Flutter 3.5.2+ / Dart / Provider
 > **Iteraciones realizadas:** 1
 > **Veredicto final:** ✅ APROBADO
@@ -11,7 +11,7 @@
 
 ## Objetivo confirmado
 
-Rediseñar la interfaz visual completa de la app LOVEPLAY, refinando el estilo
+Rediseñar la interfaz visual completa de la app TWO PLAYERS, refinando el estilo
 neón romántico actual hacia una versión más premium, pulida y cinematográfica,
 sin modificar lógica de juego, datos ni funcionalidad existente.
 

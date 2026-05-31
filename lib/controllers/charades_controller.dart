@@ -11,6 +11,7 @@ class CharadesController extends ChangeNotifier {
   final AudioService audioService;
   final SettingsProvider settingsProvider;
   final List<String> selectedCategories;
+  final bool singleCategoryMode;
   final int timerSeconds;
   final int pointsToWin;
   final int strikesForPenance;
@@ -20,6 +21,7 @@ class CharadesController extends ChangeNotifier {
     required this.audioService,
     required this.settingsProvider,
     required this.selectedCategories,
+    required this.singleCategoryMode,
     required this.timerSeconds,
     required this.pointsToWin,
     required this.strikesForPenance,
@@ -81,6 +83,15 @@ class CharadesController extends ChangeNotifier {
       return true;
     }).toList();
 
+    // Si el modo es categoría única, seleccionar una al azar
+    if (singleCategoryMode && selectedCategories.isNotEmpty) {
+      final random = Random();
+      final chosenCategory =
+          selectedCategories[random.nextInt(selectedCategories.length)];
+      _availableWords =
+          _availableWords.where((w) => w.category == chosenCategory).toList();
+    }
+
     _availableWords.shuffle();
     _isLoading = false;
     notifyListeners();
@@ -93,6 +104,14 @@ class CharadesController extends ChangeNotifier {
         if (w.isHot && !isHotMode) return false;
         return true;
       }).toList();
+
+      // Mantener la categoría única si el modo está activo
+      if (singleCategoryMode && selectedCategories.isNotEmpty && _currentWord != null) {
+        _availableWords = _availableWords
+            .where((w) => w.category == _currentWord!.category)
+            .toList();
+      }
+
       _availableWords.shuffle();
     }
 

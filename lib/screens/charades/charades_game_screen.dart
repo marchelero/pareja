@@ -468,12 +468,23 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
   String _categoryDisplayName(String category) {
     const names = {
       'peliculas': 'Pel\u00edculas',
-      'acciones': 'Acciones Cotidianas',
-      'animales': 'Animales',
-      'comidas': 'Comidas',
-      'profesiones': 'Profesiones',
+      'canciones': 'Canciones',
+      'series': 'Series',
+      'personajes': 'Personajes',
       'celebridades': 'Celebridades',
+      'animales': 'Animales',
+      'profesiones': 'Profesiones',
+      'comidas': 'Comidas',
+      'acciones': 'Acciones Cotidianas',
+      'lugares': 'Lugares',
+      'deportes': 'Deportes',
+      'superheroes': 'Superh\u00e9roes',
+      'disney': 'Disney',
+      'videojuegos': 'Videojuegos',
       'posiciones_sexuales': 'Posiciones Sexuales',
+      'libros': 'Libros',
+      'marcas': 'Marcas',
+      'bailes': 'Bailes',
     };
     return names[category] ?? category;
   }

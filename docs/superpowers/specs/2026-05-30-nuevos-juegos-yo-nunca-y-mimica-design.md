@@ -1,7 +1,7 @@
 # Nuevos Juegos: «Yo Nunca» y «Dígalo con Mímica»
 
 > **Fecha:** 2026-05-30
-> **Proyecto:** LOVEPLAY
+> **Proyecto:** TWO PLAYERS
 > **Estado:** Diseño aprobado — pendiente de implementación
 
 ---

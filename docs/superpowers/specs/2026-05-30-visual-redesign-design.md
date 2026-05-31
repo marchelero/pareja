@@ -1,4 +1,4 @@
-# Rediseño Visual — LOVEPLAY (Pareja)
+# Rediseño Visual — TWO PLAYERS (Pareja)
 
 > **Fecha:** 2026-05-30
 > **Estado:** Aprobado para implementación
@@ -8,7 +8,7 @@
 
 ## 1. Objetivo
 
-Rediseñar la interfaz visual completa de la app LOVEPLAY, refinando el estilo
+Rediseñar la interfaz visual completa de la app TWO PLAYERS, refinando el estilo
 neón romántico actual hacia una versión más premium, pulida y cinematográfica.
 No se modifica lógica de juego, datos, ni funcionalidad existente.
 
@@ -125,7 +125,7 @@ SizedBox(60)
 ## 6. GamesMenuScreen
 
 ### AppBar
-- Título "DATE GAMES 🌙 JUEGOS" (consistente con código actual)
+- Título "TWO PLAYERS • JUEGOS" (consistente con código actual)
 - Montserrat w900, tracking 2, color blanco
 - Fondo transparente con blur
 - Sin elevation ni borde inferior

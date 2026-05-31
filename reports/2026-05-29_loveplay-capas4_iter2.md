@@ -1,4 +1,4 @@
-# Reporte de Iteración — Capa 4 LOVEPLAY (Controllers)
+# Reporte de Iteración — Capa 4 TWO PLAYERS (Controllers)
 
 **Fecha:** 2026-05-29  
 **Iteración:** 2  
