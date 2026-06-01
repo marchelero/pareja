@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import '../core/models/player.dart';
 import '../core/models/question.dart';
 import '../data/questions_repository.dart';
+import '../core/theme/app_colors.dart';
 import '../services/audio_service.dart';
 import '../providers/settings_provider.dart';
 
@@ -115,7 +116,7 @@ class QuestionsController extends ChangeNotifier {
       }
 
       _currentQuestion = validQuestions[Random().nextInt(validQuestions.length)];
-      _backgroundColor = categoryColors[_currentQuestion?.category] ?? const Color(0xFF3F51B5);
+      _backgroundColor = _currentPlayer == _playerHe ? AppColors.playerHe : AppColors.playerShe;
       notifyListeners();
       return;
     }
@@ -146,7 +147,7 @@ class QuestionsController extends ChangeNotifier {
 
     _currentQuestion = validQuestions[Random().nextInt(validQuestions.length)];
     _availableQuestions.remove(_currentQuestion);
-    _backgroundColor = categoryColors[_currentQuestion?.category] ?? const Color(0xFF3F51B5);
+    _backgroundColor = _currentPlayer == _playerHe ? AppColors.playerHe : AppColors.playerShe;
     notifyListeners();
   }
 
@@ -161,7 +162,7 @@ class QuestionsController extends ChangeNotifier {
     if (_isSuddenDeath) {
       if (points == 7) {
         _currentPlayer!.score += 7;
-        _currentPlayer!.suddenDeathPoints = 7;
+        _currentPlayer!.suddenDeathPoints += 7;
         _currentPlayer!.suddenDeathCorrect = true;
       } else {
         _currentPlayer!.suddenDeathPoints = 0;
@@ -184,7 +185,7 @@ class QuestionsController extends ChangeNotifier {
   void activateSuddenDeath() {
     _isSuddenDeath = true;
     _suddenDeathRound = 0;
-    notifyListeners();
+    _nextTurn();
   }
 
   void _finishGame() {

@@ -64,8 +64,8 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
           sheName: c.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
+          maxScore: c.pointsToWin,
           isTie: false,
-          customStatsSection: null,
           onReplay: () {
             final newController = NeverHaveIEverController(
               audioService: audioService,

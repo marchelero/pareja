@@ -21,7 +21,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
   int _sipsPerGlass = 5;
   int _initialLevel = 1;
   int _levelingSpeed = 7;
-  bool _isHotMode = true;
+  bool _isHotMode = false;
   bool _freeMode = false;
   int _totalGlasses = 5;
 

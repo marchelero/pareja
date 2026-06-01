@@ -136,8 +136,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           sheName: c.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
+          maxScore: c.pointsToWin,
           isTie: false,
-          customStatsSection: null,
           onReplay: () {
             final newController = CharadesController(
               audioService: audioService,

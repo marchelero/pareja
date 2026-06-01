@@ -158,8 +158,8 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
           sheName: c.sheName,
           scoreHe: c.heGlassesDrunk,
           scoreShe: c.sheGlassesDrunk,
+          maxScore: c.totalGlasses,
           isTie: false,
-          customStatsSection: null,
           onReplay: () {
             final newController = DrinksController(
               audioService: audioService,

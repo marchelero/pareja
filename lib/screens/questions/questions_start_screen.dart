@@ -26,7 +26,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
     _heName = settings.heName;
     _sheName = settings.sheName;
   }
-  
+
   final List<Map<String, dynamic>> _categories = [
     {'name': 'General', 'icon': Icons.all_inclusive, 'color': Colors.blue},
     {'name': 'Romántico', 'icon': Icons.favorite, 'color': Colors.pink},
@@ -34,12 +34,20 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
     {'name': 'Convivencia', 'icon': Icons.home, 'color': Colors.green},
     {'name': 'Futuro', 'icon': Icons.rocket_launch, 'color': Colors.purple},
     {'name': 'Viajes', 'icon': Icons.flight, 'color': Colors.teal},
-    {'name': 'Pasatiempos', 'icon': Icons.sports_esports, 'color': Colors.indigo},
+    {
+      'name': 'Pasatiempos',
+      'icon': Icons.sports_esports,
+      'color': Colors.indigo,
+    },
     {'name': 'Valores', 'icon': Icons.balance, 'color': Colors.brown},
     {'name': 'Humor', 'icon': Icons.mood, 'color': Colors.yellow.shade800},
     {'name': 'Profundo', 'icon': Icons.psychology, 'color': Colors.blueGrey},
     {'name': 'Trivia', 'icon': Icons.quiz, 'color': Colors.indigo},
-    {'name': 'Flirteo', 'icon': Icons.favorite_border, 'color': Colors.redAccent},
+    {
+      'name': 'Flirteo',
+      'icon': Icons.favorite_border,
+      'color': Colors.redAccent,
+    },
   ];
   final Set<String> _selectedCategories = {'General', 'Romántico'};
 
@@ -50,7 +58,10 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
         child: Column(
           children: [
             AppBar(
-              title: const Text('CONFIGURAR PARTIDA', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2)),
+              title: const Text(
+                'CONFIGURAR PARTIDA',
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2),
+              ),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,
@@ -72,74 +83,151 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                           _sheName = she;
                         }),
                       ),
-              const SizedBox(height: 30),
-              _buildSectionTitle('Número de Preguntas', Icons.timer),
-              const SizedBox(height: 15),
-              SizedBox(
-                height: 80,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _roundOptions.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final rounds = _roundOptions[index];
-                    final isSelected = _selectedRounds == rounds;
-                    return _RoundCard(
-                      rounds: rounds,
-                      isSelected: isSelected,
-                      onTap: () => setState(() => _selectedRounds = rounds),
-                    );
-                  },
+                      const SizedBox(height: 30),
+                      _buildSectionTitle('Número de Preguntas', Icons.timer),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _roundOptions.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, index) {
+                            final rounds = _roundOptions[index];
+                            final isSelected = _selectedRounds == rounds;
+                            return _RoundCard(
+                              rounds: rounds,
+                              isSelected: isSelected,
+                              onTap: () =>
+                                  setState(() => _selectedRounds = rounds),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 35),
+                      _buildGlassCard(
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            dividerColor: Colors.transparent,
+                            unselectedWidgetColor: Colors.white54,
+                          ),
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: ExpansionTile(
+                              tilePadding: EdgeInsets.zero,
+                              childrenPadding: EdgeInsets.zero,
+                              initiallyExpanded: true,
+                              leading: const Icon(
+                                Icons.category,
+                                color: Colors.white70,
+                                size: 24,
+                              ),
+                              title: Text(
+                                'CATEGOR\u00cdAS',
+                                style: const TextStyle(
+                                  color: Colors.white54,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              children: [
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: _categories.map((cat) {
+                                    final isSelected = _selectedCategories
+                                        .contains(cat['name']);
+                                    final catColor = cat['color'] as Color;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (isSelected) {
+                                            if (_selectedCategories.length >
+                                                1) {
+                                              _selectedCategories.remove(
+                                                cat['name'],
+                                              );
+                                            }
+                                          } else {
+                                            _selectedCategories.add(
+                                              cat['name'],
+                                            );
+                                          }
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 200,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? catColor.withValues(alpha: 0.3)
+                                              : Colors.white.withValues(
+                                                  alpha: 0.08,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? catColor
+                                                : Colors.white24,
+                                            width: isSelected ? 2 : 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              cat['icon'] as IconData,
+                                              color: isSelected
+                                                  ? Colors.white
+                                                  : Colors.white54,
+                                              size: 18,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              cat['name'] as String,
+                                              style: TextStyle(
+                                                color: isSelected
+                                                    ? Colors.white
+                                                    : Colors.white54,
+                                                fontSize: 13,
+                                                fontWeight: isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      _buildStartButton(context),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 35),
-              _buildSectionTitle('Categorías', Icons.category),
-              const SizedBox(height: 15),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 1.3,
-                ),
-                itemCount: _categories.length,
-                itemBuilder: (context, index) {
-                  final cat = _categories[index];
-                  final isSelected = _selectedCategories.contains(cat['name']);
-                  return _CategoryCard(
-                    name: cat['name'],
-                    icon: cat['icon'],
-                    color: cat['color'],
-                    isSelected: isSelected,
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          if (_selectedCategories.length > 1) {
-                            _selectedCategories.remove(cat['name']);
-                          }
-                        } else {
-                          _selectedCategories.add(cat['name']);
-                        }
-                      });
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 40),
-              _buildStartButton(context),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    ),
-  ],
-),
-),
-);
-}
+    );
+  }
 
   Widget _buildGlassCard({required Widget child}) {
     return ClipRRect(
@@ -201,7 +289,10 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.pink.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.4)],
+              colors: [
+                Colors.pink.withValues(alpha: 0.6),
+                Colors.purple.withValues(alpha: 0.4),
+              ],
             ),
             borderRadius: BorderRadius.circular(15),
           ),
@@ -225,7 +316,11 @@ class _RoundCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _RoundCard({required this.rounds, required this.isSelected, required this.onTap});
+  const _RoundCard({
+    required this.rounds,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +337,13 @@ class _RoundCard extends StatelessWidget {
             width: 2,
           ),
           boxShadow: isSelected
-              ? [BoxShadow(color: Colors.orange.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))]
+              ? [
+                  BoxShadow(
+                    color: Colors.orange.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
               : [],
         ),
         child: Column(
@@ -264,71 +365,6 @@ class _RoundCard extends StatelessWidget {
                 color: isSelected ? Colors.white70 : Colors.grey,
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  final String name;
-  final IconData icon;
-  final Color color;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _CategoryCard({
-    required this.name,
-    required this.icon,
-    required this.color,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: isSelected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: isSelected ? color : Colors.grey.shade200,
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected ? color.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 32,
-              color: isSelected ? Colors.white : color,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: isSelected ? Colors.white : Colors.black87,
-              ),
-            ),
-            if (isSelected)
-              const Padding(
-                padding: EdgeInsets.only(top: 4),
-                child: Icon(Icons.check_circle, color: Colors.white, size: 16),
-              ),
           ],
         ),
       ),

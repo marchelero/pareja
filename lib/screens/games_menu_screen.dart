@@ -12,6 +12,7 @@ import 'russian_roulette/russian_roulette_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
 import '../widgets/route_transitions.dart';
+import 'home_screen.dart';
 import 'settings_screen.dart';
 
 class GamesMenuScreen extends StatelessWidget {
@@ -43,6 +44,17 @@ class GamesMenuScreen extends StatelessWidget {
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white54),
+                onPressed: () {
+                  audioService.playClick();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    (route) => false,
+                  );
+                },
+              ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.settings_rounded, color: Colors.white54),

@@ -322,8 +322,8 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
           sheName: c.settingsProvider.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
+          maxScore: c.pointsToWin,
           isTie: false,
-          customStatsSection: null,
           onReplay: () {
             final newController = RussianRouletteController(
               audioService: audioService,

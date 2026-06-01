@@ -93,19 +93,33 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
                         _playSound();
                         Navigator.pop(context);
                       },
                     ),
                     const Expanded(
-                      child: Text('D\u00cdGALO CON M\u00cdMICA', textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                      child: Text(
+                        'D\u00cdGALO CON M\u00cdMICA',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 48),
                   ],
@@ -114,8 +128,11 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
               const SizedBox(height: 5),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
-                child: Text('Act\u00faa sin hablar y haz que tu pareja adivine.',
-                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
+                child: Text(
+                  'Act\u00faa sin hablar y haz que tu pareja adivine.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
               ),
               const SizedBox(height: 15),
               Expanded(
@@ -135,16 +152,21 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 20,
+                ),
                 child: SizedBox(
-                  width: double.infinity, height: 60,
+                  width: double.infinity,
+                  height: 60,
                   child: ElevatedButton(
                     onPressed: _selectedCategories.isEmpty
                         ? null
                         : () async {
                             _playSound();
                             final audioService = context.read<AudioService>();
-                            final settingsProvider = context.read<SettingsProvider>();
+                            final settingsProvider = context
+                                .read<SettingsProvider>();
                             final controller = CharadesController(
                               audioService: audioService,
                               settingsProvider: settingsProvider,
@@ -160,17 +182,30 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      CharadesGameScreen(controller: controller)),
+                                builder: (context) =>
+                                    CharadesGameScreen(controller: controller),
+                              ),
                             );
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _isHotMode ? Colors.pink : Colors.deepPurple,
-                      foregroundColor: Colors.white, elevation: 10,
+                      backgroundColor: _isHotMode
+                          ? Colors.pink
+                          : Colors.deepPurple,
+                      foregroundColor: Colors.white,
+                      elevation: 10,
                       shadowColor: _isHotMode ? Colors.pink : Colors.deepPurple,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                    child: const Text('\u00a1EMPEZAR!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    child: const Text(
+                      '\u00a1EMPEZAR!',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -197,19 +232,55 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
             ),
             child: Column(
               children: [
-                _buildSectionLabel('CATEGOR\u00cdAS'),
-                const SizedBox(height: 12),
-                _buildCategoriesGrid(),
-                const SizedBox(height: 8),
-                _buildSettingRow(
-                  icon: Icons.shuffle,
-                  iconColor: Colors.amberAccent,
-                  title: _singleCategoryMode ? 'Categor\u00eda \u00fanica (al azar)' : 'Varias categor\u00edas',
-                  child: Switch(
-                    value: _singleCategoryMode,
-                    onChanged: (value) { _playSound(); setState(() => _singleCategoryMode = value); },
-                    activeThumbColor: Colors.amberAccent,
-                    activeTrackColor: Colors.amberAccent.withValues(alpha: 0.5),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                    unselectedWidgetColor: Colors.white54,
+                  ),
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: ExpansionTile(
+                      tilePadding: EdgeInsets.zero,
+                      childrenPadding: EdgeInsets.zero,
+                      initiallyExpanded: true,
+                      leading: const Icon(
+                        Icons.category,
+                        color: Colors.white70,
+                        size: 24,
+                      ),
+                      title: Text(
+                        'CATEGOR\u00cdAS',
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                          fontSize: 12,
+                        ),
+                      ),
+                      children: [
+                        const SizedBox(height: 8),
+                        _buildCategoriesGrid(),
+                        const SizedBox(height: 12),
+                        _buildSettingRow(
+                          icon: Icons.shuffle,
+                          iconColor: Colors.amberAccent,
+                          title: _singleCategoryMode
+                              ? 'Categor\u00eda \u00fanica (al azar)'
+                              : 'Varias categor\u00edas',
+                          child: Switch(
+                            value: _singleCategoryMode,
+                            onChanged: (value) {
+                              _playSound();
+                              setState(() => _singleCategoryMode = value);
+                            },
+                            activeThumbColor: Colors.amberAccent,
+                            activeTrackColor: Colors.amberAccent.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const Padding(
@@ -217,17 +288,32 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   child: Divider(color: Colors.white12, height: 1),
                 ),
                 _buildSettingRow(
-                  icon: Icons.hourglass_bottom, title: 'Tiempo:',
+                  icon: Icons.hourglass_bottom,
+                  title: 'Tiempo:',
                   child: DropdownButton<int>(
-                    value: _timerSeconds, dropdownColor: Colors.black87,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    value: _timerSeconds,
+                    dropdownColor: Colors.black87,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                     underline: const SizedBox(),
-                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white70,
+                    ),
                     items: [30, 45, 60].map((int value) {
-                      return DropdownMenuItem<int>(value: value, child: Text('$value s'));
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text('$value s'),
+                      );
                     }).toList(),
                     onChanged: (int? newValue) {
-                      if (newValue != null) { _playSound(); setState(() => _timerSeconds = newValue); }
+                      if (newValue != null) {
+                        _playSound();
+                        setState(() => _timerSeconds = newValue);
+                      }
                     },
                   ),
                 ),
@@ -236,17 +322,32 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   child: Divider(color: Colors.white12, height: 1),
                 ),
                 _buildSettingRow(
-                  icon: Icons.emoji_events, title: 'Puntos para ganar:',
+                  icon: Icons.emoji_events,
+                  title: 'Puntos para ganar:',
                   child: DropdownButton<int>(
-                    value: _pointsToWin, dropdownColor: Colors.black87,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    value: _pointsToWin,
+                    dropdownColor: Colors.black87,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                     underline: const SizedBox(),
-                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white70,
+                    ),
                     items: [3, 5, 7].map((int value) {
-                      return DropdownMenuItem<int>(value: value, child: Text('$value'));
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text('$value'),
+                      );
                     }).toList(),
                     onChanged: (int? newValue) {
-                      if (newValue != null) { _playSound(); setState(() => _pointsToWin = newValue); }
+                      if (newValue != null) {
+                        _playSound();
+                        setState(() => _pointsToWin = newValue);
+                      }
                     },
                   ),
                 ),
@@ -255,17 +356,32 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   child: Divider(color: Colors.white12, height: 1),
                 ),
                 _buildSettingRow(
-                  icon: Icons.flash_on, title: 'Strikes por penitencia:',
+                  icon: Icons.flash_on,
+                  title: 'Strikes por penitencia:',
                   child: DropdownButton<int>(
-                    value: _strikesForPenance, dropdownColor: Colors.black87,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    value: _strikesForPenance,
+                    dropdownColor: Colors.black87,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                     underline: const SizedBox(),
-                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white70,
+                    ),
                     items: [5, 7].map((int value) {
-                      return DropdownMenuItem<int>(value: value, child: Text('$value'));
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text('$value'),
+                      );
                     }).toList(),
                     onChanged: (int? newValue) {
-                      if (newValue != null) { _playSound(); setState(() => _strikesForPenance = newValue); }
+                      if (newValue != null) {
+                        _playSound();
+                        setState(() => _strikesForPenance = newValue);
+                      }
                     },
                   ),
                 ),
@@ -274,10 +390,15 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   child: Divider(color: Colors.white12, height: 1),
                 ),
                 _buildSettingRow(
-                  icon: Icons.whatshot, iconColor: Colors.pinkAccent, title: 'Modo Hot',
+                  icon: Icons.whatshot,
+                  iconColor: Colors.pinkAccent,
+                  title: 'Modo Hot',
                   child: Switch(
                     value: _isHotMode,
-                    onChanged: (value) { _playSound(); setState(() => _isHotMode = value); },
+                    onChanged: (value) {
+                      _playSound();
+                      setState(() => _isHotMode = value);
+                    },
                     activeThumbColor: Colors.pinkAccent,
                     activeTrackColor: Colors.pinkAccent.withValues(alpha: 0.5),
                   ),
@@ -328,7 +449,9 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   style: TextStyle(
                     color: isSelected ? Colors.white : Colors.white54,
                     fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ],
@@ -339,18 +462,12 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
     );
   }
 
-  Widget _buildSectionLabel(String text) {
-    return Text(text,
-      style: const TextStyle(
-        color: Colors.white54,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 2,
-        fontSize: 12,
-      ),
-    );
-  }
-
-  Widget _buildSettingRow({required IconData icon, Color iconColor = Colors.white70, required String title, required Widget child}) {
+  Widget _buildSettingRow({
+    required IconData icon,
+    Color iconColor = Colors.white70,
+    required String title,
+    required Widget child,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -358,7 +475,14 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
           children: [
             Icon(icon, color: iconColor, size: 24),
             const SizedBox(width: 15),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         child,

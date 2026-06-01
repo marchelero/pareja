@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../core/theme/app_colors.dart';
 import '../services/audio_service.dart';
 import 'neon_background.dart';
-import 'score_board.dart';
 
 class GameResultScreen extends StatefulWidget {
   final String gameName;
@@ -15,7 +15,9 @@ class GameResultScreen extends StatefulWidget {
   final int scoreHe;
   final int scoreShe;
   final bool isTie;
-  final Widget? customStatsSection;
+  final int? maxScore;
+  final Widget? heStatsSection;
+  final Widget? sheStatsSection;
   final VoidCallback onReplay;
   final VoidCallback onGameMenu;
   final VoidCallback onMainMenu;
@@ -31,7 +33,9 @@ class GameResultScreen extends StatefulWidget {
     required this.scoreHe,
     required this.scoreShe,
     this.isTie = false,
-    this.customStatsSection,
+    this.maxScore,
+    this.heStatsSection,
+    this.sheStatsSection,
     required this.onReplay,
     required this.onGameMenu,
     required this.onMainMenu,
@@ -93,20 +97,12 @@ class _GameResultScreenState extends State<GameResultScreen>
                     delay: 0.0,
                     child: _buildHeader(),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 24),
                   _AnimatedEntry(
                     controller: _entryController,
                     delay: 0.2,
-                    child: _buildScoreboard(),
+                    child: _buildPlayerCards(),
                   ),
-                  if (widget.customStatsSection != null) ...[
-                    const SizedBox(height: 20),
-                    _AnimatedEntry(
-                      controller: _entryController,
-                      delay: 0.3,
-                      child: widget.customStatsSection!,
-                    ),
-                  ],
                   const SizedBox(height: 40),
                   _AnimatedEntry(
                     controller: _entryController,
@@ -264,7 +260,9 @@ class _GameResultScreenState extends State<GameResultScreen>
     );
   }
 
-  Widget _buildScoreboard() {
+  Widget _buildPlayerCards() {
+    final showBars = widget.maxScore != null && widget.maxScore! > 0;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -272,11 +270,36 @@ class _GameResultScreenState extends State<GameResultScreen>
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
-      child: ScoreBoard(
-        player1Name: widget.heName,
-        player2Name: widget.sheName,
-        player1Score: widget.scoreHe,
-        player2Score: widget.scoreShe,
+      child: Column(
+        children: [
+          Text(
+            widget.gameName.toUpperCase(),
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.white.withValues(alpha: 0.5),
+              letterSpacing: 3,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _PlayerResultCard(
+            icon: Icons.male,
+            name: widget.heName,
+            score: widget.scoreHe,
+            color: AppColors.playerHe,
+            maxScore: showBars ? widget.maxScore : null,
+            statsSection: widget.heStatsSection,
+          ),
+          const SizedBox(height: 16),
+          _PlayerResultCard(
+            icon: Icons.female,
+            name: widget.sheName,
+            score: widget.scoreShe,
+            color: AppColors.playerShe,
+            maxScore: showBars ? widget.maxScore : null,
+            statsSection: widget.sheStatsSection,
+          ),
+        ],
       ),
     );
   }
@@ -364,6 +387,85 @@ class _IconButton extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _PlayerResultCard extends StatelessWidget {
+  final IconData icon;
+  final String name;
+  final int score;
+  final Color color;
+  final int? maxScore;
+  final Widget? statsSection;
+
+  const _PlayerResultCard({
+    required this.icon,
+    required this.name,
+    required this.score,
+    required this.color,
+    this.maxScore,
+    this.statsSection,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasBar = maxScore != null && maxScore! > 0;
+    final barValue = hasBar ? (score / maxScore!).clamp(0.0, 1.0) : (score > 0 ? score / (score + 5).clamp(1, 999) : 0.0);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: color, size: 26),
+              const SizedBox(width: 10),
+              Text(
+                name,
+                style: GoogleFonts.montserrat(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 1,
+                ),
+              ),
+              const Spacer(),
+              TweenAnimationBuilder<int>(
+                tween: IntTween(begin: 0, end: score),
+                duration: const Duration(milliseconds: 1200),
+                builder: (context, value, _) => Text(
+                  '$value',
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (score > 0) ...[
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: barValue,
+                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                valueColor: AlwaysStoppedAnimation<Color>(color),
+                minHeight: 4,
+              ),
+            ),
+            if (statsSection != null) const SizedBox(height: 16),
+          ],
+          if (statsSection != null) statsSection!,
+        ],
       ),
     );
   }

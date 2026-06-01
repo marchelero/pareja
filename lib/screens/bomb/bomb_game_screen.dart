@@ -98,8 +98,8 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
           sheName: c.settingsProvider.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
+          maxScore: c.pointsToWin,
           isTie: false,
-          customStatsSection: null,
           onReplay: () {
             final newController = BombController(
               audioService: audioService,
