@@ -75,6 +75,7 @@ flutter:
     - assets/images/woman_drinking.png
     - assets/images/logo.png
     - assets/images/game2.png
+    - assets/images/tombstone.png
     - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see

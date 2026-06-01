@@ -9,11 +9,15 @@ class RussianRouletteController extends ChangeNotifier {
   final AudioService audioService;
   final SettingsProvider settingsProvider;
   final int bestOf;
+  final bool wildMode;
+  final int bulletCount;
 
   RussianRouletteController({
     required this.audioService,
     required this.settingsProvider,
     required this.bestOf,
+    this.wildMode = false,
+    this.bulletCount = 2,
   });
 
   bool _isLoading = true;
@@ -28,6 +32,8 @@ class RussianRouletteController extends ChangeNotifier {
   late int _pointsToWin;
   bool _roundOver = false;
   bool _bulletFired = false;
+
+  Set<int> _bulletChambers = {};
 
   bool _isSpinning = false;
   bool _isPullingTrigger = false;
@@ -45,6 +51,7 @@ class RussianRouletteController extends ChangeNotifier {
   int get triggerPulls => _triggerPulls;
   int get firingPinChamber => _firingPinChamber;
   List<int> get checkedOrder => _checkedOrder;
+  Set<int> get bulletChambers => _bulletChambers;
   bool get isHeTurn => _isHeTurn;
   int get scoreHe => _scoreHe;
   int get scoreShe => _scoreShe;
@@ -55,6 +62,7 @@ class RussianRouletteController extends ChangeNotifier {
   bool get isPullingTrigger => _isPullingTrigger;
   bool get isClickResult => _isClickResult;
   bool get isBangResult => _isBangResult;
+  bool get isWildMode => wildMode;
   String get heName => _heName;
   String get sheName => _sheName;
   int get roundNumber => _roundNumber;
@@ -74,9 +82,7 @@ class RussianRouletteController extends ChangeNotifier {
   }
 
   void _startNewRound() {
-    _currentChamber = Random().nextInt(6);
     _triggerPulls = 0;
-    _firingPinChamber = Random().nextInt(6);
     _checkedOrder.clear();
     _roundOver = false;
     _bulletFired = false;
@@ -86,12 +92,43 @@ class RussianRouletteController extends ChangeNotifier {
     _isBangResult = false;
     _isPullingTrigger = false;
     _roundNumber++;
+
+    final rng = Random();
+    if (wildMode) {
+      _bulletChambers = {};
+      while (_bulletChambers.length < bulletCount) {
+        _bulletChambers.add(rng.nextInt(6));
+      }
+      _firingPinChamber = rng.nextInt(6);
+    } else {
+      _currentChamber = rng.nextInt(6);
+      _firingPinChamber = rng.nextInt(6);
+    }
+
     notifyListeners();
   }
 
   void endSpin() {
     _isSpinning = false;
     _isPlaying = true;
+    notifyListeners();
+  }
+
+  void startRespin() {
+    _isClickResult = false;
+    _isPullingTrigger = false;
+    _isHeTurn = !_isHeTurn;
+
+    final rng = Random();
+    _bulletChambers = {};
+    while (_bulletChambers.length < bulletCount) {
+      _bulletChambers.add(rng.nextInt(6));
+    }
+    _firingPinChamber = rng.nextInt(6);
+    _checkedOrder.clear();
+
+    _isSpinning = true;
+    _isPlaying = false;
     notifyListeners();
   }
 
@@ -102,8 +139,13 @@ class RussianRouletteController extends ChangeNotifier {
     _triggerPulls++;
     _checkedOrder.add(_firingPinChamber);
 
-    if (_firingPinChamber == _currentChamber) {
+    final bool hitBullet = wildMode
+        ? _bulletChambers.contains(_firingPinChamber)
+        : _firingPinChamber == _currentChamber;
+
+    if (hitBullet) {
       // BANG! The bullet fires
+      _currentChamber = _firingPinChamber; // for painter
       _bulletFired = true;
       _roundOver = true;
       _isPlaying = false;
@@ -117,6 +159,9 @@ class RussianRouletteController extends ChangeNotifier {
         _scoreHe++;
       }
 
+      final bool previousTurn = _isHeTurn;
+      if (wildMode) _isHeTurn = !_isHeTurn;
+
       notifyListeners();
       audioService.play(AppConstants.soundShot);
 
@@ -125,7 +170,7 @@ class RussianRouletteController extends ChangeNotifier {
         _isBangResult = false;
         notifyListeners();
 
-        final loserName = _isHeTurn ? _heName : _sheName;
+        final loserName = previousTurn ? _heName : _sheName;
         final isGameOver = _scoreHe >= _pointsToWin || _scoreShe >= _pointsToWin;
 
         if (isGameOver) {
@@ -142,15 +187,19 @@ class RussianRouletteController extends ChangeNotifier {
       notifyListeners();
       audioService.play(AppConstants.soundEmptyShot);
 
-      _firingPinChamber = (_firingPinChamber + 5) % 6; // CW 60° advance
+      if (wildMode) {
+        // Game screen will call startRespin() after showing result
+      } else {
+        _firingPinChamber = (_firingPinChamber + 5) % 6; // CW 60° advance
 
-      Future.delayed(const Duration(milliseconds: 800), () {
-        _isClickResult = false;
-        _isPullingTrigger = false;
-        _isHeTurn = !_isHeTurn;
-        _isPlaying = true;
-        notifyListeners();
-      });
+        Future.delayed(const Duration(milliseconds: 800), () {
+          _isClickResult = false;
+          _isPullingTrigger = false;
+          _isHeTurn = !_isHeTurn;
+          _isPlaying = true;
+          notifyListeners();
+        });
+      }
     }
   }
 

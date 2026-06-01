@@ -1,9 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/russian_roulette_controller.dart';
 import '../../widgets/game_winner_dialog.dart';
-import '../../widgets/round_result_dialog.dart';
-import '../../widgets/score_board.dart';
 import '../../core/theme/app_colors.dart';
 
 class RussianRouletteGameScreen extends StatefulWidget {
@@ -97,12 +96,16 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
       _shakeController.reverse();
       Future.delayed(const Duration(milliseconds: 200), () {
         if (!mounted) return;
-        final target = (_spinController.value + 1.0 / 6.0).clamp(0.0, 50.0);
-        _spinController.animateTo(
-          target,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-        );
+        if (c.isWildMode) {
+          c.startRespin();
+        } else {
+          final target = (_spinController.value + 1.0 / 6.0).clamp(0.0, 50.0);
+          _spinController.animateTo(
+            target,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+          );
+        }
       });
     }
     if (c.isBangResult) {
@@ -133,24 +136,167 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
 
   void _showRoundResultDialog(String loserName) {
     final c = widget.controller;
+    final scoreHe = c.scoreHe;
+    final scoreShe = c.scoreShe;
+    final TextStyle titleStyle = GoogleFonts.creepster(
+      fontSize: 56,
+      fontWeight: FontWeight.w400,
+      color: AppColors.modeRussianRoulette,
+      letterSpacing: 8,
+      height: 1.1,
+      shadows: [
+        Shadow(color: AppColors.modeRussianRoulette.withValues(alpha: 0.8), blurRadius: 40),
+        Shadow(color: Colors.black87, blurRadius: 4, offset: const Offset(2, 3)),
+      ],
+    );
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.9),
+      barrierColor: Colors.black.withValues(alpha: 0.92),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, anim1, anim2) {
-        return RoundResultDialog(
-          loserName: loserName,
-          pointsEarned: 1,
-          isGoldenRound: false,
-          heName: c.settingsProvider.heName,
-          sheName: c.settingsProvider.sheName,
-          scoreHe: c.scoreHe,
-          scoreShe: c.scoreShe,
-          onSiguienteRonda: () {
-            Navigator.pop(context);
-            c.nextRoundAfterDialog();
-          },
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('DISPARO\nMORTAL', style: titleStyle, textAlign: TextAlign.center),
+                const SizedBox(height: 24),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: Text(
+                    loserName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 700),
+                  curve: Curves.elasticOut,
+                  builder: (context, scale, child) {
+                    return Transform.scale(scale: scale, child: child);
+                  },
+                  child: SizedBox(
+                    width: 80,
+                    height: 100,
+                    child: Image.asset(
+                      'assets/images/tombstone.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.modeRussianRoulette.withValues(alpha: 0.5),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('ÉL',
+                            style: TextStyle(
+                              color: const Color(0xFF448AFF),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Wrap(
+                            spacing: 2,
+                            runSpacing: 2,
+                            children: List.generate(
+                              scoreShe,
+                              (_) => const Text('💀', style: TextStyle(fontSize: 22)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text('†',
+                          style: TextStyle(
+                            color: AppColors.modeRussianRoulette.withValues(alpha: 0.4),
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('ELLA',
+                            style: TextStyle(
+                              color: const Color(0xFFFF4081),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Wrap(
+                            spacing: 2,
+                            runSpacing: 2,
+                            children: List.generate(
+                              scoreHe,
+                              (_) => const Text('💀', style: TextStyle(fontSize: 22)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      c.nextRoundAfterDialog();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.modeRussianRoulette,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 10,
+                      shadowColor: AppColors.modeRussianRoulette,
+                    ),
+                    child: const Text(
+                      'SIGUIENTE RONDA',
+                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 2),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -206,12 +352,75 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                   ),
-                  Flexible(
-                    child: ScoreBoard(
-                      player1Name: c.settingsProvider.heName,
-                      player2Name: c.settingsProvider.sheName,
-                      player1Score: c.scoreHe,
-                      player2Score: c.scoreShe,
+                  // ScoreBoard temático ruleta rusa
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.modeRussianRoulette.withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('ÉL',
+                              style: TextStyle(
+                                color: const Color(0xFF448AFF),
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Wrap(
+                              spacing: 1,
+                              runSpacing: 1,
+                              children: List.generate(
+                                c.scoreShe,
+                                (_) => const Text('💀', style: TextStyle(fontSize: 18)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Text('†',
+                            style: TextStyle(
+                              color: AppColors.modeRussianRoulette.withValues(alpha: 0.4),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('ELLA',
+                              style: TextStyle(
+                                color: const Color(0xFFFF4081),
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Wrap(
+                              spacing: 1,
+                              runSpacing: 1,
+                              children: List.generate(
+                                c.scoreHe,
+                                (_) => const Text('💀', style: TextStyle(fontSize: 18)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -223,21 +432,34 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
               duration: const Duration(milliseconds: 300),
               child: Container(
                 key: ValueKey<String>('${c.isHeTurn}-${c.roundNumber}'),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 decoration: BoxDecoration(
-                  color: c.activeColor.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: c.activeColor.withValues(alpha: 0.5)),
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: c.activeColor.withValues(alpha: 0.5),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: c.activeColor.withValues(alpha: 0.2),
+                      blurRadius: 12,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
                 child: Text(
                   c.isSpinning
-                      ? 'GIRANDO...'
-                      : 'RONDA ${c.roundNumber} • TURNO DE ${c.activeName.toUpperCase()}',
+                      ? '⚡ GIRANDO...'
+                      : 'RONDA ${c.roundNumber}  •  ${c.activeName.toUpperCase()}',
                   style: TextStyle(
                     color: c.isSpinning ? Colors.white54 : c.activeColor,
-                    fontSize: c.isSpinning ? 14 : 18,
+                    fontSize: c.isSpinning ? 16 : 20,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
+                    shadows: c.isSpinning
+                        ? null
+                        : [Shadow(color: c.activeColor.withValues(alpha: 0.3), blurRadius: 8)],
                   ),
                 ),
               ),
@@ -278,47 +500,37 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                       size: 45,
                     ),
                   ),
-                  // Baaam overlay on drum
+                  // Destello visual al disparar (sin texto)
                   if (c.isBangResult)
                     AnimatedBuilder(
                       animation: _bangController,
                       builder: (context, _) {
-                        final value = _bangController.value;
-                        final opacity = (1.0 - value).clamp(0.0, 1.0);
-                        final scale = 1.0 + value * 2.5;
+                        final v = _bangController.value;
                         return IgnorePointer(
                           child: Center(
                             child: Transform.scale(
-                              scale: scale,
+                              scale: 1.0 + v * 4.0,
                               child: Opacity(
-                                opacity: opacity,
+                                opacity: (1.0 - v).clamp(0.0, 1.0),
                                 child: Container(
-                                  width: 130,
-                                  height: 130,
+                                  width: 140, height: 140,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.red.withValues(alpha: 0.5 * opacity),
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        Colors.white.withValues(alpha: 0.9 * (1.0 - v)),
+                                        Colors.red.withValues(alpha: 0.5 * (1.0 - v)),
+                                        Colors.red.withValues(alpha: 0.0),
+                                      ],
+                                      stops: const [0.0, 0.3, 1.0],
+                                    ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.red.withValues(alpha: 0.3 * opacity),
-                                        blurRadius: 50,
-                                        spreadRadius: 15,
+                                        color: Colors.red.withValues(alpha: 0.4 * (1.0 - v)),
+                                        blurRadius: 60,
+                                        spreadRadius: 25,
                                       ),
                                     ],
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Baam',
-                                      style: TextStyle(
-                                        color: Colors.white.withValues(alpha: opacity),
-                                        fontSize: 36,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 4,
-                                        shadows: [
-                                          Shadow(color: Colors.red, blurRadius: 40),
-                                        ],
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
@@ -330,49 +542,54 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            // Shooting history
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(6, (i) {
-                final checked = i < c.checkedOrder.length;
-                final chamberIndex = checked ? c.checkedOrder[i] : -1;
-                final wasBullet = c.bulletFired && chamberIndex == c.currentChamber;
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: wasBullet
-                        ? Colors.redAccent
-                        : (checked ? Colors.greenAccent : Colors.white.withValues(alpha: 0.2)),
-                    border: Border.all(
+            if (!c.isWildMode) ...[
+              const SizedBox(height: 20),
+              // Shooting history
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(6, (i) {
+                  final checked = i < c.checkedOrder.length;
+                  final chamberIndex = checked ? c.checkedOrder[i] : -1;
+                  final wasBullet = c.bulletFired && chamberIndex == c.currentChamber;
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                       color: wasBullet
-                          ? Colors.red
-                          : (checked ? Colors.greenAccent : Colors.white24),
-                      width: checked ? 2 : 1,
+                          ? Colors.redAccent
+                          : (checked ? Colors.greenAccent : Colors.white.withValues(alpha: 0.2)),
+                      border: Border.all(
+                        color: wasBullet
+                            ? Colors.red
+                            : (checked ? Colors.greenAccent : Colors.white24),
+                        width: checked ? 2 : 1,
+                      ),
                     ),
-                  ),
-                  child: checked
-                      ? Center(
-                          child: Text(
-                            '${chamberIndex + 1}',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8),
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
+                    child: checked
+                        ? Center(
+                            child: Text(
+                              '${chamberIndex + 1}',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        )
-                      : null,
-                );
-              }),
-            ),
+                          )
+                        : null,
+                  );
+                }),
+              ),
+            ],
             const SizedBox(height: 20),
             // Trigger button
             if (!c.isSpinning)
               _buildTriggerButton(c),
+            // Pre-carga emojis y fuente Creepster para evitar retardos en diálogos
+            const Text('💀🪦', style: TextStyle(fontSize: 0.1, color: Colors.transparent)),
+            Text('x', style: GoogleFonts.creepster(fontSize: 0.1, color: Colors.transparent)),
             const Spacer(),
           ],
         ),
@@ -394,31 +611,31 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
           );
         },
         child: ScaleTransition(
-          scale: Tween<double>(begin: 1.0, end: c.isPlaying ? 1.05 : 1.0).animate(
+          scale: Tween<double>(begin: 1.0, end: c.isPlaying ? 1.08 : 1.0).animate(
             CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
           ),
           child: Container(
-            width: 200,
-            height: 60,
+            width: 210,
+            height: 64,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(32),
               gradient: LinearGradient(
                 colors: [
                   AppColors.modeRussianRoulette,
-                  AppColors.modeRussianRoulette.withValues(alpha: 0.6),
+                  AppColors.modeRussianRoulette.withValues(alpha: 0.5),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               border: Border.all(
-                color: AppColors.modeRussianRoulette.withValues(alpha: 0.8),
+                color: AppColors.modeRussianRoulette.withValues(alpha: 0.9),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.modeRussianRoulette.withValues(alpha: 0.4),
-                  blurRadius: 20,
-                  spreadRadius: 2,
+                  color: AppColors.modeRussianRoulette.withValues(alpha: c.isPlaying ? 0.5 : 0.2),
+                  blurRadius: 30,
+                  spreadRadius: c.isPlaying ? 4 : 0,
                 ),
               ],
             ),
@@ -427,18 +644,18 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.gps_fixed,
+                    c.isPlaying ? Icons.gps_fixed : Icons.hourglass_empty,
                     color: Colors.white.withValues(alpha: c.isPlaying ? 1.0 : 0.5),
-                    size: 28,
+                    size: 26,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Flexible(
                     child: Text(
                       c.isPlaying ? '¡DISPARAR!' : 'ESPERANDO...',
                       overflow: TextOverflow.visible,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: c.isPlaying ? 1.0 : 0.5),
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
                       ),

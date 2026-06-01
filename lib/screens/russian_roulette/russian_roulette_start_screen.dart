@@ -18,6 +18,8 @@ class RussianRouletteStartScreen extends StatefulWidget {
 
 class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen> {
   int _bestOf = 3;
+  bool _wildMode = false;
+  int _bulletCount = 2;
 
   void _playSound() {
     context.read<AudioService>().playClick();
@@ -100,6 +102,60 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
                                       },
                                     ),
                                   ),
+                                  const SizedBox(height: 20),
+                                  _buildSettingRow(
+                                    icon: Icons.flash_on, title: 'Modo Salvaje:',
+                                    child: Switch.adaptive(
+                                      value: _wildMode,
+                                      activeTrackColor: AppColors.modeRussianRoulette,
+                                      activeThumbColor: AppColors.modeRussianRoulette,
+                                      onChanged: (v) => setState(() => _wildMode = v),
+                                    ),
+                                  ),
+                                  if (_wildMode) ...[
+                                    const SizedBox(height: 15),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [2, 3, 4, 5].map((n) {
+                                        final selected = _bulletCount == n;
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                                          child: GestureDetector(
+                                            onTap: () => setState(() => _bulletCount = n),
+                                            child: Container(
+                                              width: 48, height: 48,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: selected
+                                                    ? AppColors.modeRussianRoulette
+                                                    : Colors.white.withValues(alpha: 0.1),
+                                                border: Border.all(
+                                                  color: selected
+                                                      ? AppColors.modeRussianRoulette
+                                                      : Colors.white.withValues(alpha: 0.2),
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '$n',
+                                                  style: TextStyle(
+                                                    color: selected ? Colors.white : Colors.white54,
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w900,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 6),
+                                      child: Text('balas', style: TextStyle(color: Colors.white38, fontSize: 12)),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -124,6 +180,8 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
                         audioService: audioService,
                         settingsProvider: settingsProvider,
                         bestOf: _bestOf,
+                        wildMode: _wildMode,
+                        bulletCount: _bulletCount,
                       );
                       await controller.initGame();
                       if (!context.mounted) return;
