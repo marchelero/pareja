@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../controllers/charades_controller.dart';
 import '../../widgets/game_button.dart';
-import '../../widgets/game_winner_dialog.dart';
+import '../../widgets/game_result_screen.dart';
 import '../../widgets/score_board.dart';
 import '../../widgets/neon_background.dart';
 import '../../core/theme/app_colors.dart';
+import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
+import 'charades_start_screen.dart';
+import '../games_menu_screen.dart';
 
 class CharadesGameScreen extends StatefulWidget {
   final CharadesController controller;
@@ -113,30 +118,62 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
 
   void _showWinnerDialog(String winnerName) {
     final c = widget.controller;
-    final Color winnerColor = c.scoreHe >= c.pointsToWin
+    final Color winnerColor = winnerName == c.heName
         ? AppColors.playerHe
         : AppColors.playerShe;
+    final audioService = context.read<AudioService>();
+    final settingsProvider = context.read<SettingsProvider>();
 
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.95),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        return GameWinnerDialog(
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameResultScreen(
+          gameName: 'Dígalo con Mímica',
+          gameColor: AppColors.modeCharades,
           winnerName: winnerName,
           winnerColor: winnerColor,
           heName: c.heName,
           sheName: c.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
-          pointsToWin: c.pointsToWin,
-          onVolverAlMenu: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
+          isTie: false,
+          customStatsSection: null,
+          onReplay: () {
+            final newController = CharadesController(
+              audioService: audioService,
+              settingsProvider: settingsProvider,
+              selectedCategories: c.selectedCategories,
+              singleCategoryMode: c.singleCategoryMode,
+              timerSeconds: c.timerSeconds,
+              pointsToWin: c.pointsToWin,
+              strikesForPenance: c.strikesForPenance,
+              isHotMode: c.isHotMode,
+            );
+            newController.initGame().then((_) {
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CharadesGameScreen(controller: newController),
+                ),
+              );
+            });
           },
-        );
-      },
+          onGameMenu: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CharadesStartScreen()),
+            );
+          },
+          onMainMenu: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const GamesMenuScreen()),
+              (route) => false,
+            );
+          },
+        ),
+      ),
     );
   }
 

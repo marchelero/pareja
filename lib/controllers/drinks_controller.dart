@@ -13,6 +13,8 @@ class DrinksController extends ChangeNotifier {
   final int initialLevel;
   final int levelingSpeed;
   final bool isHotMode;
+  final bool freeMode;
+  final int totalGlasses;
 
   DrinksController({
     required this.audioService,
@@ -21,6 +23,8 @@ class DrinksController extends ChangeNotifier {
     required this.initialLevel,
     required this.levelingSpeed,
     required this.isHotMode,
+    this.freeMode = false,
+    this.totalGlasses = 5,
   });
 
   List<DrinkTask> _allTasks = [];
@@ -36,6 +40,8 @@ class DrinksController extends ChangeNotifier {
   int _sheSipsLeft = 0;
   int _currentLevel = 1;
   int _turnCount = 0;
+  int _heGlassesDrunk = 0;
+  int _sheGlassesDrunk = 0;
 
   DrinkTask? get currentTask => _currentTask;
   String? get activePlayerName => _activePlayerName;
@@ -47,9 +53,12 @@ class DrinksController extends ChangeNotifier {
   int get currentLevel => _currentLevel;
   int get turnCount => _turnCount;
   int get sipsPerGlassParam => sipsPerGlass;
+  int get heGlassesDrunk => _heGlassesDrunk;
+  int get sheGlassesDrunk => _sheGlassesDrunk;
 
   void Function(int level)? onLevelUp;
   void Function(String playerName)? onGameOver;
+  void Function(String winnerName)? onGameFinished;
 
   Future<void> initGame() async {
     _heName = settingsProvider.heName;
@@ -214,10 +223,28 @@ class DrinksController extends ChangeNotifier {
   }
 
   void _checkGameOver() {
+    String? emptyPlayer;
+    bool heFinished = false;
+    bool sheFinished = false;
+
     if (_heSipsLeft <= 0) {
-      onGameOver?.call(_heName);
-    } else if (_sheSipsLeft <= 0) {
-      onGameOver?.call(_sheName);
+      emptyPlayer = _heName;
+      heFinished = true;
+      _heGlassesDrunk++;
+    }
+    if (_sheSipsLeft <= 0) {
+      emptyPlayer ??= _sheName;
+      sheFinished = true;
+      _sheGlassesDrunk++;
+    }
+
+    if (emptyPlayer == null) return;
+
+    if (!freeMode && ((heFinished && _heGlassesDrunk >= totalGlasses) || (sheFinished && _sheGlassesDrunk >= totalGlasses))) {
+      final String winner = heFinished && _heGlassesDrunk >= totalGlasses ? _sheName : _heName;
+      onGameFinished?.call(winner);
+    } else {
+      onGameOver?.call(emptyPlayer);
     }
   }
 

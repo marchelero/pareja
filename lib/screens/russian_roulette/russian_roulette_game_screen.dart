@@ -1,9 +1,14 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../controllers/russian_roulette_controller.dart';
-import '../../widgets/game_winner_dialog.dart';
+import '../../widgets/game_result_screen.dart';
 import '../../core/theme/app_colors.dart';
+import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
+import 'russian_roulette_start_screen.dart';
+import '../games_menu_screen.dart';
 
 class RussianRouletteGameScreen extends StatefulWidget {
   final RussianRouletteController controller;
@@ -302,26 +307,56 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
 
   void _showWinnerDialog(String winnerName, Color winnerColor) {
     final c = widget.controller;
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.95),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        return GameWinnerDialog(
+    final audioService = context.read<AudioService>();
+    final settingsProvider = context.read<SettingsProvider>();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameResultScreen(
+          gameName: 'Ruleta Rusa',
+          gameColor: AppColors.modeRussianRoulette,
           winnerName: winnerName,
           winnerColor: winnerColor,
           heName: c.settingsProvider.heName,
           sheName: c.settingsProvider.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
-          pointsToWin: c.pointsToWin,
-          onVolverAlMenu: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
+          isTie: false,
+          customStatsSection: null,
+          onReplay: () {
+            final newController = RussianRouletteController(
+              audioService: audioService,
+              settingsProvider: settingsProvider,
+              bestOf: c.bestOf,
+              wildMode: c.wildMode,
+              bulletCount: c.bulletCount,
+            );
+            newController.initGame().then((_) {
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RussianRouletteGameScreen(controller: newController),
+                ),
+              );
+            });
           },
-        );
-      },
+          onGameMenu: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const RussianRouletteStartScreen()),
+            );
+          },
+          onMainMenu: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const GamesMenuScreen()),
+              (route) => false,
+            );
+          },
+        ),
+      ),
     );
   }
 

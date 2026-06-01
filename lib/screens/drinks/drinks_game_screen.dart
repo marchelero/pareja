@@ -1,11 +1,17 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../controllers/drinks_controller.dart';
 import '../../core/models/drink_task.dart';
-import '../../widgets/drink_game_over_dialog.dart';
+import '../../widgets/game_result_screen.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
+import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
+import '../../core/theme/app_colors.dart';
+import 'drinks_start_screen.dart';
+import '../games_menu_screen.dart';
 
 class DrinksGameScreen extends StatefulWidget {
   final DrinksController controller;
@@ -26,7 +32,10 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
     widget.controller.addListener(_onControllerChange);
 
     widget.controller.onGameOver = (String playerName) {
-      _showGameOverDialog(playerName);
+      _showContinueDialog(playerName);
+    };
+    widget.controller.onGameFinished = (String playerName) {
+      _showResultScreen(playerName);
     };
   }
 
@@ -40,9 +49,9 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
     super.dispose();
   }
 
-  void _showGameOverDialog(String playerName) {
+  void _showContinueDialog(String playerName) {
     final c = widget.controller;
-    bool isHe = playerName == c.heName;
+    final bool isHe = playerName == c.heName;
 
     showGeneralDialog(
       context: context,
@@ -50,16 +59,143 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
       barrierColor: Colors.black.withValues(alpha: 0.9),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, anim1, anim2) {
-        return DrinkGameOverDialog(
-          playerName: playerName,
-          isHe: isHe,
-          onVascoSecoSiguiente: () {
-            Navigator.pop(context);
-            c.resetPlayerGlasses(playerName);
-            c.advanceAfterGameOver();
-          },
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: [Colors.pink.withValues(alpha: 0.3), Colors.black],
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 220,
+                  height: 220,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isHe ? Colors.blueAccent : Colors.pinkAccent).withValues(alpha: 0.4),
+                        blurRadius: 40,
+                        spreadRadius: 8,
+                      ),
+                    ],
+                    border: Border.all(
+                      color: (isHe ? Colors.blueAccent : Colors.pinkAccent).withValues(alpha: 0.6),
+                      width: 4,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      isHe ? 'assets/images/man_drinking.png' : 'assets/images/woman_drinking.png',
+                      width: 220,
+                      height: 220,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  '¡${playerName.toUpperCase()} SECO!',
+                  style: TextStyle(
+                    color: isHe ? Colors.blueAccent : Colors.pinkAccent,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 3,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '${c.heName}: ${c.heGlassesDrunk} vaso${c.heGlassesDrunk == 1 ? '' : 's'}  •  ${c.sheName}: ${c.sheGlassesDrunk} vaso${c.sheGlassesDrunk == 1 ? '' : 's'}',
+                  style: const TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: 250,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      c.resetPlayerGlasses(playerName);
+                      c.advanceAfterGameOver();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    ),
+                    child: const Text('SIGUIENTE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2)),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
+    );
+  }
+
+  void _showResultScreen(String winnerName) {
+    final c = widget.controller;
+    final bool isHe = winnerName == c.heName;
+    final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final audioService = context.read<AudioService>();
+    final settingsProvider = context.read<SettingsProvider>();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameResultScreen(
+          gameName: 'Chupitos',
+          gameColor: AppColors.modeDrinks,
+          winnerName: winnerName,
+          winnerColor: winnerColor,
+          heName: c.heName,
+          sheName: c.sheName,
+          scoreHe: c.heGlassesDrunk,
+          scoreShe: c.sheGlassesDrunk,
+          isTie: false,
+          customStatsSection: null,
+          onReplay: () {
+            final newController = DrinksController(
+              audioService: audioService,
+              settingsProvider: settingsProvider,
+              sipsPerGlass: c.sipsPerGlass,
+              initialLevel: c.initialLevel,
+              levelingSpeed: c.levelingSpeed,
+              isHotMode: c.isHotMode,
+              freeMode: c.freeMode,
+              totalGlasses: c.totalGlasses,
+            );
+            newController.initGame().then((_) {
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DrinksGameScreen(controller: newController),
+                ),
+              );
+            });
+          },
+          onGameMenu: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const DrinksStartScreen()),
+            );
+          },
+          onMainMenu: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const GamesMenuScreen()),
+              (route) => false,
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -126,6 +262,31 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                         ],
                       ),
                       Text('Turno ${c.turnCount}', style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                      if (!c.freeMode) const SizedBox(height: 4),
+                      if (!c.freeMode)
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text('${c.heName}: ${c.heGlassesDrunk}', style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.pink.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text('${c.sheName}: ${c.sheGlassesDrunk}', style: const TextStyle(color: Colors.pinkAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                            const SizedBox(width: 8),
+                            Text('/ ${c.totalGlasses}', style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                          ],
+                        ),
                     ],
                   ),
                   IconButton(

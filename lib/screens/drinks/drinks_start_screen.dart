@@ -22,6 +22,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
   int _initialLevel = 1;
   int _levelingSpeed = 7;
   bool _isHotMode = true;
+  bool _freeMode = false;
+  int _totalGlasses = 5;
 
   @override
   void initState() {
@@ -74,6 +76,71 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                       inactiveColor: Colors.white10,
                       onChanged: (val) => setState(() => _sipsPerGlass = val.toInt()),
                     ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildSectionTitle('MODO DE JUEGO'),
+            _buildCard(
+              child: Column(
+                children: [
+                  Material(
+                    color: Colors.transparent,
+                    child: SwitchListTile(
+                      title: const Text('Modo Libre', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
+                      subtitle: const Text('Sin límite de vasos — juego perpetuo', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                      value: _freeMode,
+                      activeThumbColor: Colors.orangeAccent,
+                      onChanged: (val) => setState(() => _freeMode = val),
+                    ),
+                  ),
+                  if (!_freeMode) ...[
+                    const Divider(color: Colors.white10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('VASOS A TOMAR:', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [1, 3, 5, 7, 10, 15].map((n) {
+                              final isSelected = _totalGlasses == n;
+                              return GestureDetector(
+                                onTap: () => setState(() => _totalGlasses = n),
+                                child: Container(
+                                  width: 52,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? Colors.pinkAccent.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: isSelected ? Colors.pinkAccent : Colors.white12,
+                                      width: isSelected ? 2 : 1,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '$n',
+                                      style: TextStyle(
+                                        color: isSelected ? Colors.white : Colors.white54,
+                                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 8),
+                          Text('Al alcanzar $_totalGlasses vasos el juego termina', style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -184,6 +251,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                 initialLevel: _initialLevel,
                 levelingSpeed: _levelingSpeed,
                 isHotMode: _isHotMode,
+                freeMode: _freeMode,
+                totalGlasses: _totalGlasses,
               );
               await controller.initGame();
               if (!mounted) return;

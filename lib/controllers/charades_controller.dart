@@ -45,6 +45,7 @@ class CharadesController extends ChangeNotifier {
   bool _wasGuessed = false;
   String? _penanceText;
   String? _winner;
+  String? _matchPointPlayer;
 
   void Function(String winnerName)? onGameWinner;
 
@@ -155,17 +156,12 @@ class CharadesController extends ChangeNotifier {
       _scoreShe++;
     }
 
-    final hasWinner = (_isHeTurn && _scoreHe >= pointsToWin) ||
-        (!_isHeTurn && _scoreShe >= pointsToWin);
-
-    if (hasWinner) {
-      _winner = currentPlayerName;
-    }
-
     notifyListeners();
 
-    if (hasWinner) {
-      onGameWinner?.call(_winner!);
+    if (_matchPointPlayer == null &&
+        ((_isHeTurn && _scoreHe >= pointsToWin) ||
+         (!_isHeTurn && _scoreShe >= pointsToWin))) {
+      _matchPointPlayer = currentPlayerName;
     }
   }
 
@@ -220,7 +216,26 @@ class CharadesController extends ChangeNotifier {
     _wasGuessed = false;
     _isPlaying = false;
     _timer?.cancel();
+
+    if (_matchPointPlayer != null && currentPlayerName == _matchPointPlayer) {
+      _finishGameOrContinue();
+      if (_winner != null) {
+        notifyListeners();
+        onGameWinner?.call(_winner!);
+        return;
+      }
+    }
+
     showNewWord();
+  }
+
+  void _finishGameOrContinue() {
+    if (_scoreHe == _scoreShe) {
+      _matchPointPlayer = null;
+      return;
+    }
+
+    _winner = _scoreHe > _scoreShe ? heName : sheName;
   }
 
   void cancelTimer() {

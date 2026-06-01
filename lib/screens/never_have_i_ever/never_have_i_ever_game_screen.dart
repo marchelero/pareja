@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../controllers/never_have_i_ever_controller.dart';
 import '../../widgets/game_button.dart';
-import '../../widgets/game_winner_dialog.dart';
+import '../../widgets/game_result_screen.dart';
 import '../../widgets/score_board.dart';
 import '../../core/theme/app_colors.dart';
+import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
+import 'never_have_i_ever_start_screen.dart';
+import '../games_menu_screen.dart';
 
 class NeverHaveIEverGameScreen extends StatefulWidget {
   final NeverHaveIEverController controller;
@@ -44,27 +49,57 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
     final c = widget.controller;
     final isHe = winnerName == c.heName;
     final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final audioService = context.read<AudioService>();
+    final settingsProvider = context.read<SettingsProvider>();
 
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.95),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        return GameWinnerDialog(
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameResultScreen(
+          gameName: 'Yo Nunca',
+          gameColor: AppColors.modeMostLikely,
           winnerName: winnerName,
           winnerColor: winnerColor,
           heName: c.heName,
           sheName: c.sheName,
           scoreHe: c.scoreHe,
           scoreShe: c.scoreShe,
-          pointsToWin: c.pointsToWin,
-          onVolverAlMenu: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
+          isTie: false,
+          customStatsSection: null,
+          onReplay: () {
+            final newController = NeverHaveIEverController(
+              audioService: audioService,
+              settingsProvider: settingsProvider,
+              rounds: c.rounds,
+              pointsToWin: c.pointsToWin,
+              strikesForPenance: c.strikesForPenance,
+              isHotMode: c.isHotMode,
+            );
+            newController.initGame().then((_) {
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NeverHaveIEverGameScreen(controller: newController),
+                ),
+              );
+            });
           },
-        );
-      },
+          onGameMenu: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const NeverHaveIEverStartScreen()),
+            );
+          },
+          onMainMenu: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const GamesMenuScreen()),
+              (route) => false,
+            );
+          },
+        ),
+      ),
     );
   }
 
