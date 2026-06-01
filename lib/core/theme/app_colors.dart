@@ -25,6 +25,7 @@ class AppColors {
   static const Color modeBomb = Color(0xFFFF5722);
   static const Color modeMostLikely = Color(0xFF009688);
   static const Color modeCharades = Color(0xFF673AB7);
+  static const Color modeRussianRoulette = Color(0xFFDC143C);
 
   static Color glassBackground(double opacity) => Colors.white.withValues(alpha: opacity);
   static Color glassBorder(double opacity) => Colors.white.withValues(alpha: opacity);

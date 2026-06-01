@@ -8,6 +8,7 @@ import 'drinks/drinks_start_screen.dart';
 import 'bomb/bomb_start_screen.dart';
 import 'never_have_i_ever/never_have_i_ever_start_screen.dart';
 import 'charades/charades_start_screen.dart';
+import 'russian_roulette/russian_roulette_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
 import '../widgets/route_transitions.dart';
@@ -44,11 +45,11 @@ class GamesMenuScreen extends StatelessWidget {
             ),
             Expanded(
               child: GridView.count(
-                crossAxisCount: 2,
+                crossAxisCount: 3,
                 padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 10,
-                childAspectRatio: 1.3,
+                childAspectRatio: 1.0,
                 children: [
                   GameCard(
                     title: 'Preguntas',
@@ -131,6 +132,20 @@ class GamesMenuScreen extends StatelessWidget {
                         context,
                         RouteTransitions.slideFromBottom(
                             const CharadesStartScreen()),
+                      );
+                    },
+                  ),
+                  GameCard(
+                    title: 'Ruleta Rusa',
+                    icon: Icons.gps_fixed,
+                    accentColor: AppColors.modeRussianRoulette,
+                    animationDelay: 600,
+                    onTap: () {
+                      audioService.playClick();
+                      Navigator.push(
+                        context,
+                        RouteTransitions.slideFromBottom(
+                            const RussianRouletteStartScreen()),
                       );
                     },
                   ),
