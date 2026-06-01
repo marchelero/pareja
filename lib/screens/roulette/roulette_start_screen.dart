@@ -84,6 +84,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                 ],
               ),
                       const SizedBox(height: 40),
+                      _buildResetProgress(),
+                      const SizedBox(height: 20),
                       _buildStartButton(context),
                     ],
                   ),
@@ -127,6 +129,68 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
             border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResetProgress() {
+    return _buildGlassCard(
+      child: InkWell(
+        onTap: () async {
+          final settings = context.read<SettingsProvider>();
+          final confirm = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: const Color(0xFF1A0A2E),
+              title: const Text('Reiniciar progreso',
+                style: TextStyle(color: Colors.white)),
+              content: const Text(
+                '¿Estás seguro de que quieres reiniciar el progreso de la ruleta?',
+                style: TextStyle(color: Colors.white70)),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancelar',
+                    style: TextStyle(color: Colors.white54)),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Reiniciar',
+                    style: TextStyle(color: Colors.pinkAccent)),
+                ),
+              ],
+            ),
+          );
+          if (confirm == true) {
+            await settings.resetRouletteProgress();
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Progreso de ruleta reiniciado')),
+              );
+            }
+          }
+        },
+        child: Container(
+          width: double.infinity,
+          height: 45,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5)),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.refresh, color: Colors.redAccent, size: 18),
+              SizedBox(width: 8),
+              Text(
+                'REINICIAR PROGRESO',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900,
+                  color: Colors.redAccent, letterSpacing: 2),
+              ),
+            ],
+          ),
         ),
       ),
     );

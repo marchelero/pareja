@@ -12,6 +12,7 @@ import 'russian_roulette/russian_roulette_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
 import '../widgets/route_transitions.dart';
+import 'settings_screen.dart';
 
 class GamesMenuScreen extends StatelessWidget {
   const GamesMenuScreen({super.key});
@@ -42,6 +43,18 @@ class GamesMenuScreen extends StatelessWidget {
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings_rounded, color: Colors.white54),
+                  onPressed: () {
+                    audioService.playClick();
+                    Navigator.push(
+                      context,
+                      RouteTransitions.slideFromRight(const SettingsScreen()),
+                    );
+                  },
+                ),
+              ],
             ),
             Expanded(
               child: GridView.count(

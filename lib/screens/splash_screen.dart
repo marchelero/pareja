@@ -43,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
     GoogleFonts.montserratTextTheme();
     GoogleFonts.dancingScriptTextTheme();
     GoogleFonts.playfairDisplayTextTheme();
+    GoogleFonts.creepsterTextTheme();
 
     // 3. Esperar 3 segundos (animación de carga + descarga de fonts)
     await Future.delayed(const Duration(seconds: 3));
