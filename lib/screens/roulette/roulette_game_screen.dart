@@ -102,6 +102,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     _controller.reset();
     _lastHapticSection = -1;
     _controller.forward().then((_) {
+      if (!mounted) return;
       c.onSpinFinished(_animation.value);
       setState(() {
         _currentRotation = _animation.value % (2 * pi);

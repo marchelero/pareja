@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../services/haptics_service.dart';
 
 enum NeonButtonVariant { primary, secondary, ghost }
 
@@ -55,6 +56,7 @@ class _NeonButtonState extends State<NeonButton>
       onTapDown: (_) => setState(() => _scale = 1.02),
       onTapUp: (_) {
         setState(() => _scale = 1.0);
+        HapticsService.light();
         widget.onPressed();
       },
       onTapCancel: () => setState(() => _scale = 1.0),

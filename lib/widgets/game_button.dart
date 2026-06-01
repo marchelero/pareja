@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../services/haptics_service.dart';
 
 enum GameButtonStyle { primary, secondary, danger }
 
@@ -31,6 +32,7 @@ class GameButton extends StatefulWidget {
 class _GameButtonState extends State<GameButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _shimmerController;
+  double _scale = 1.0;
 
   @override
   void initState() {
@@ -51,19 +53,26 @@ class _GameButtonState extends State<GameButton>
   Widget build(BuildContext context) {
     final bool isPrimary = widget.style == GameButtonStyle.primary;
 
-    return SizedBox(
-      width: widget.width ?? double.infinity,
-      height: widget.height,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: _buildDecoration(isPrimary),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: widget.onPressed,
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _scale = 0.95),
+      onTapUp: (_) {
+        setState(() => _scale = 1.0);
+        HapticsService.light();
+        widget.onPressed();
+      },
+      onTapCancel: () => setState(() => _scale = 1.0),
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 150),
+        child: SizedBox(
+          width: widget.width ?? double.infinity,
+          height: widget.height,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: _buildDecoration(isPrimary),
                 child: Stack(
                   children: [
                     if (isPrimary)
@@ -128,21 +137,23 @@ class _GameButtonState extends State<GameButton>
   BoxDecoration _buildDecoration(bool isPrimary) {
     switch (widget.style) {
       case GameButtonStyle.primary:
+        final Color primaryColor = widget.customColor ?? AppColors.primary;
+        final Color gradientColor = widget.customColor?.withValues(alpha: 0.55) ?? AppColors.primaryGradient.withValues(alpha: 0.55);
         return BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primary.withValues(alpha: 0.85),
-              AppColors.primaryGradient.withValues(alpha: 0.55),
+              primaryColor.withValues(alpha: 0.85),
+              gradientColor,
             ],
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.6),
+            color: primaryColor.withValues(alpha: 0.6),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.35),
+              color: primaryColor.withValues(alpha: 0.35),
               blurRadius: 15,
               spreadRadius: 1,
             ),

@@ -9,6 +9,7 @@ import 'bomb/bomb_start_screen.dart';
 import 'never_have_i_ever/never_have_i_ever_start_screen.dart';
 import 'charades/charades_start_screen.dart';
 import 'russian_roulette/russian_roulette_start_screen.dart';
+import 'duel/duel_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
 import '../widgets/route_transitions.dart';
@@ -171,6 +172,20 @@ class GamesMenuScreen extends StatelessWidget {
                         context,
                         RouteTransitions.slideFromBottom(
                             const RussianRouletteStartScreen()),
+                      );
+                    },
+                  ),
+                  GameCard(
+                    title: 'Duelo',
+                    icon: Icons.favorite,
+                    accentColor: AppColors.modeDuel,
+                    animationDelay: 700,
+                    onTap: () {
+                      audioService.playClick();
+                      Navigator.push(
+                        context,
+                        RouteTransitions.slideFromBottom(
+                            const DuelStartScreen()),
                       );
                     },
                   ),

@@ -578,6 +578,7 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
       text: text,
       onPressed: onPressed,
       style: color == Colors.white10 ? GameButtonStyle.secondary : GameButtonStyle.primary,
+      customColor: color == Colors.white10 ? null : color,
       height: isLarge ? 70 : 60,
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/roulette_controller.dart';
@@ -6,6 +7,9 @@ import '../../controllers/questions_controller.dart';
 import '../../data/questions_repository.dart';
 import '../../services/audio_service.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/coin_flip_widget.dart';
+import '../../widgets/neon_background.dart';
+import '../../core/theme/app_colors.dart';
 import '../roulette/roulette_game_screen.dart';
 import 'questions_game_screen.dart';
 
@@ -31,29 +35,32 @@ class CoinFlipScreen extends StatefulWidget {
   State<CoinFlipScreen> createState() => _CoinFlipScreenState();
 }
 
-class _CoinFlipScreenState extends State<CoinFlipScreen> with SingleTickerProviderStateMixin {
+class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _animation;
-  bool _isHeWinner = true;
+  late Animation<double> _titleAnimation;
+  late AnimationController _pulseController;
+  final bool _isHeWinner = Random().nextBool();
   bool _showResult = false;
 
   @override
   void initState() {
     super.initState();
-    _isHeWinner = Random().nextBool();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
 
     _controller = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
 
-    double endValue = 5 * 2 * pi + (_isHeWinner ? 0 : pi);
-
-    _animation = Tween<double>(begin: 0, end: endValue).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+    _titleAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: const Interval(0, 0.3, curve: Curves.easeOut)),
     );
 
-    _controller.forward().then((value) {
+    _controller.forward().then((_) {
       if (!mounted) return;
       setState(() {
         _showResult = true;
@@ -104,90 +111,176 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with SingleTickerProvid
   @override
   void dispose() {
     _controller.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.orange.shade100, Colors.white],
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('¿Quién empieza?', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.orange)),
-            const SizedBox(height: 60),
-            AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                final angle = _animation.value;
-                final isFront = (angle % (2 * pi)) < pi / 2 || (angle % (2 * pi)) > 3 * pi / 2;
-
-                return Transform(
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.002)
-                    ..rotateY(angle),
-                  alignment: Alignment.center,
-                  child: isFront ? _buildCoinFace(true) : _buildCoinFace(false),
-                );
-              },
-            ),
-            const SizedBox(height: 60),
-            if (_showResult)
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 500),
-                builder: (context, value, child) {
+      body: NeonBackground(
+        child: SafeArea(
+          child: SizedBox.expand(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              AnimatedBuilder(
+                animation: _titleAnimation,
+                builder: (context, _) {
                   return Opacity(
-                    opacity: value,
-                    child: Column(
-                      children: [
-                        Text(
-                          '¡Empieza ${_isHeWinner ? (widget.heName.isEmpty ? 'ÉL' : widget.heName) : (widget.sheName.isEmpty ? 'ELLA' : widget.sheName)}!',
-                          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900,
-                            color: _isHeWinner ? Colors.blue : Colors.pink),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text('Preparando preguntas...', style: TextStyle(color: Colors.grey)),
-                      ],
+                    opacity: _titleAnimation.value,
+                    child: Transform.translate(
+                      offset: Offset(0, 20 * (1 - _titleAnimation.value)),
+                      child: AnimatedBuilder(
+                        animation: _pulseController,
+                        builder: (context, _) {
+                          final g = _pulseController.value;
+                          return ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: [
+                                AppColors.primaryNeon.withValues(alpha: 0.5 + g * 0.5),
+                                AppColors.secondaryNeon,
+                                AppColors.primaryNeon.withValues(alpha: 0.5 + g * 0.5),
+                              ],
+                            ).createShader(bounds),
+                            child: const Text(
+                              '¿QUIÉN EMPIEZA?',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                letterSpacing: 6,
+                                height: 1.2,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   );
                 },
               ),
-          ],
-        ),
-      ),
-    );
-  }
+              const SizedBox(height: 50),
+              CoinFlipWidget(
+                isHeWinner: _isHeWinner,
+                controller: _controller,
+                heName: widget.heName,
+                sheName: widget.sheName,
+              ),
+              const SizedBox(height: 50),
+              if (_showResult)
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0, end: 1),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.elasticOut,
+                  builder: (context, value, child) {
+                    final isHe = _isHeWinner;
+                    final Color winnerColor = isHe ? Colors.blueAccent : Colors.pinkAccent;
+                    final playerName = isHe
+                        ? (widget.heName.isEmpty ? 'ÉL' : widget.heName)
+                        : (widget.sheName.isEmpty ? 'ELLA' : widget.sheName);
 
-  Widget _buildCoinFace(bool isHe) {
-    return Container(
-      width: 180, height: 180,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.amber,
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 15, offset: const Offset(0, 10)),
-        ],
-        border: Border.all(color: Colors.amber.shade700, width: 8),
-        gradient: RadialGradient(
-          colors: [Colors.amber.shade300, Colors.amber.shade700],
+                    return Opacity(
+                      opacity: value.clamp(0.0, 1.0),
+                      child: Transform.scale(
+                        scale: 0.5 + value * 0.5,
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: winnerColor.withValues(alpha: 0.4),
+                                  width: 2,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    winnerColor.withValues(alpha: 0.15),
+                                    winnerColor.withValues(alpha: 0.05),
+                                  ],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: winnerColor.withValues(alpha: 0.3),
+                                    blurRadius: 30,
+                                    spreadRadius: 5,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    '¡EMPIEZA',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white54,
+                                      letterSpacing: 4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    playerName.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.w900,
+                                      color: winnerColor,
+                                      letterSpacing: 4,
+                                      shadows: [
+                                        Shadow(
+                                          color: winnerColor.withValues(alpha: 0.6),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: 16, height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white38),
+                                        ),
+                                      ),
+                                      SizedBox(width: 12),
+                                      Text(
+                                        'Preparando juego...',
+                                        style: TextStyle(color: Colors.white38, fontSize: 14, letterSpacing: 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
+          ),
         ),
       ),
-      child: Center(
-        child: Icon(
-          isHe ? Icons.male : Icons.female,
-          size: 100,
-          color: isHe ? Colors.blue.shade800 : Colors.pink.shade800,
-        ),
-      ),
-    );
+    ),
+  );
   }
 }
