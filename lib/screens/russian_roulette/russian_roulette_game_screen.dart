@@ -152,14 +152,12 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.92),
+      barrierColor: Colors.black.withValues(alpha: 0.80),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, anim1, anim2) {
         return Scaffold(
           backgroundColor: Colors.transparent,
-          body: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(30),
+          body: SizedBox.expand(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -218,7 +216,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('ÉL',
+                          Text(c.heName.toUpperCase(),
                             style: TextStyle(
                               color: const Color(0xFF448AFF),
                               fontSize: 13,
@@ -250,7 +248,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('ELLA',
+                          Text(c.sheName.toUpperCase(),
                             style: TextStyle(
                               color: const Color(0xFFFF4081),
                               fontSize: 13,
@@ -337,11 +335,23 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            colors: [
+              c.activeColor.withValues(alpha: 0.05),
+              Colors.black,
+            ],
+            radius: 1.4,
+            center: Alignment.center,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -356,10 +366,10 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.black87,
+                      color: Colors.black.withValues(alpha: 0.35),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: AppColors.modeRussianRoulette.withValues(alpha: 0.5),
+                        color: AppColors.modeRussianRoulette.withValues(alpha: 0.4),
                         width: 1.5,
                       ),
                     ),
@@ -369,7 +379,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('ÉL',
+                            Text(c.heName.toUpperCase(),
                               style: TextStyle(
                                 color: const Color(0xFF448AFF),
                                 fontSize: 11,
@@ -401,7 +411,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('ELLA',
+                            Text(c.sheName.toUpperCase(),
                               style: TextStyle(
                                 color: const Color(0xFFFF4081),
                                 fontSize: 11,
@@ -430,24 +440,24 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
             const SizedBox(height: 5),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: Container(
-                key: ValueKey<String>('${c.isHeTurn}-${c.roundNumber}'),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                decoration: BoxDecoration(
-                  color: Colors.black87,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    color: c.activeColor.withValues(alpha: 0.5),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: c.activeColor.withValues(alpha: 0.2),
-                      blurRadius: 12,
-                      spreadRadius: 1,
+                child: Container(
+                  key: ValueKey<String>('${c.isHeTurn}-${c.roundNumber}'),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: c.activeColor.withValues(alpha: 0.5),
+                      width: 1.5,
                     ),
-                  ],
-                ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: c.activeColor.withValues(alpha: 0.2),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
                 child: Text(
                   c.isSpinning
                       ? '⚡ GIRANDO...'
@@ -593,6 +603,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
             const Spacer(),
           ],
         ),
+      ),
       ),
     );
   }
@@ -761,6 +772,23 @@ class _DrumPainter extends CustomPainter {
         ..strokeWidth = isLatest ? 2.5 : 1.5;
       canvas.drawCircle(pos, chamberRadius, borderPaint);
 
+      // Calavera negra dentro de la recámara que disparó
+      if (wasBullet) {
+        final skull = TextPainter(
+          text: const TextSpan(
+            text: '💀',
+            style: TextStyle(fontSize: 20, color: Colors.black87),
+          ),
+          textDirection: TextDirection.ltr,
+        );
+        skull.layout();
+        canvas.save();
+        canvas.translate(pos.dx, pos.dy);
+        canvas.rotate(-turns * 2 * math.pi);
+        skull.paint(canvas, Offset(-skull.width / 2, -skull.height / 2));
+        canvas.restore();
+      }
+
       // White dot for fired chambers (latest one has glow)
       if (fired && !wasBullet) {
         final dotPaint = Paint()
@@ -768,6 +796,21 @@ class _DrumPainter extends CustomPainter {
         canvas.drawCircle(pos, chamberRadius * 0.35, dotPaint);
       }
     }
+
+    // Centro del tambor (siempre plomo/plateado)
+    final hubRadius = chamberRadius * 2.2;
+    final hubColor = const Color(0xFF708090);
+
+    final hubFill = Paint()
+      ..color = hubColor.withValues(alpha: 0.5)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset.zero, hubRadius, hubFill);
+
+    final hubBorder = Paint()
+      ..color = hubColor.withValues(alpha: 0.7)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
+    canvas.drawCircle(Offset.zero, hubRadius, hubBorder);
 
     canvas.restore();
   }
