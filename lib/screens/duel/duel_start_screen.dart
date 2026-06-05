@@ -16,16 +16,16 @@ class DuelStartScreen extends StatefulWidget {
 }
 
 class _DuelStartScreenState extends State<DuelStartScreen> {
-  String _heName = 'ÉL';
-  String _sheName = 'ELLA';
+  String _player1Name = 'ÉL';
+  String _player2Name = 'ELLA';
   int _maxRounds = 10;
 
   @override
   void initState() {
     super.initState();
     final settings = context.read<SettingsProvider>();
-    _heName = settings.heName;
-    _sheName = settings.sheName;
+    _player1Name = settings.player1Name;
+    _player2Name = settings.player2Name;
   }
 
   @override
@@ -96,7 +96,8 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
           ),
           child: InkWell(
             onTap: () async {
-              await context.read<SettingsProvider>().saveNames(_heName, _sheName);
+              await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
+              await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
               if (!mounted) return;
               final audioService = context.read<AudioService>();
               final settingsProvider = context.read<SettingsProvider>();

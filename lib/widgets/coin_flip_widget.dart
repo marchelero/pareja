@@ -3,17 +3,25 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 
 class CoinFlipWidget extends StatefulWidget {
-  final bool isHeWinner;
+  final bool isPlayer1Winner;
   final AnimationController controller;
-  final String heName;
-  final String sheName;
+  final String player1Name;
+  final String player2Name;
+  final IconData player1Icon;
+  final IconData player2Icon;
+  final Color player1Color;
+  final Color player2Color;
 
   const CoinFlipWidget({
     super.key,
-    required this.isHeWinner,
+    required this.isPlayer1Winner,
     required this.controller,
-    required this.heName,
-    required this.sheName,
+    required this.player1Name,
+    required this.player2Name,
+    required this.player1Icon,
+    required this.player2Icon,
+    required this.player1Color,
+    required this.player2Color,
   });
 
   @override
@@ -30,7 +38,7 @@ class _CoinFlipWidgetState extends State<CoinFlipWidget> with TickerProviderStat
   void initState() {
     super.initState();
 
-    final double endValue = 7 * 2 * pi + (widget.isHeWinner ? 0 : pi);
+    final double endValue = 7 * 2 * pi + (widget.isPlayer1Winner ? 0 : pi);
 
     _spinAnimation = Tween<double>(begin: 0, end: endValue).animate(
       CurvedAnimation(parent: widget.controller, curve: Curves.easeOutCubic),
@@ -74,8 +82,8 @@ class _CoinFlipWidgetState extends State<CoinFlipWidget> with TickerProviderStat
         final isFront = (angle % (2 * pi)) < pi / 2 || (angle % (2 * pi)) > 3 * pi / 2;
         final bounceOffset = sin(_bounceAnimation.value * pi) * 15;
         final glow = _glowAnimation.value;
-        final isHe = widget.isHeWinner;
-        final Color glowColor = isHe ? Colors.blueAccent : Colors.pinkAccent;
+        final isP1 = widget.isPlayer1Winner;
+        final Color glowColor = isP1 ? widget.player1Color : widget.player2Color;
 
         return Transform.translate(
           offset: Offset(0, -bounceOffset),
@@ -116,9 +124,11 @@ class _CoinFlipWidgetState extends State<CoinFlipWidget> with TickerProviderStat
     );
   }
 
-  Widget _buildFace(bool isHe, double glow) {
-    final Color faceColor = isHe ? Colors.blueAccent : Colors.pinkAccent;
-    final Color bgColor = isHe ? const Color(0xFF1A237E) : const Color(0xFF4A0020);
+  Widget _buildFace(bool isP1, double glow) {
+    final Color faceColor = isP1 ? widget.player1Color : widget.player2Color;
+    final Color bgColor = isP1 ? const Color(0xFF1A237E) : const Color(0xFF4A0020);
+    final IconData icon = isP1 ? widget.player1Icon : widget.player2Icon;
+    final String name = isP1 ? widget.player1Name.toUpperCase() : widget.player2Name.toUpperCase();
 
     return Container(
       width: 200, height: 200,
@@ -149,13 +159,13 @@ class _CoinFlipWidgetState extends State<CoinFlipWidget> with TickerProviderStat
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              isHe ? Icons.male : Icons.female,
+              icon,
               size: 70,
               color: faceColor.withValues(alpha: 0.7 + glow * 0.3),
             ),
             const SizedBox(height: 4),
             Text(
-              isHe ? widget.heName.toUpperCase() : widget.sheName.toUpperCase(),
+              name,
               style: TextStyle(
                 color: faceColor.withValues(alpha: 0.7 + glow * 0.3),
                 fontSize: 18,

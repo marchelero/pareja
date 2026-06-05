@@ -15,8 +15,8 @@ class ScoreBoard extends StatelessWidget {
     required this.player2Name,
     required this.player1Score,
     required this.player2Score,
-    this.player1Color = AppColors.playerHe,
-    this.player2Color = AppColors.playerShe,
+    this.player1Color = AppColors.defaultPlayer1Color,
+    this.player2Color = AppColors.defaultPlayer2Color,
   });
 
   @override

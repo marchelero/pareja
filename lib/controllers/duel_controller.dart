@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/audio_service.dart';
 import '../providers/settings_provider.dart';
@@ -22,10 +23,12 @@ class DuelController extends ChangeNotifier {
   bool _isLoading = true;
   int _currentRound = 0;
 
-  late String _heName;
-  late String _sheName;
-  int _heScore = 0;
-  int _sheScore = 0;
+  late String _player1Name;
+  late String _player2Name;
+  int _player1Score = 0;
+  int _player2Score = 0;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
 
   String? _lastWinner;
 
@@ -34,18 +37,22 @@ class DuelController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   int get currentRound => _currentRound;
   int get maxRoundsValue => maxRounds;
-  String get heName => _heName;
-  String get sheName => _sheName;
-  int get heScore => _heScore;
-  int get sheScore => _sheScore;
+  String get player1Name => _player1Name;
+  String get player2Name => _player2Name;
+  int get player1Score => _player1Score;
+  int get player2Score => _player2Score;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
   String? get lastWinner => _lastWinner;
   bool get isGameOver => _currentRound >= maxRounds || _availableTasks.isEmpty;
 
   void Function({required String winnerName, required String loserName})? onGameFinished;
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
 
     try {
       final String response = await rootBundle.loadString('assets/data/duel_questions.json');
@@ -89,16 +96,16 @@ class DuelController extends ChangeNotifier {
   void claimHe() {
     if (_currentTask == null) return;
     audioService.playClick();
-    _heScore++;
-    _lastWinner = _heName;
+    _player1Score++;
+    _lastWinner = _player1Name;
     _nextTurn();
   }
 
   void claimShe() {
     if (_currentTask == null) return;
     audioService.playClick();
-    _sheScore++;
-    _lastWinner = _sheName;
+    _player2Score++;
+    _lastWinner = _player2Name;
     _nextTurn();
   }
 
@@ -111,16 +118,16 @@ class DuelController extends ChangeNotifier {
 
   void _finishGame() {
     final String winnerName;
-    if (_heScore > _sheScore) {
-      winnerName = _heName;
-    } else if (_sheScore > _heScore) {
-      winnerName = _sheName;
+    if (_player1Score > _player2Score) {
+      winnerName = _player1Name;
+    } else if (_player2Score > _player1Score) {
+      winnerName = _player2Name;
     } else {
       winnerName = 'EMPATE';
     }
     onGameFinished?.call(
       winnerName: winnerName,
-      loserName: winnerName == _heName ? _sheName : _heName,
+      loserName: winnerName == _player1Name ? _player2Name : _player1Name,
     );
   }
 }

@@ -118,9 +118,9 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
 
   void _showWinnerDialog(String winnerName) {
     final c = widget.controller;
-    final Color winnerColor = winnerName == c.heName
-        ? AppColors.playerHe
-        : AppColors.playerShe;
+    final Color winnerColor = winnerName == c.player1Name
+        ? AppColors.defaultPlayer1Color
+        : AppColors.defaultPlayer2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -132,10 +132,14 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           gameColor: AppColors.modeCharades,
           winnerName: winnerName,
           winnerColor: winnerColor,
-          heName: c.heName,
-          sheName: c.sheName,
-          scoreHe: c.scoreHe,
-          scoreShe: c.scoreShe,
+          player1Name: c.player1Name,
+          player2Name: c.player2Name,
+          player1Icon: settingsProvider.player1Icon,
+          player2Icon: settingsProvider.player2Icon,
+          player1Color: c.player1Color,
+          player2Color: c.player2Color,
+          scoreP1: c.scoreHe,
+          scoreP2: c.scoreShe,
           maxScore: c.pointsToWin,
           isTie: false,
           onReplay: () {
@@ -190,8 +194,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
     }
 
     final Color activeColor = c.isHeTurn
-        ? AppColors.playerHe
-        : AppColors.playerShe;
+        ? AppColors.defaultPlayer1Color
+        : AppColors.defaultPlayer2Color;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -224,8 +228,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           Column(
             children: [
               ScoreBoard(
-                player1Name: c.heName,
-                player2Name: c.sheName,
+                player1Name: c.player1Name,
+                player2Name: c.player2Name,
                 player1Score: c.scoreHe,
                 player2Score: c.scoreShe,
               ),
@@ -233,9 +237,9 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildStrikes(c.strikesHe, AppColors.playerHe),
+                  _buildStrikes(c.strikesHe, AppColors.defaultPlayer1Color),
                   const SizedBox(width: 8),
-                  _buildStrikes(c.strikesShe, AppColors.playerShe),
+                  _buildStrikes(c.strikesShe, AppColors.defaultPlayer2Color),
                 ],
               ),
             ],
@@ -485,8 +489,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
 
   Widget _buildStrikeResult(CharadesController c) {
     final List<String> strikedPlayers = [];
-    if (c.strikesHe > 0) strikedPlayers.add('${c.heName}: ${"⚡" * c.strikesHe}');
-    if (c.strikesShe > 0) strikedPlayers.add('${c.sheName}: ${"⚡" * c.strikesShe}');
+    if (c.strikesHe > 0) strikedPlayers.add('${c.player1Name}: ${"⚡" * c.strikesHe}');
+    if (c.strikesShe > 0) strikedPlayers.add('${c.player2Name}: ${"⚡" * c.strikesShe}');
 
     if (strikedPlayers.isEmpty) {
       return const Text('Nadie recibi\u00f3 strike',

@@ -142,7 +142,12 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: PlayerNamesSection(),
+                        child: PlayerNamesSection(
+                          player1Icon: context.read<SettingsProvider>().player1Icon,
+                          player2Icon: context.read<SettingsProvider>().player2Icon,
+                          player1Color: context.read<SettingsProvider>().player1Color,
+                          player2Color: context.read<SettingsProvider>().player2Color,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       _buildSettingsCard(),

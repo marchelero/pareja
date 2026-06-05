@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/audio_service.dart';
 import '../providers/settings_provider.dart';
@@ -26,10 +27,12 @@ class RapidFireController extends ChangeNotifier {
   Map<String, dynamic>? _currentQuestion;
   RapidFireState _state = RapidFireState.idle;
 
-  String _heName = '';
-  String _sheName = '';
-  int _heScore = 0;
-  int _sheScore = 0;
+  String _player1Name = '';
+  String _player2Name = '';
+  int _player1Score = 0;
+  int _player2Score = 0;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
   int _questionIndex = 0;
 
   String? _buzzerPlayer;
@@ -41,10 +44,12 @@ class RapidFireController extends ChangeNotifier {
   String? _lastCorrectAnswer;
 
   bool get isHeTurn => _buzzerPlayer == 'he';
-  String get heName => _heName;
-  String get sheName => _sheName;
-  int get heScore => _heScore;
-  int get sheScore => _sheScore;
+  String get player1Name => _player1Name;
+  String get player2Name => _player2Name;
+  int get player1Score => _player1Score;
+  int get player2Score => _player2Score;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
   int get targetScoreValue => targetScore;
   int get questionIndex => _questionIndex;
   RapidFireState get state => _state;
@@ -79,10 +84,12 @@ class RapidFireController extends ChangeNotifier {
   }
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
-    _heScore = 0;
-    _sheScore = 0;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
+    _player1Score = 0;
+    _player2Score = 0;
     _questionIndex = 0;
     _state = RapidFireState.idle;
     _buzzerPlayer = null;
@@ -186,9 +193,9 @@ class RapidFireController extends ChangeNotifier {
 
   void _onTimeout() {
     if (_buzzerPlayer == 'he') {
-      _sheScore++;
+      _player2Score++;
     } else {
-      _heScore++;
+      _player1Score++;
     }
     _lastCorrectAnswer = _currentQuestion?['o'][correctAnswerIndex] as String? ?? '';
     _state = RapidFireState.showingResult;
@@ -204,15 +211,15 @@ class RapidFireController extends ChangeNotifier {
 
     if (index == correctAnswerIndex) {
       if (_buzzerPlayer == 'he') {
-        _heScore++;
+        _player1Score++;
       } else {
-        _sheScore++;
+        _player2Score++;
       }
     } else {
       if (_buzzerPlayer == 'he') {
-        _sheScore++;
+        _player2Score++;
       } else {
-        _heScore++;
+        _player1Score++;
       }
     }
 
@@ -223,7 +230,7 @@ class RapidFireController extends ChangeNotifier {
 
   void _startNextTimer() {
     Future.delayed(const Duration(seconds: 2), () {
-      if (_heScore >= targetScore || _sheScore >= targetScore) {
+      if (_player1Score >= targetScore || _player2Score >= targetScore) {
         _cancelInputTimer();
         _cancelBuzzTimer();
         _state = RapidFireState.finished;
@@ -241,16 +248,16 @@ class RapidFireController extends ChangeNotifier {
 
   void _finishGame() {
     final String winnerName;
-    if (_heScore > _sheScore) {
-      winnerName = _heName;
-    } else if (_sheScore > _heScore) {
-      winnerName = _sheName;
+    if (_player1Score > _player2Score) {
+      winnerName = _player1Name;
+    } else if (_player2Score > _player1Score) {
+      winnerName = _player2Name;
     } else {
       winnerName = 'EMPATE';
     }
     onGameFinished?.call(
       winnerName: winnerName,
-      loserName: winnerName == _heName ? _sheName : _heName,
+      loserName: winnerName == _player1Name ? _player2Name : _player1Name,
     );
   }
 

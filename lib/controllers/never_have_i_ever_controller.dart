@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/models/never_have_i_ever_question.dart';
 import '../services/audio_service.dart';
@@ -49,6 +50,8 @@ class NeverHaveIEverController extends ChangeNotifier {
   void Function(String winnerName)? onWinner;
 
   List<String> _penanceList = [];
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
 
   bool get isLoading => _isLoading;
   NeverHaveIEverQuestion? get currentQuestion => _currentQuestion;
@@ -64,12 +67,16 @@ class NeverHaveIEverController extends ChangeNotifier {
   bool get isRevealed => _isRevealed;
   int get roundNumber => _roundNumber;
   String? get penanceText => _penanceText;
-  String get heName => settingsProvider.heName;
-  String get sheName => settingsProvider.sheName;
+  String get player1Name => settingsProvider.player1Name;
+  String get player2Name => settingsProvider.player2Name;
   bool get disparity => _disparity;
   String? get strikePlayerName => _strikePlayerName;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
 
   Future<void> initGame() async {
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
     try {
       final String jsonStr = await rootBundle.loadString('assets/data/never_have_i_ever.json');
       final List<dynamic> data = json.decode(jsonStr);
@@ -142,11 +149,11 @@ class NeverHaveIEverController extends ChangeNotifier {
       // Quien dijo NUNCA (no lo ha hecho) suma punto por ganar la ronda
       if (_heSaidYo == true && _sheSaidYo == false) {
         _strikesHe++;
-        _strikePlayerName = heName;
+        _strikePlayerName = player1Name;
         _scoreShe++; // Ella gana la ronda
       } else {
         _strikesShe++;
-        _strikePlayerName = sheName;
+        _strikePlayerName = player2Name;
         _scoreHe++; // Él gana la ronda
       }
     }
@@ -170,7 +177,7 @@ class NeverHaveIEverController extends ChangeNotifier {
     if (_penanceList.isNotEmpty) {
       final random = Random();
       _penanceText = _penanceList[random.nextInt(_penanceList.length)];
-      _penanceText = _penanceText!.replaceAll('{PAREJA}', sheName);
+      _penanceText = _penanceText!.replaceAll('{PAREJA}', player2Name);
     } else {
       _penanceText = 'Penitencia: haz algo especial para tu pareja.';
     }
@@ -186,18 +193,18 @@ class NeverHaveIEverController extends ChangeNotifier {
 
   void nextRound() {
     if (_scoreHe >= pointsToWin) {
-      onWinner?.call(heName);
+      onWinner?.call(player1Name);
       return;
     }
     if (_scoreShe >= pointsToWin) {
-      onWinner?.call(sheName);
+      onWinner?.call(player2Name);
       return;
     }
 
     if (_roundNumber >= rounds) {
       final winnerName = _scoreHe > _scoreShe
-          ? heName
-          : (_scoreShe > _scoreHe ? sheName : 'EMPATE');
+          ? player1Name
+          : (_scoreShe > _scoreHe ? player2Name : 'EMPATE');
       onWinner?.call(winnerName);
       return;
     }

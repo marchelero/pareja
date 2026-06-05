@@ -16,8 +16,8 @@ class AppColors {
   static const Color surfaceDark = Color(0xFF1A1A2E);
   static const Color surfacePurple = Color(0xFF1A0A2E);
 
-  static const Color playerHe = Colors.blueAccent;
-  static const Color playerShe = Colors.pinkAccent;
+  static const Color defaultPlayer1Color = Colors.blueAccent;
+  static const Color defaultPlayer2Color = Colors.pinkAccent;
 
   static const Color modeQuestions = Color(0xFFFF9800);
   static const Color modeRoulette = Color(0xFF2196F3);

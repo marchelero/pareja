@@ -26,7 +26,7 @@ class RussianRouletteController extends ChangeNotifier {
   int _triggerPulls = 0;
   int _firingPinChamber = 0;  // chamber currently under the firing pin (arrow at top)
   final List<int> _checkedOrder = [];
-  bool _isHeTurn = true;
+  bool _isPlayer1Turn = true;
   int _scoreHe = 0;
   int _scoreShe = 0;
   late int _pointsToWin;
@@ -40,8 +40,10 @@ class RussianRouletteController extends ChangeNotifier {
   bool _isClickResult = false;
   bool _isBangResult = false;
 
-  late String _heName;
-  late String _sheName;
+  late String _player1Name;
+  late String _player2Name;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
   int _roundNumber = 0;
 
   // Getters
@@ -52,7 +54,7 @@ class RussianRouletteController extends ChangeNotifier {
   int get firingPinChamber => _firingPinChamber;
   List<int> get checkedOrder => _checkedOrder;
   Set<int> get bulletChambers => _bulletChambers;
-  bool get isHeTurn => _isHeTurn;
+  bool get isHeTurn => _isPlayer1Turn;
   int get scoreHe => _scoreHe;
   int get scoreShe => _scoreShe;
   int get pointsToWin => _pointsToWin;
@@ -63,18 +65,22 @@ class RussianRouletteController extends ChangeNotifier {
   bool get isClickResult => _isClickResult;
   bool get isBangResult => _isBangResult;
   bool get isWildMode => wildMode;
-  String get heName => _heName;
-  String get sheName => _sheName;
+  String get player1Name => _player1Name;
+  String get player2Name => _player2Name;
   int get roundNumber => _roundNumber;
-  String get activeName => _isHeTurn ? _heName : _sheName;
-  Color get activeColor => _isHeTurn ? const Color(0xFF448AFF) : const Color(0xFFFF4081);
+  String get activeName => _isPlayer1Turn ? _player1Name : _player2Name;
+  Color get activeColor => _isPlayer1Turn ? const Color(0xFF448AFF) : const Color(0xFFFF4081);
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
 
   void Function({required String loserName})? onRoundResult;
   void Function({required String winnerName, required Color winnerColor})? onWinner;
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
     _pointsToWin = (bestOf / 2).floor() + 1;
     _startNewRound();
     _isLoading = false;
@@ -117,7 +123,7 @@ class RussianRouletteController extends ChangeNotifier {
   void startRespin() {
     _isClickResult = false;
     _isPullingTrigger = false;
-    _isHeTurn = !_isHeTurn;
+    _isPlayer1Turn = !_isPlayer1Turn;
 
     final rng = Random();
     _bulletChambers = {};
@@ -153,14 +159,14 @@ class RussianRouletteController extends ChangeNotifier {
       _isPullingTrigger = false;
 
       // Award point to the other player
-      if (_isHeTurn) {
+      if (_isPlayer1Turn) {
         _scoreShe++;
       } else {
         _scoreHe++;
       }
 
-      final bool previousTurn = _isHeTurn;
-      if (wildMode) _isHeTurn = !_isHeTurn;
+      final bool previousTurn = _isPlayer1Turn;
+      if (wildMode) _isPlayer1Turn = !_isPlayer1Turn;
 
       notifyListeners();
       audioService.play(AppConstants.soundShot);
@@ -170,11 +176,11 @@ class RussianRouletteController extends ChangeNotifier {
         _isBangResult = false;
         notifyListeners();
 
-        final loserName = previousTurn ? _heName : _sheName;
+        final loserName = previousTurn ? _player1Name : _player2Name;
         final isGameOver = _scoreHe >= _pointsToWin || _scoreShe >= _pointsToWin;
 
         if (isGameOver) {
-          final winnerName = _scoreHe >= _pointsToWin ? _heName : _sheName;
+          final winnerName = _scoreHe >= _pointsToWin ? _player1Name : _player2Name;
           onWinner?.call(winnerName: winnerName, winnerColor: AppColors.modeRussianRoulette);
         } else {
           onRoundResult?.call(loserName: loserName);
@@ -195,7 +201,7 @@ class RussianRouletteController extends ChangeNotifier {
         Future.delayed(const Duration(milliseconds: 800), () {
           _isClickResult = false;
           _isPullingTrigger = false;
-          _isHeTurn = !_isHeTurn;
+          _isPlayer1Turn = !_isPlayer1Turn;
           _isPlaying = true;
           notifyListeners();
         });

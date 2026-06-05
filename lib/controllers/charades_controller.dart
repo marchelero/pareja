@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/models/charades_word.dart';
 import '../services/audio_service.dart';
@@ -39,19 +40,21 @@ class CharadesController extends ChangeNotifier {
   int _scoreShe = 0;
   int _strikesHe = 0;
   int _strikesShe = 0;
-  bool _isHeTurn = true;
+  bool _isPlayer1Turn = true;
   bool _turnReady = false;
   bool _roundDone = false;
   bool _wasGuessed = false;
   String? _penanceText;
   String? _winner;
   String? _matchPointPlayer;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
 
   void Function(String winnerName)? onGameWinner;
 
   bool get isLoading => _isLoading;
   CharadesWord? get currentWord => _currentWord;
-  bool get isHeTurn => _isHeTurn;
+  bool get isHeTurn => _isPlayer1Turn;
   bool get isPlaying => _isPlaying;
   int get timeLeft => _timeLeft;
   bool get turnReady => _turnReady;
@@ -61,14 +64,18 @@ class CharadesController extends ChangeNotifier {
   int get scoreShe => _scoreShe;
   int get strikesHe => _strikesHe;
   int get strikesShe => _strikesShe;
-  String get heName => settingsProvider.heName;
-  String get sheName => settingsProvider.sheName;
-  String get currentPlayerName => _isHeTurn ? heName : sheName;
-  String get partnerName => _isHeTurn ? sheName : heName;
+  String get player1Name => settingsProvider.player1Name;
+  String get player2Name => settingsProvider.player2Name;
+  String get currentPlayerName => _isPlayer1Turn ? player1Name : player2Name;
+  String get partnerName => _isPlayer1Turn ? player2Name : player1Name;
   String? get penanceText => _penanceText;
   String? get winner => _winner;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
 
   Future<void> initGame() async {
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
     try {
       final String jsonStr =
           await rootBundle.loadString('assets/data/charades_words.json');
@@ -150,7 +157,7 @@ class CharadesController extends ChangeNotifier {
     _wasGuessed = true;
     _roundDone = true;
 
-    if (_isHeTurn) {
+    if (_isPlayer1Turn) {
       _scoreHe++;
     } else {
       _scoreShe++;
@@ -159,8 +166,8 @@ class CharadesController extends ChangeNotifier {
     notifyListeners();
 
     if (_matchPointPlayer == null &&
-        ((_isHeTurn && _scoreHe >= pointsToWin) ||
-         (!_isHeTurn && _scoreShe >= pointsToWin))) {
+        ((_isPlayer1Turn && _scoreHe >= pointsToWin) ||
+         (!_isPlayer1Turn && _scoreShe >= pointsToWin))) {
       _matchPointPlayer = currentPlayerName;
     }
   }
@@ -193,9 +200,9 @@ class CharadesController extends ChangeNotifier {
 
   void _checkPenance() {
     if (_strikesHe >= strikesForPenance) {
-      _penanceText = 'Penitencia para $heName';
+      _penanceText = 'Penitencia para $player1Name';
     } else if (_strikesShe >= strikesForPenance) {
-      _penanceText = 'Penitencia para $sheName';
+      _penanceText = 'Penitencia para $player2Name';
     }
     if (_penanceText != null) {
       notifyListeners();
@@ -210,7 +217,7 @@ class CharadesController extends ChangeNotifier {
   }
 
   void nextRound() {
-    _isHeTurn = !_isHeTurn;
+    _isPlayer1Turn = !_isPlayer1Turn;
     _turnReady = false;
     _roundDone = false;
     _wasGuessed = false;
@@ -235,7 +242,7 @@ class CharadesController extends ChangeNotifier {
       return;
     }
 
-    _winner = _scoreHe > _scoreShe ? heName : sheName;
+    _winner = _scoreHe > _scoreShe ? player1Name : player2Name;
   }
 
   void cancelTimer() {

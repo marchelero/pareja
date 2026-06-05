@@ -14,8 +14,8 @@ class QuestionsStartScreen extends StatefulWidget {
 }
 
 class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
-  String _heName = 'ÉL';
-  String _sheName = 'ELLA';
+  String _player1Name = 'ÉL';
+  String _player2Name = 'ELLA';
   int _selectedRounds = 10;
   final List<int> _roundOptions = [10, 20, 30, 40, 50];
 
@@ -23,8 +23,8 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
   void initState() {
     super.initState();
     final settings = context.read<SettingsProvider>();
-    _heName = settings.heName;
-    _sheName = settings.sheName;
+    _player1Name = settings.player1Name;
+    _player2Name = settings.player2Name;
   }
 
   final List<Map<String, dynamic>> _categories = [
@@ -78,9 +78,13 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                       _buildSectionTitle('Jugadores', Icons.people),
                       const SizedBox(height: 15),
                       PlayerNamesSection(
-                        onChanged: (he, she) => setState(() {
-                          _heName = he;
-                          _sheName = she;
+                        player1Icon: context.read<SettingsProvider>().player1Icon,
+                        player2Icon: context.read<SettingsProvider>().player2Icon,
+                        player1Color: context.read<SettingsProvider>().player1Color,
+                        player2Color: context.read<SettingsProvider>().player2Color,
+                        onChanged: (p1, p2) => setState(() {
+                          _player1Name = p1;
+                          _player2Name = p2;
                         }),
                       ),
                       const SizedBox(height: 30),
@@ -270,15 +274,16 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
       child: InkWell(
         onTap: () async {
           final navigator = Navigator.of(context);
-          await context.read<SettingsProvider>().saveNames(_heName, _sheName);
+          await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
+          await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
           if (!mounted) return;
           navigator.push(
             MaterialPageRoute(
               builder: (context) => CoinFlipScreen(
                 maxRounds: _selectedRounds,
                 categories: _selectedCategories.toList(),
-                heName: _heName,
-                sheName: _sheName,
+                player1Name: _player1Name,
+                player2Name: _player2Name,
               ),
             ),
           );

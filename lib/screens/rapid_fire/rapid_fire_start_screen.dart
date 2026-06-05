@@ -20,8 +20,8 @@ class RapidFireStartScreen extends StatefulWidget {
 
 class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
   int _targetScore = 10;
-  String _heName = 'ÉL';
-  String _sheName = 'ELLA';
+  String _player1Name = 'ÉL';
+  String _player2Name = 'ELLA';
   Set<String> _allCategories = {};
   Set<String> _selectedCategories = {};
   bool _loading = true;
@@ -95,9 +95,13 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
             padding: const EdgeInsets.all(24),
             children: [
               PlayerNamesSection(
-                onChanged: (he, she) {
-                  _heName = he;
-                  _sheName = she;
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
+                onChanged: (p1, p2) {
+                  _player1Name = p1;
+                  _player2Name = p2;
                 },
               ),
               const SizedBox(height: 24),
@@ -220,8 +224,9 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
               if (_selectedCategories.isEmpty && _allCategories.isNotEmpty) return;
               final audioService = context.read<AudioService>();
               final settingsProvider = context.read<SettingsProvider>();
-              if (_heName.isNotEmpty && _sheName.isNotEmpty) {
-                await settingsProvider.saveNames(_heName, _sheName);
+              if (_player1Name.isNotEmpty && _player2Name.isNotEmpty) {
+                await settingsProvider.setPlayer1Name(_player1Name);
+                await settingsProvider.setPlayer2Name(_player2Name);
               }
               final controller = RapidFireController(
                 audioService: audioService,

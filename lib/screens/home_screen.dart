@@ -45,8 +45,9 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
-    final heName = settings.heName;
-    final sheName = settings.sheName;
+    final p1Name = settings.player1Name;
+    final p2Name = settings.player2Name;
+    final isFriends = settings.friendsMode;
 
     return Scaffold(
       body: NeonBackground(
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen>
                 controller: _entryController,
                 intervalStart: 0.0,
                 intervalEnd: 0.4,
-                child: _buildTitle(),
+                child: _buildTitle(isFriends),
               ),
               const SizedBox(height: 36),
               _AnimatedEntry(
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen>
                 controller: _entryController,
                 intervalStart: 0.2,
                 intervalEnd: 0.6,
-                child: _buildNameBadge(heName, sheName),
+                child: _buildNameBadge(p1Name, p2Name, isFriends),
               ),
               const Spacer(flex: 3),
               Padding(
@@ -185,14 +186,13 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(bool isFriends) {
     return AnimatedBuilder(
       animation: _glowController,
       builder: (context, _) {
         final double g = _glowController.value;
         return Column(
           children: [
-            // ── TWO PLAYERS (Montserrat Black) ──
             Text(
               'TWO\nPLAYERS',
               textAlign: TextAlign.center,
@@ -217,7 +217,6 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
             const SizedBox(height: 20),
-            // ── COUPLE GAMES (Montserrat Light) ──
             ShaderMask(
               shaderCallback: (bounds) => LinearGradient(
                 colors: [
@@ -227,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ).createShader(bounds),
               child: Text(
-                'COUPLE GAMES',
+                isFriends ? 'PARTY GAMES' : 'COUPLE GAMES',
                 style: GoogleFonts.montserrat(
                   fontSize: 14,
                   fontWeight: FontWeight.w300,
@@ -242,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildNameBadge(String heName, String sheName) {
+  Widget _buildNameBadge(String p1Name, String p2Name, bool isFriends) {
     return AnimatedBuilder(
       animation: _glowController,
       builder: (context, _) {
@@ -272,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                heName.toUpperCase(),
+                p1Name.toUpperCase(),
                 style: GoogleFonts.montserrat(
                   color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 14,
@@ -282,16 +281,18 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               const SizedBox(width: 12),
               Transform.scale(
-                scale: scale,
+                scale: isFriends ? 1.0 : scale,
                 child: Icon(
-                  Icons.favorite,
-                  color: AppColors.primaryNeon.withValues(alpha: 0.8),
+                  isFriends ? Icons.remove : Icons.favorite,
+                  color: isFriends
+                      ? Colors.white.withValues(alpha: 0.4)
+                      : AppColors.primaryNeon.withValues(alpha: 0.8),
                   size: 16,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
-                sheName.toUpperCase(),
+                p2Name.toUpperCase(),
                 style: GoogleFonts.montserrat(
                   color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 14,

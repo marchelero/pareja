@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/models/bomb_category.dart';
 import '../services/audio_service.dart';
@@ -41,12 +42,14 @@ class BombController extends ChangeNotifier {
   late int _timeLeft;
   Timer? _timer;
 
-  late String _heName;
-  late String _sheName;
+  late String _player1Name;
+  late String _player2Name;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
   int _scoreHe = 0;
   int _scoreShe = 0;
   late int _pointsToWin;
-  bool _isHeTurn = true;
+  bool _isPlayer1Turn = true;
 
   bool _isGoldenRound = false;
   bool _heHasWildcard = false;
@@ -58,18 +61,22 @@ class BombController extends ChangeNotifier {
   BombCategory? get currentCategory => _currentCategory;
   int get scoreHe => _scoreHe;
   int get scoreShe => _scoreShe;
-  bool get isHeTurn => _isHeTurn;
+  bool get isHeTurn => _isPlayer1Turn;
   bool get isGoldenRound => _isGoldenRound;
-  bool get activeHasWildcard => _isHeTurn ? _heHasWildcard : _sheHasWildcard;
-  String get activeName => _isHeTurn ? _heName : _sheName;
+  bool get activeHasWildcard => _isPlayer1Turn ? _heHasWildcard : _sheHasWildcard;
+  String get activeName => _isPlayer1Turn ? _player1Name : _player2Name;
   int get pointsToWin => _pointsToWin;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
 
   void Function({required String loserName, required int pointsEarned})? onRoundResult;
   void Function({required String winnerName, required Color winnerColor})? onWinner;
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
     _currentLimit = timerSeconds.toDouble();
     _timeLeft = _currentLimit.ceil();
     _pointsToWin = (bestOf / 2).floor() + 1;
@@ -113,7 +120,7 @@ class BombController extends ChangeNotifier {
   void _nextRound() {
     _nextCategory();
     _isPlaying = false;
-    _isHeTurn = Random().nextBool();
+    _isPlayer1Turn = Random().nextBool();
 
     if (optGold) {
       _isGoldenRound = Random().nextDouble() < 0.35;
@@ -150,16 +157,16 @@ class BombController extends ChangeNotifier {
       _currentLimit = max(1.5, _currentLimit - 0.5);
     }
     _timeLeft = _currentLimit.ceil();
-    _isHeTurn = !_isHeTurn;
+    _isPlayer1Turn = !_isPlayer1Turn;
     notifyListeners();
   }
 
   void useWildcard() {
     if (!_isPlaying) return;
 
-    if (_isHeTurn && _heHasWildcard) {
+    if (_isPlayer1Turn && _heHasWildcard) {
       _heHasWildcard = false;
-    } else if (!_isHeTurn && _sheHasWildcard) {
+    } else if (!_isPlayer1Turn && _sheHasWildcard) {
       _sheHasWildcard = false;
     } else {
       return;
@@ -174,7 +181,7 @@ class BombController extends ChangeNotifier {
     _timer?.cancel();
     audioService.playGameOver();
 
-    bool heLost = _isHeTurn;
+    bool heLost = _isPlayer1Turn;
     int pointsEarned = _isGoldenRound ? 2 : 1;
 
     if (heLost) {
@@ -188,11 +195,11 @@ class BombController extends ChangeNotifier {
     bool isGameOver = _scoreHe >= _pointsToWin || _scoreShe >= _pointsToWin;
 
     if (isGameOver) {
-      final winnerName = _scoreHe >= _pointsToWin ? _heName : _sheName;
+      final winnerName = _scoreHe >= _pointsToWin ? _player1Name : _player2Name;
       final winnerColor = _scoreHe >= _pointsToWin ? const Color(0xFF448AFF) : const Color(0xFFFF4081);
       onWinner?.call(winnerName: winnerName, winnerColor: winnerColor);
     } else {
-      final loserName = heLost ? _heName : _sheName;
+      final loserName = heLost ? _player1Name : _player2Name;
       onRoundResult?.call(loserName: loserName, pointsEarned: pointsEarned);
     }
   }

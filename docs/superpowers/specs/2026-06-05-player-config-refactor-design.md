@@ -110,7 +110,7 @@ Used in each game's start screen. Only name editing is available here.
 ## GameResultScreen
 
 - Player icons dynamically show ♂ or ♀ per gender
-- Player colors dynamically from settings (remove `AppColors.playerHe`/`playerShe`)
+- Player colors dynamically from settings (remove `AppColors.defaultPlayer1Color`/`defaultPlayer2Color`)
 - Player names from settings
 
 ## Controllers (All 10 Games)
@@ -203,5 +203,5 @@ Remove `playerHe`/`playerShe` constants. All color references are now dynamic pe
 6. Update all controllers (rename + add colors)
 7. Update all game screens (use dynamic colors)
 8. Update question/drink targeting logic
-9. Remove AppColors.playerHe/playerShe
+9. Remove AppColors.defaultPlayer1Color/defaultPlayer2Color
 10. Full hot restart + smoke test all 10 games

@@ -6,6 +6,8 @@ class AppConstants {
 
   static const String defaultHeName = 'ÉL';
   static const String defaultSheName = 'ELLA';
+  static const String defaultPlayer1Name = 'J1';
+  static const String defaultPlayer2Name = 'J2';
 
   static const String assetSounds = 'assets/sounds/';
   static const String assetImages = 'assets/images/';

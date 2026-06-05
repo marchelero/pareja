@@ -47,8 +47,8 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
 
   void _showWinnerDialog(String winnerName) {
     final c = widget.controller;
-    final isHe = winnerName == c.heName;
-    final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final isHe = winnerName == c.player1Name;
+    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -60,10 +60,14 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
           gameColor: AppColors.modeMostLikely,
           winnerName: winnerName,
           winnerColor: winnerColor,
-          heName: c.heName,
-          sheName: c.sheName,
-          scoreHe: c.scoreHe,
-          scoreShe: c.scoreShe,
+          player1Name: c.player1Name,
+          player2Name: c.player2Name,
+          player1Icon: settingsProvider.player1Icon,
+          player2Icon: settingsProvider.player2Icon,
+          player1Color: c.player1Color,
+          player2Color: c.player2Color,
+          scoreP1: c.scoreHe,
+          scoreP2: c.scoreShe,
           maxScore: c.pointsToWin,
           isTie: false,
           onReplay: () {
@@ -210,8 +214,8 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
     final bool isResultPhase = c.isRevealed;
 
     final Color phaseColor = isHePhase
-        ? AppColors.playerHe
-        : (isShePhase ? AppColors.playerShe : Colors.white);
+        ? AppColors.defaultPlayer1Color
+        : (isShePhase ? AppColors.defaultPlayer2Color : Colors.white);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -230,8 +234,8 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
                       onPressed: () => Navigator.pop(context),
                     ),
                     ScoreBoard(
-                      player1Name: c.heName,
-                      player2Name: c.sheName,
+                      player1Name: c.player1Name,
+                      player2Name: c.player2Name,
                       player1Score: c.scoreHe,
                       player2Score: c.scoreShe,
                     ),
@@ -250,9 +254,9 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildStrikeDisplay(c.heName, c.strikesHe, c.strikesForPenance, AppColors.playerHe),
+                  _buildStrikeDisplay(c.player1Name, c.strikesHe, c.strikesForPenance, AppColors.defaultPlayer1Color),
                   const SizedBox(width: 40),
-                  _buildStrikeDisplay(c.sheName, c.strikesShe, c.strikesForPenance, AppColors.playerShe),
+                  _buildStrikeDisplay(c.player2Name, c.strikesShe, c.strikesForPenance, AppColors.defaultPlayer2Color),
                 ],
               ),
 
@@ -268,9 +272,9 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
                 ),
                 child: Text(
                   isHePhase
-                      ? 'TURNO DE ${c.heName.toUpperCase()}'
+                      ? 'TURNO DE ${c.player1Name.toUpperCase()}'
                       : (isShePhase
-                          ? 'TURNO DE ${c.sheName.toUpperCase()}'
+                          ? 'TURNO DE ${c.player2Name.toUpperCase()}'
                           : (isRevealPhase ? 'LISTO PARA REVELAR' : 'RESULTADO')),
                   style: TextStyle(
                     color: phaseColor,
@@ -361,7 +365,7 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
 
   Widget _buildAnswerButtons({required String phase}) {
     final c = widget.controller;
-    final Color accentColor = phase == 'he' ? AppColors.playerHe : AppColors.playerShe;
+    final Color accentColor = phase == 'he' ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -445,7 +449,7 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
           ),
           const SizedBox(height: 5),
           Text(
-            '${c.heName} dijo ${c.heSaidYo == true ? "YO" : "NUNCA"} \u{b7} ${c.sheName} dijo ${c.sheSaidYo == true ? "YO" : "NUNCA"}',
+            '${c.player1Name} dijo ${c.heSaidYo == true ? "YO" : "NUNCA"} \u{b7} ${c.player2Name} dijo ${c.sheSaidYo == true ? "YO" : "NUNCA"}',
             textAlign: TextAlign.center,
             style: const TextStyle(color: Colors.white54, fontSize: 13),
           ),

@@ -14,16 +14,16 @@ class RouletteStartScreen extends StatefulWidget {
 }
 
 class _RouletteStartScreenState extends State<RouletteStartScreen> {
-  String _heName = 'ÉL';
-  String _sheName = 'ELLA';
+  String _player1Name = 'ÉL';
+  String _player2Name = 'ELLA';
   bool _isDareMode = false;
 
   @override
   void initState() {
     super.initState();
     final settings = context.read<SettingsProvider>();
-    _heName = settings.heName;
-    _sheName = settings.sheName;
+    _player1Name = settings.player1Name;
+    _player2Name = settings.player2Name;
   }
 
   @override
@@ -50,9 +50,13 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                       _buildSectionTitle('Jugadores', Icons.people),
                       const SizedBox(height: 15),
                       PlayerNamesSection(
-                        onChanged: (he, she) => setState(() {
-                          _heName = he;
-                          _sheName = she;
+                        player1Icon: context.read<SettingsProvider>().player1Icon,
+                        player2Icon: context.read<SettingsProvider>().player2Icon,
+                        player1Color: context.read<SettingsProvider>().player1Color,
+                        player2Color: context.read<SettingsProvider>().player2Color,
+                        onChanged: (p1, p2) => setState(() {
+                          _player1Name = p1;
+                          _player2Name = p2;
                         }),
                       ),
               const SizedBox(height: 30),
@@ -200,7 +204,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
     return _buildGlassCard(
       child: InkWell(
         onTap: () async {
-          await context.read<SettingsProvider>().saveNames(_heName, _sheName);
+          await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
+          await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
 
           if (!context.mounted) return;
 
@@ -210,8 +215,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               builder: (context) => CoinFlipScreen(
                 maxRounds: 0,
                 categories: const [],
-                heName: _heName,
-                sheName: _sheName,
+                player1Name: _player1Name,
+                player2Name: _player2Name,
                 isRoulette: true,
                 isDareMode: _isDareMode,
               ),

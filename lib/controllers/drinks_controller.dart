@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/models/drink_task.dart';
 import '../services/audio_service.dart';
@@ -34,8 +35,10 @@ class DrinksController extends ChangeNotifier {
   String? _activePlayerName;
   bool _isLoading = true;
 
-  late String _heName;
-  late String _sheName;
+  late String _player1Name;
+  late String _player2Name;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
   int _heSipsLeft = 0;
   int _sheSipsLeft = 0;
   int _currentLevel = 1;
@@ -46,8 +49,10 @@ class DrinksController extends ChangeNotifier {
   DrinkTask? get currentTask => _currentTask;
   String? get activePlayerName => _activePlayerName;
   bool get isLoading => _isLoading;
-  String get heName => _heName;
-  String get sheName => _sheName;
+  String get player1Name => _player1Name;
+  String get player2Name => _player2Name;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
   int get heSipsLeft => _heSipsLeft;
   int get sheSipsLeft => _sheSipsLeft;
   int get currentLevel => _currentLevel;
@@ -61,8 +66,10 @@ class DrinksController extends ChangeNotifier {
   void Function(String winnerName)? onGameFinished;
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
     _heSipsLeft = sipsPerGlass;
     _sheSipsLeft = sipsPerGlass;
     _currentLevel = initialLevel;
@@ -170,19 +177,19 @@ class DrinksController extends ChangeNotifier {
 
   void _assignActivePlayer(DrinkTask task) {
     if (task.target == DrinkTarget.he) {
-      _activePlayerName = _heName;
+      _activePlayerName = _player1Name;
     } else if (task.target == DrinkTarget.she) {
-      _activePlayerName = _sheName;
+      _activePlayerName = _player2Name;
     } else if (task.target == DrinkTarget.both) {
       _activePlayerName = null;
     }
     else {
       if (task.gender == DrinkGender.male) {
-        _activePlayerName = _heName;
+        _activePlayerName = _player1Name;
       } else if (task.gender == DrinkGender.female) {
-        _activePlayerName = _sheName;
+        _activePlayerName = _player2Name;
       } else {
-        _activePlayerName = Random().nextBool() ? _heName : _sheName;
+        _activePlayerName = Random().nextBool() ? _player1Name : _player2Name;
       }
     }
   }
@@ -228,12 +235,12 @@ class DrinksController extends ChangeNotifier {
     bool sheFinished = false;
 
     if (_heSipsLeft <= 0) {
-      emptyPlayer = _heName;
+      emptyPlayer = _player1Name;
       heFinished = true;
       _heGlassesDrunk++;
     }
     if (_sheSipsLeft <= 0) {
-      emptyPlayer ??= _sheName;
+      emptyPlayer ??= _player2Name;
       sheFinished = true;
       _sheGlassesDrunk++;
     }
@@ -241,7 +248,7 @@ class DrinksController extends ChangeNotifier {
     if (emptyPlayer == null) return;
 
     if (!freeMode && ((heFinished && _heGlassesDrunk >= totalGlasses) || (sheFinished && _sheGlassesDrunk >= totalGlasses))) {
-      final String winner = heFinished && _heGlassesDrunk >= totalGlasses ? _sheName : _heName;
+      final String winner = heFinished && _heGlassesDrunk >= totalGlasses ? _player2Name : _player1Name;
       onGameFinished?.call(winner);
     } else {
       onGameOver?.call(emptyPlayer);
@@ -249,7 +256,7 @@ class DrinksController extends ChangeNotifier {
   }
 
   void resetPlayerGlasses(String playerName) {
-    bool isHe = playerName == _heName;
+    bool isHe = playerName == _player1Name;
     if (isHe) {
       _heSipsLeft = sipsPerGlass;
     } else {

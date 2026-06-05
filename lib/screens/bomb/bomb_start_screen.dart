@@ -70,8 +70,13 @@ class _BombStartScreenState extends State<BombStartScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: PlayerNamesSection(
-                          onChanged: (he, she) {
-                            context.read<SettingsProvider>().saveNames(he, she);
+                          player1Icon: context.read<SettingsProvider>().player1Icon,
+                          player2Icon: context.read<SettingsProvider>().player2Icon,
+                          player1Color: context.read<SettingsProvider>().player1Color,
+                          player2Color: context.read<SettingsProvider>().player2Color,
+                          onChanged: (p1, p2) {
+                            context.read<SettingsProvider>().setPlayer1Name(p1);
+                            context.read<SettingsProvider>().setPlayer2Name(p2);
                           },
                         ),
                       ),

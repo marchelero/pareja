@@ -5,10 +5,10 @@ class RoundResultDialog extends StatelessWidget {
   final String loserName;
   final int pointsEarned;
   final bool isGoldenRound;
-  final String heName;
-  final String sheName;
-  final int scoreHe;
-  final int scoreShe;
+  final String player1Name;
+  final String player2Name;
+  final int scoreP1;
+  final int scoreP2;
   final VoidCallback onSiguienteRonda;
 
   const RoundResultDialog({
@@ -16,10 +16,10 @@ class RoundResultDialog extends StatelessWidget {
     required this.loserName,
     required this.pointsEarned,
     required this.isGoldenRound,
-    required this.heName,
-    required this.sheName,
-    required this.scoreHe,
-    required this.scoreShe,
+    required this.player1Name,
+    required this.player2Name,
+    required this.scoreP1,
+    required this.scoreP2,
     required this.onSiguienteRonda,
   });
 
@@ -61,10 +61,10 @@ class RoundResultDialog extends StatelessWidget {
                   const Text('MARCADOR', style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, letterSpacing: 2)),
                   const SizedBox(height: 15),
                   ScoreBoard(
-                    player1Name: heName,
-                    player2Name: sheName,
-                    player1Score: scoreHe,
-                    player2Score: scoreShe,
+                    player1Name: player1Name,
+                    player2Name: player2Name,
+                    player1Score: scoreP1,
+                    player2Score: scoreP2,
                   ),
                 ],
               ),

@@ -16,8 +16,8 @@ import 'questions_game_screen.dart';
 class CoinFlipScreen extends StatefulWidget {
   final int maxRounds;
   final List<String> categories;
-  final String heName;
-  final String sheName;
+  final String player1Name;
+  final String player2Name;
   final bool isRoulette;
   final bool isDareMode;
 
@@ -25,8 +25,8 @@ class CoinFlipScreen extends StatefulWidget {
     super.key,
     required this.maxRounds,
     required this.categories,
-    required this.heName,
-    required this.sheName,
+    required this.player1Name,
+    required this.player2Name,
     this.isRoulette = false,
     this.isDareMode = false,
   });
@@ -39,7 +39,7 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
   late AnimationController _controller;
   late Animation<double> _titleAnimation;
   late AnimationController _pulseController;
-  final bool _isHeWinner = Random().nextBool();
+  final bool _isPlayer1Winner = Random().nextBool();
   bool _showResult = false;
 
   @override
@@ -74,7 +74,7 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
             audioService: audioService,
             settingsProvider: settingsProvider,
             isDareMode: widget.isDareMode,
-            startingPlayerIsHe: _isHeWinner,
+            startingPlayerIsP1: _isPlayer1Winner,
           );
           await controller.initGame();
           if (!mounted) return;
@@ -93,7 +93,7 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
             settingsProvider: settingsProvider,
             maxRounds: widget.maxRounds,
             categories: widget.categories,
-            startingPlayerIsHe: _isHeWinner,
+            startingPlayerIsP1: _isPlayer1Winner,
           );
           await controller.initGame();
           if (!mounted) return;
@@ -162,10 +162,14 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
               ),
               const SizedBox(height: 50),
               CoinFlipWidget(
-                isHeWinner: _isHeWinner,
+                isPlayer1Winner: _isPlayer1Winner,
                 controller: _controller,
-                heName: widget.heName,
-                sheName: widget.sheName,
+                player1Name: widget.player1Name,
+                player2Name: widget.player2Name,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
               ),
               const SizedBox(height: 50),
               if (_showResult)
@@ -174,11 +178,11 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
                   duration: const Duration(milliseconds: 600),
                   curve: Curves.elasticOut,
                   builder: (context, value, child) {
-                    final isHe = _isHeWinner;
+                    final isHe = _isPlayer1Winner;
                     final Color winnerColor = isHe ? Colors.blueAccent : Colors.pinkAccent;
                     final playerName = isHe
-                        ? (widget.heName.isEmpty ? 'ÉL' : widget.heName)
-                        : (widget.sheName.isEmpty ? 'ELLA' : widget.sheName);
+                        ? (widget.player1Name.isEmpty ? 'ÉL' : widget.player1Name)
+                        : (widget.player2Name.isEmpty ? 'ELLA' : widget.player2Name);
 
                     return Opacity(
                       opacity: value.clamp(0.0, 1.0),

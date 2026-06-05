@@ -29,11 +29,11 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
     super.initState();
     widget.controller.addListener(_onControllerChange);
 
-    widget.controller.onGameFinished = (Player playerHe, Player playerShe) {
+    widget.controller.onGameFinished = (Player player1, Player player2) {
       final c = widget.controller;
-      final isTie = playerHe.score == playerShe.score;
-      final winner = playerHe.score > playerShe.score ? playerHe : playerShe;
-      final winnerColor = winner.name == playerHe.name ? AppColors.playerHe : AppColors.playerShe;
+      final isTie = player1.score == player2.score;
+      final winner = player1.score > player2.score ? player1 : player2;
+      final winnerColor = winner.name == player1.name ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
       final audioService = context.read<AudioService>();
       final settingsProvider = context.read<SettingsProvider>();
 
@@ -45,14 +45,18 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
             gameColor: AppColors.modeQuestions,
             winnerName: winner.name,
             winnerColor: winnerColor,
-            heName: playerHe.name,
-            sheName: playerShe.name,
-            scoreHe: playerHe.score,
-            scoreShe: playerShe.score,
+            player1Name: player1.name,
+            player2Name: player2.name,
+            player1Icon: settingsProvider.player1Icon,
+            player2Icon: settingsProvider.player2Icon,
+            player1Color: settingsProvider.player1Color,
+            player2Color: settingsProvider.player2Color,
+            scoreP1: player1.score,
+            scoreP2: player2.score,
             maxScore: c.maxRounds,
             isTie: isTie,
-            heStatsSection: _QuestionsPlayerStats(player: playerHe),
-            sheStatsSection: _QuestionsPlayerStats(player: playerShe),
+            p1StatsSection: _QuestionsPlayerStats(player: player1),
+            p2StatsSection: _QuestionsPlayerStats(player: player2),
             onReplay: () {
               final newController = QuestionsController(
                 repository: c.repository,
@@ -60,7 +64,7 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
                 settingsProvider: settingsProvider,
                 maxRounds: c.maxRounds,
                 categories: c.categories,
-                startingPlayerIsHe: true,
+                startingPlayerIsP1: true,
               );
               newController.initGame().then((_) {
                 if (!context.mounted) return;
@@ -193,7 +197,7 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
     final c = widget.controller;
     if (c.isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
-    final otherPlayer = (c.currentPlayer == c.playerHe) ? c.playerShe : c.playerHe;
+    final otherPlayer = (c.currentPlayer == c.player1) ? c.player2 : c.player1;
 
     return Scaffold(
       body: NeonBackground(

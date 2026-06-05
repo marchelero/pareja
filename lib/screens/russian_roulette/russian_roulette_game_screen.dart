@@ -221,7 +221,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(c.heName.toUpperCase(),
+                          Text(c.player1Name.toUpperCase(),
                             style: TextStyle(
                               color: const Color(0xFF448AFF),
                               fontSize: 13,
@@ -253,7 +253,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(c.sheName.toUpperCase(),
+                          Text(c.player2Name.toUpperCase(),
                             style: TextStyle(
                               color: const Color(0xFFFF4081),
                               fontSize: 13,
@@ -318,10 +318,14 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
           gameColor: AppColors.modeRussianRoulette,
           winnerName: winnerName,
           winnerColor: winnerColor,
-          heName: c.settingsProvider.heName,
-          sheName: c.settingsProvider.sheName,
-          scoreHe: c.scoreHe,
-          scoreShe: c.scoreShe,
+          player1Name: c.settingsProvider.player1Name,
+          player2Name: c.settingsProvider.player2Name,
+          player1Icon: settingsProvider.player1Icon,
+          player2Icon: settingsProvider.player2Icon,
+          player1Color: c.player1Color,
+          player2Color: c.player2Color,
+          scoreP1: c.scoreHe,
+          scoreP2: c.scoreShe,
           maxScore: c.pointsToWin,
           isTie: false,
           onReplay: () {
@@ -414,7 +418,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(c.heName.toUpperCase(),
+                            Text(c.player1Name.toUpperCase(),
                               style: TextStyle(
                                 color: const Color(0xFF448AFF),
                                 fontSize: 11,
@@ -446,7 +450,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(c.sheName.toUpperCase(),
+                            Text(c.player2Name.toUpperCase(),
                               style: TextStyle(
                                 color: const Color(0xFFFF4081),
                                 fontSize: 11,

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../services/audio_service.dart';
 import '../providers/settings_provider.dart';
 
@@ -15,15 +16,17 @@ class MemoryController extends ChangeNotifier {
     this.maxRounds = 5,
   });
 
-  String _heName = '';
-  String _sheName = '';
-  int _heScore = 0;
-  int _sheScore = 0;
+  String _player1Name = '';
+  String _player2Name = '';
+  int _player1Score = 0;
+  int _player2Score = 0;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
 
   bool _isShowingSequence = false;
   bool _isPlayerTurn = false;
   bool _isTransitioning = false;
-  bool _isHeTurn = true;
+  bool _isPlayer1Turn = true;
   int _currentRound = 0;
   int _currentLevel = 1;
   int _inputIndex = 0;
@@ -46,14 +49,16 @@ class MemoryController extends ChangeNotifier {
     audioService.play(_tileSounds[index]);
   }
 
-  String get heName => _heName;
-  String get sheName => _sheName;
-  int get heScore => _heScore;
-  int get sheScore => _sheScore;
+  String get player1Name => _player1Name;
+  String get player2Name => _player2Name;
+  int get player1Score => _player1Score;
+  int get player2Score => _player2Score;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
   bool get isShowingSequence => _isShowingSequence;
   bool get isPlayerTurn => _isPlayerTurn;
   bool get isTransitioning => _isTransitioning;
-  bool get isHeTurn => _isHeTurn;
+  bool get isHeTurn => _isPlayer1Turn;
   int get currentRound => _currentRound;
   int get currentLevel => _currentLevel;
   int get maxRoundsValue => maxRounds;
@@ -61,22 +66,24 @@ class MemoryController extends ChangeNotifier {
   int get inputIndex => _inputIndex;
   int? get highlightedButton => _highlightedButton;
   double get timeLeft => _timeLeft;
-  String get activeName => _isHeTurn ? _heName : _sheName;
+  String get activeName => _isPlayer1Turn ? _player1Name : _player2Name;
   bool get isGameOver => _currentRound >= maxRounds;
 
   void Function({required String winnerName, required String loserName})? onGameFinished;
   void Function({required String loserName})? onRoundLost;
 
   void setStartingPlayer(bool isHe) {
-    _isHeTurn = isHe;
+    _isPlayer1Turn = isHe;
   }
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
     _currentRound = 0;
-    _heScore = 0;
-    _sheScore = 0;
+    _player1Score = 0;
+    _player2Score = 0;
     notifyListeners();
   }
 
@@ -173,7 +180,7 @@ class MemoryController extends ChangeNotifier {
     _isPlayerTurn = false;
     _cancelInputTimer();
     _currentLevel++;
-    _isHeTurn = !_isHeTurn;
+    _isPlayer1Turn = !_isPlayer1Turn;
     notifyListeners();
 
     Future.delayed(const Duration(milliseconds: 400), () {
@@ -200,12 +207,12 @@ class MemoryController extends ChangeNotifier {
   void _onMistake() {
     _isPlayerTurn = false;
     _cancelInputTimer();
-    final loser = _isHeTurn ? _heName : _sheName;
+    final loser = _isPlayer1Turn ? _player1Name : _player2Name;
 
-    if (_isHeTurn) {
-      _sheScore++;
+    if (_isPlayer1Turn) {
+      _player2Score++;
     } else {
-      _heScore++;
+      _player1Score++;
     }
 
     notifyListeners();
@@ -219,22 +226,22 @@ class MemoryController extends ChangeNotifier {
   }
 
   void startNextRound() {
-    _isHeTurn = !_isHeTurn;
+    _isPlayer1Turn = !_isPlayer1Turn;
     startRound();
   }
 
   void _finishGame() {
     final String winnerName;
-    if (_heScore > _sheScore) {
-      winnerName = _heName;
-    } else if (_sheScore > _heScore) {
-      winnerName = _sheName;
+    if (_player1Score > _player2Score) {
+      winnerName = _player1Name;
+    } else if (_player2Score > _player1Score) {
+      winnerName = _player2Name;
     } else {
       winnerName = 'EMPATE';
     }
     onGameFinished?.call(
       winnerName: winnerName,
-      loserName: winnerName == _heName ? _sheName : _heName,
+      loserName: winnerName == _player1Name ? _player2Name : _player1Name,
     );
   }
 

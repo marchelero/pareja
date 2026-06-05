@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/audio_service.dart';
 import '../services/haptics_service.dart';
@@ -11,21 +12,23 @@ class RouletteController extends ChangeNotifier {
   final AudioService audioService;
   final SettingsProvider settingsProvider;
   final bool isDareMode;
-  final bool startingPlayerIsHe;
+  final bool startingPlayerIsP1;
 
   RouletteController({
     required this.audioService,
     required this.settingsProvider,
     required this.isDareMode,
-    required this.startingPlayerIsHe,
+    required this.startingPlayerIsP1,
   });
 
   List<String> _options = [];
   bool _isLoading = true;
-  late String _heName;
-  late String _sheName;
+  late String _player1Name;
+  late String _player2Name;
+  Color _player1Color = Colors.blueAccent;
+  Color _player2Color = Colors.pinkAccent;
   late String _currentPlayerName;
-  late bool _isHeTurn;
+  late bool _isPlayer1Turn;
   int _spinCount = 0;
 
   double _currentRotation = 0;
@@ -38,21 +41,25 @@ class RouletteController extends ChangeNotifier {
   List<String> get options => _options;
   bool get isLoading => _isLoading;
   String get currentPlayerName => _currentPlayerName;
-  bool get isHeTurn => _isHeTurn;
+  bool get isHeTurn => _isPlayer1Turn;
   int get spinCount => _spinCount;
   String? get result => _result;
   int get selectedIndex => _selectedIndex;
   bool get isSpinning => _isSpinning;
   double get currentRotation => _currentRotation;
   int get maxSpinsForHot => AppConstants.rouletteMaxSpinsForHot;
+  Color get player1Color => _player1Color;
+  Color get player2Color => _player2Color;
 
   void Function()? onSpinComplete;
 
   Future<void> initGame() async {
-    _heName = settingsProvider.heName;
-    _sheName = settingsProvider.sheName;
-    _isHeTurn = startingPlayerIsHe;
-    _currentPlayerName = _isHeTurn ? _heName : _sheName;
+    _player1Name = settingsProvider.player1Name;
+    _player2Name = settingsProvider.player2Name;
+    _player1Color = settingsProvider.player1Color;
+    _player2Color = settingsProvider.player2Color;
+    _isPlayer1Turn = startingPlayerIsP1;
+    _currentPlayerName = _isPlayer1Turn ? _player1Name : _player2Name;
     _spinCount = settingsProvider.rouletteSpinCount;
 
     final String fileName = isDareMode ? 'roulette_dare.json' : 'roulette_normal.json';
@@ -130,13 +137,13 @@ class RouletteController extends ChangeNotifier {
   }
 
   String formatResultText(String text) {
-    final String targetName = _isHeTurn ? _sheName : _heName;
+    final String targetName = _isPlayer1Turn ? _player2Name : _player1Name;
     return text.replaceAll('{PAREJA}', targetName);
   }
 
   void _nextTurn() {
-    _isHeTurn = !_isHeTurn;
-    _currentPlayerName = _isHeTurn ? _heName : _sheName;
+    _isPlayer1Turn = !_isPlayer1Turn;
+    _currentPlayerName = _isPlayer1Turn ? _player1Name : _player2Name;
     _result = null;
     _selectedIndex = -1;
     notifyListeners();

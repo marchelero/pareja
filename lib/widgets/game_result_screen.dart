@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../core/theme/app_colors.dart';
 import '../services/audio_service.dart';
 import 'neon_background.dart';
 
@@ -10,14 +9,18 @@ class GameResultScreen extends StatefulWidget {
   final Color gameColor;
   final String winnerName;
   final Color winnerColor;
-  final String heName;
-  final String sheName;
-  final int scoreHe;
-  final int scoreShe;
+  final String player1Name;
+  final String player2Name;
+  final IconData player1Icon;
+  final IconData player2Icon;
+  final Color player1Color;
+  final Color player2Color;
+  final int scoreP1;
+  final int scoreP2;
   final bool isTie;
   final int? maxScore;
-  final Widget? heStatsSection;
-  final Widget? sheStatsSection;
+  final Widget? p1StatsSection;
+  final Widget? p2StatsSection;
   final VoidCallback onReplay;
   final VoidCallback onGameMenu;
   final VoidCallback onMainMenu;
@@ -28,14 +31,18 @@ class GameResultScreen extends StatefulWidget {
     required this.gameColor,
     required this.winnerName,
     required this.winnerColor,
-    required this.heName,
-    required this.sheName,
-    required this.scoreHe,
-    required this.scoreShe,
+    required this.player1Name,
+    required this.player2Name,
+    required this.player1Icon,
+    required this.player2Icon,
+    required this.player1Color,
+    required this.player2Color,
+    required this.scoreP1,
+    required this.scoreP2,
     this.isTie = false,
     this.maxScore,
-    this.heStatsSection,
-    this.sheStatsSection,
+    this.p1StatsSection,
+    this.p2StatsSection,
     required this.onReplay,
     required this.onGameMenu,
     required this.onMainMenu,
@@ -283,21 +290,21 @@ class _GameResultScreenState extends State<GameResultScreen>
           ),
           const SizedBox(height: 20),
           _PlayerResultCard(
-            icon: Icons.male,
-            name: widget.heName,
-            score: widget.scoreHe,
-            color: AppColors.playerHe,
+            icon: widget.player1Icon,
+            name: widget.player1Name,
+            score: widget.scoreP1,
+            color: widget.player1Color,
             maxScore: showBars ? widget.maxScore : null,
-            statsSection: widget.heStatsSection,
+            statsSection: widget.p1StatsSection,
           ),
           const SizedBox(height: 16),
           _PlayerResultCard(
-            icon: Icons.female,
-            name: widget.sheName,
-            score: widget.scoreShe,
-            color: AppColors.playerShe,
+            icon: widget.player2Icon,
+            name: widget.player2Name,
+            score: widget.scoreP2,
+            color: widget.player2Color,
             maxScore: showBars ? widget.maxScore : null,
-            statsSection: widget.sheStatsSection,
+            statsSection: widget.p2StatsSection,
           ),
         ],
       ),

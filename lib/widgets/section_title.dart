@@ -20,7 +20,7 @@ class SectionTitle extends StatelessWidget {
     return Row(
       children: [
         if (icon != null) ...[
-          Icon(icon, color: color ?? AppColors.playerShe, size: 24),
+          Icon(icon, color: color ?? AppColors.defaultPlayer2Color, size: 24),
           const SizedBox(width: 10),
         ],
         Text(

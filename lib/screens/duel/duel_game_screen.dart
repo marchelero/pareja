@@ -44,8 +44,8 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
 
   void _showResultScreen(String winnerName, String loserName) {
     final c = widget.controller;
-    final bool isHe = winnerName == c.heName;
-    final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final bool isHe = winnerName == c.player1Name;
+    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -57,10 +57,14 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
           gameColor: AppColors.modeMostLikely,
           winnerName: winnerName,
           winnerColor: winnerColor,
-          heName: c.heName,
-          sheName: c.sheName,
-          scoreHe: c.heScore,
-          scoreShe: c.sheScore,
+          player1Name: c.player1Name,
+          player2Name: c.player2Name,
+          player1Icon: settingsProvider.player1Icon,
+          player2Icon: settingsProvider.player2Icon,
+          player1Color: c.player1Color,
+          player2Color: c.player2Color,
+          scoreP1: c.player1Score,
+          scoreP2: c.player2Score,
           maxScore: c.maxRoundsValue,
           isTie: winnerName == 'EMPATE',
           onReplay: () {
@@ -137,11 +141,11 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
           ),
           Row(
             children: [
-              _buildScoreChip(c.heName, c.heScore, Colors.blueAccent),
+              _buildScoreChip(c.player1Name, c.player1Score, Colors.blueAccent),
               const SizedBox(width: 8),
               const Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 14)),
               const SizedBox(width: 8),
-              _buildScoreChip(c.sheName, c.sheScore, Colors.pinkAccent),
+              _buildScoreChip(c.player2Name, c.player2Score, Colors.pinkAccent),
             ],
           ),
           const SizedBox(width: 48),
@@ -253,7 +257,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
             children: [
               Expanded(
                 child: _buildClaimButton(
-                  '${c.heName} lo hizo',
+                  '${c.player1Name} lo hizo',
                   Icons.male,
                   Colors.blueAccent,
                   c.claimHe,
@@ -262,7 +266,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildClaimButton(
-                  '${c.sheName} lo hizo',
+                  '${c.player2Name} lo hizo',
                   Icons.female,
                   Colors.pinkAccent,
                   c.claimShe,

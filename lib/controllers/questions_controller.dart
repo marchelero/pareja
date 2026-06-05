@@ -13,7 +13,7 @@ class QuestionsController extends ChangeNotifier {
   final SettingsProvider settingsProvider;
   final int maxRounds;
   final List<String> categories;
-  final bool startingPlayerIsHe;
+  final bool startingPlayerIsP1;
 
   QuestionsController({
     required this.repository,
@@ -21,14 +21,14 @@ class QuestionsController extends ChangeNotifier {
     required this.settingsProvider,
     required this.maxRounds,
     required this.categories,
-    required this.startingPlayerIsHe,
+    required this.startingPlayerIsP1,
   });
 
   final QuestionsRepository repository;
   List<Question> _allQuestions = [];
   List<Question> _availableQuestions = [];
-  late Player _playerHe;
-  late Player _playerShe;
+  late Player _player1;
+  late Player _player2;
   Player? _currentPlayer;
   Question? _currentQuestion;
   Color _backgroundColor = const Color(0xFF2196F3);
@@ -37,8 +37,8 @@ class QuestionsController extends ChangeNotifier {
   bool _isSuddenDeath = false;
   int _suddenDeathRound = 0;
 
-  Player get playerHe => _playerHe;
-  Player get playerShe => _playerShe;
+  Player get player1 => _player1;
+  Player get player2 => _player2;
   Player? get currentPlayer => _currentPlayer;
   Question? get currentQuestion => _currentQuestion;
   Color get backgroundColor => _backgroundColor;
@@ -62,11 +62,11 @@ class QuestionsController extends ChangeNotifier {
     'Flirteo': Color(0xFFD50000),
   };
 
-  void Function(Player playerHe, Player playerShe)? onGameFinished;
+  void Function(Player player1, Player player2)? onGameFinished;
 
   Future<void> initGame() async {
-    _playerHe = Player(name: settingsProvider.heName);
-    _playerShe = Player(name: settingsProvider.sheName);
+    _player1 = Player(name: settingsProvider.player1Name);
+    _player2 = Player(name: settingsProvider.player2Name);
 
     _allQuestions = await repository.loadQuestions();
 
@@ -78,7 +78,7 @@ class QuestionsController extends ChangeNotifier {
       _availableQuestions = List.from(_allQuestions);
     }
 
-    _currentPlayer = startingPlayerIsHe ? _playerHe : _playerShe;
+    _currentPlayer = startingPlayerIsP1 ? _player1 : _player2;
 
     _nextTurn();
 
@@ -95,11 +95,11 @@ class QuestionsController extends ChangeNotifier {
       _suddenDeathRound++;
 
       _currentPlayer = (_suddenDeathRound == 1)
-          ? (startingPlayerIsHe ? _playerHe : _playerShe)
-          : (startingPlayerIsHe ? _playerShe : _playerHe);
+          ? (startingPlayerIsP1 ? _player1 : _player2)
+          : (startingPlayerIsP1 ? _player2 : _player1);
 
       List<Question> validQuestions = _allQuestions.where((q) {
-        bool matchesPlayer = (_currentPlayer == _playerHe)
+        bool matchesPlayer = (_currentPlayer == _player1)
             ? (q.target == Target.male || q.target == Target.any)
             : (q.target == Target.female || q.target == Target.any);
         return matchesPlayer && q.isSuddenDeath;
@@ -107,7 +107,7 @@ class QuestionsController extends ChangeNotifier {
 
       if (validQuestions.isEmpty) {
         validQuestions = _allQuestions.where((q) {
-          if (_currentPlayer == _playerHe) {
+          if (_currentPlayer == _player1) {
             return q.target == Target.male || q.target == Target.any;
           } else {
             return q.target == Target.female || q.target == Target.any;
@@ -116,7 +116,7 @@ class QuestionsController extends ChangeNotifier {
       }
 
       _currentQuestion = validQuestions[Random().nextInt(validQuestions.length)];
-      _backgroundColor = _currentPlayer == _playerHe ? AppColors.playerHe : AppColors.playerShe;
+      _backgroundColor = _currentPlayer == _player1 ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
       notifyListeners();
       return;
     }
@@ -129,11 +129,11 @@ class QuestionsController extends ChangeNotifier {
     _currentRound++;
 
     if (_currentRound > 1) {
-      _currentPlayer = (_currentPlayer == _playerHe) ? _playerShe : _playerHe;
+      _currentPlayer = (_currentPlayer == _player1) ? _player2 : _player1;
     }
 
     List<Question> validQuestions = _availableQuestions.where((q) {
-      if (_currentPlayer == _playerHe) {
+      if (_currentPlayer == _player1) {
         return q.target == Target.male || q.target == Target.any;
       } else {
         return q.target == Target.female || q.target == Target.any;
@@ -147,14 +147,14 @@ class QuestionsController extends ChangeNotifier {
 
     _currentQuestion = validQuestions[Random().nextInt(validQuestions.length)];
     _availableQuestions.remove(_currentQuestion);
-    _backgroundColor = _currentPlayer == _playerHe ? AppColors.playerHe : AppColors.playerShe;
+    _backgroundColor = _currentPlayer == _player1 ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
     notifyListeners();
   }
 
   String formatQuestionText(String text) {
     return text
-        .replaceAll('ELLA', _playerShe.name)
-        .replaceAll('ÉL', _playerHe.name);
+        .replaceAll('ELLA', _player2.name)
+        .replaceAll('ÉL', _player1.name);
   }
 
   void addPoints(int points) {
@@ -189,7 +189,7 @@ class QuestionsController extends ChangeNotifier {
   }
 
   void _finishGame() {
-    onGameFinished?.call(_playerHe, _playerShe);
+    onGameFinished?.call(_player1, _player2);
   }
 
 }

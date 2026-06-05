@@ -55,8 +55,8 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
 
   void _showResult(String winnerName, String loserName) {
     final c = widget.controller;
-    final bool isHe = winnerName == c.heName;
-    final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final bool isHe = winnerName == c.player1Name;
+    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -66,8 +66,12 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
         gameColor: AppColors.modeRapidFire,
         winnerName: winnerName,
         winnerColor: winnerColor,
-        heName: c.heName, sheName: c.sheName,
-        scoreHe: c.heScore, scoreShe: c.sheScore,
+        player1Name: c.player1Name, player2Name: c.player2Name,
+        player1Icon: settingsProvider.player1Icon,
+        player2Icon: settingsProvider.player2Icon,
+        player1Color: c.player1Color,
+        player2Color: c.player2Color,
+        scoreP1: c.player1Score, scoreP2: c.player2Score,
         maxScore: c.targetScoreValue,
         isTie: winnerName == 'EMPATE',
         onReplay: () {
@@ -124,15 +128,15 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.4)),
             ),
-            child: Text(c.heName.toUpperCase(), style: const TextStyle(color: Colors.blueAccent, fontSize: 11, fontWeight: FontWeight.w900)),
+            child: Text(c.player1Name.toUpperCase(), style: const TextStyle(color: Colors.blueAccent, fontSize: 11, fontWeight: FontWeight.w900)),
           ),
           const SizedBox(width: 6),
-          Text('${c.heScore}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
+          Text('${c.player1Score}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Text('-', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 16)),
           ),
-          Text('${c.sheScore}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
+          Text('${c.player2Score}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
           const SizedBox(width: 6),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -141,7 +145,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.pinkAccent.withValues(alpha: 0.4)),
             ),
-            child: Text(c.sheName.toUpperCase(), style: const TextStyle(color: Colors.pinkAccent, fontSize: 11, fontWeight: FontWeight.w900)),
+            child: Text(c.player2Name.toUpperCase(), style: const TextStyle(color: Colors.pinkAccent, fontSize: 11, fontWeight: FontWeight.w900)),
           ),
         ],
       ),
@@ -273,7 +277,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
   }
 
   Widget _buildSide(RapidFireController c, {required bool isHe}) {
-    final name = isHe ? c.heName : c.sheName;
+    final name = isHe ? c.player1Name : c.player2Name;
     final Color color = isHe ? Colors.blueAccent : Colors.pinkAccent;
 
     if (c.state == RapidFireState.showingResult) {
@@ -475,11 +479,11 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
     );
   }
 
-  String _buzzerName(RapidFireController c) => c.buzzerPlayer == 'he' ? c.heName : c.sheName;
-  String _otherPlayerName(RapidFireController c) => c.buzzerPlayer == 'he' ? c.sheName : c.heName;
+  String _buzzerName(RapidFireController c) => c.buzzerPlayer == 'he' ? c.player1Name : c.player2Name;
+  String _otherPlayerName(RapidFireController c) => c.buzzerPlayer == 'he' ? c.player2Name : c.player1Name;
 
   Widget _buildProgress(RapidFireController c) {
-    final total = c.heScore + c.sheScore;
+    final total = c.player1Score + c.player2Score;
     final maxPossible = c.targetScoreValue * 2;
     final progress = maxPossible > 0 ? total / maxPossible : 0.0;
 

@@ -51,7 +51,7 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
 
   void _showContinueDialog(String playerName) {
     final c = widget.controller;
-    final bool isHe = playerName == c.heName;
+    final bool isHe = playerName == c.player1Name;
 
     showGeneralDialog(
       context: context,
@@ -110,7 +110,7 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '${c.heName}: ${c.heGlassesDrunk} vaso${c.heGlassesDrunk == 1 ? '' : 's'}  •  ${c.sheName}: ${c.sheGlassesDrunk} vaso${c.sheGlassesDrunk == 1 ? '' : 's'}',
+                  '${c.player1Name}: ${c.heGlassesDrunk} vaso${c.heGlassesDrunk == 1 ? '' : 's'}  •  ${c.player2Name}: ${c.sheGlassesDrunk} vaso${c.sheGlassesDrunk == 1 ? '' : 's'}',
                   style: const TextStyle(color: Colors.white70, fontSize: 16),
                 ),
                 const SizedBox(height: 40),
@@ -141,8 +141,8 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
 
   void _showResultScreen(String winnerName) {
     final c = widget.controller;
-    final bool isHe = winnerName == c.heName;
-    final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final bool isHe = winnerName == c.player1Name;
+    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -154,10 +154,14 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
           gameColor: AppColors.modeDrinks,
           winnerName: winnerName,
           winnerColor: winnerColor,
-          heName: c.heName,
-          sheName: c.sheName,
-          scoreHe: c.heGlassesDrunk,
-          scoreShe: c.sheGlassesDrunk,
+          player1Name: c.player1Name,
+          player2Name: c.player2Name,
+          player1Icon: settingsProvider.player1Icon,
+          player2Icon: settingsProvider.player2Icon,
+          player1Color: c.player1Color,
+          player2Color: c.player2Color,
+          scoreP1: c.heGlassesDrunk,
+          scoreP2: c.sheGlassesDrunk,
           maxScore: c.totalGlasses,
           isTie: false,
           onReplay: () {
@@ -272,7 +276,7 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                                 color: Colors.blue.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Text('${c.heName}: ${c.heGlassesDrunk}', style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                              child: Text('${c.player1Name}: ${c.heGlassesDrunk}', style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(width: 8),
                             Container(
@@ -281,7 +285,7 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                                 color: Colors.pink.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Text('${c.sheName}: ${c.sheGlassesDrunk}', style: const TextStyle(color: Colors.pinkAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                              child: Text('${c.player2Name}: ${c.sheGlassesDrunk}', style: const TextStyle(color: Colors.pinkAccent, fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(width: 8),
                             Text('/ ${c.totalGlasses}', style: const TextStyle(color: Colors.white38, fontSize: 12)),
@@ -318,8 +322,8 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildGlass(c.heName, c.heSipsLeft, Colors.blue, c.sipsPerGlassParam),
-        _buildGlass(c.sheName, c.sheSipsLeft, Colors.pink, c.sipsPerGlassParam),
+        _buildGlass(c.player1Name, c.heSipsLeft, Colors.blue, c.sipsPerGlassParam),
+        _buildGlass(c.player2Name, c.sheSipsLeft, Colors.pink, c.sipsPerGlassParam),
       ],
     );
   }
@@ -483,14 +487,14 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
         child: Row(
           children: [
             Expanded(
-              child: _buildDrinkButton('TOMA ${c.heName}$sipsText', () {
+              child: _buildDrinkButton('TOMA ${c.player1Name}$sipsText', () {
                 c.applySips(DrinkTarget.he, c.currentTask!.sips);
                 c.nextTurnFromUI();
               }, Colors.blue),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildDrinkButton('TOMA ${c.sheName}$sipsText', () {
+              child: _buildDrinkButton('TOMA ${c.player2Name}$sipsText', () {
                 c.applySips(DrinkTarget.she, c.currentTask!.sips);
                 c.nextTurnFromUI();
               }, Colors.pink),
@@ -502,8 +506,8 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
 
     if (target == DrinkTarget.he || target == DrinkTarget.she ||
        ((target == DrinkTarget.random || target == DrinkTarget.loser) && c.activePlayerName != null)) {
-      bool isHe = target == DrinkTarget.he || (c.activePlayerName == c.heName);
-      String name = isHe ? c.heName : c.sheName;
+      bool isHe = target == DrinkTarget.he || (c.activePlayerName == c.player1Name);
+      String name = isHe ? c.player1Name : c.player2Name;
       Color color = isHe ? Colors.blue : Colors.pink;
       DrinkTarget applyTarget = isHe ? DrinkTarget.he : DrinkTarget.she;
       String sipsText = c.currentTask!.sips > 0 ? ' (${c.currentTask!.sips})' : '';
@@ -537,14 +541,14 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
           Row(
             children: [
               Expanded(
-                child: _buildDrinkButton('TOMA ${c.heName}$sipsText', () {
+                child: _buildDrinkButton('TOMA ${c.player1Name}$sipsText', () {
                   c.applySips(DrinkTarget.he, c.currentTask!.sips);
                   c.nextTurnFromUI();
                 }, Colors.blue),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _buildDrinkButton('TOMA ${c.sheName}$sipsText', () {
+                child: _buildDrinkButton('TOMA ${c.player2Name}$sipsText', () {
                   c.applySips(DrinkTarget.she, c.currentTask!.sips);
                   c.nextTurnFromUI();
                 }, Colors.pink),

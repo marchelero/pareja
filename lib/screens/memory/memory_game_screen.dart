@@ -26,7 +26,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
   bool _showCoinFlip = true;
   bool _showRoundBanner = false;
   String _roundBannerText = '';
-  final bool _isHeStart = Random().nextBool();
+  final bool _isP1Start = Random().nextBool();
   final List<AnimationController> _flashControllers = [];
   int _prevLevel = 1;
 
@@ -49,7 +49,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
         Future.delayed(const Duration(milliseconds: 800), () {
           if (mounted) {
             setState(() => _showCoinFlip = false);
-            widget.controller.setStartingPlayer(_isHeStart);
+            widget.controller.setStartingPlayer(_isP1Start);
             widget.controller.startRound();
           }
         });
@@ -113,8 +113,8 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
 
   void _showRoundLost(String loserName) {
     final c = widget.controller;
-    final bool heLost = loserName == c.heName;
-    final String winnerName = heLost ? c.sheName : c.heName;
+    final bool heLost = loserName == c.player1Name;
+    final String winnerName = heLost ? c.player2Name : c.player1Name;
 
     showDialog(
       context: context,
@@ -165,8 +165,9 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
 
   void _showResult(String winnerName, String loserName) {
     final c = widget.controller;
-    final bool isHe = winnerName == c.heName;
-    final Color winnerColor = isHe ? AppColors.playerHe : AppColors.playerShe;
+    final bool isHe = winnerName == c.player1Name;
+    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    final settingsProvider = context.read<SettingsProvider>();
 
     Navigator.pushReplacement(context, MaterialPageRoute(
       builder: (context) => GameResultScreen(
@@ -174,8 +175,12 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
         gameColor: AppColors.modeMemory,
         winnerName: winnerName,
         winnerColor: winnerColor,
-        heName: c.heName, sheName: c.sheName,
-        scoreHe: c.heScore, scoreShe: c.sheScore,
+        player1Name: c.player1Name, player2Name: c.player2Name,
+        player1Icon: settingsProvider.player1Icon,
+        player2Icon: settingsProvider.player2Icon,
+        player1Color: c.player1Color,
+        player2Color: c.player2Color,
+        scoreP1: c.player1Score, scoreP2: c.player2Score,
         maxScore: c.maxRoundsValue,
         isTie: winnerName == 'EMPATE',
         onReplay: () {
@@ -198,7 +203,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
     final c = widget.controller;
     final screenWidth = MediaQuery.of(context).size.width;
     final btnSize = (screenWidth - 60) / 2;
-    final starterName = _isHeStart ? c.heName : c.sheName;
+    final starterName = _isP1Start ? c.player1Name : c.player2Name;
 
     return Scaffold(
       body: Stack(
@@ -241,10 +246,14 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
             const Text('¿QUIÉN EMPIEZA?', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 3)),
             const SizedBox(height: 24),
             CoinFlipWidget(
-              isHeWinner: _isHeStart,
+              isPlayer1Winner: _isP1Start,
               controller: _coinFlipController,
-              heName: widget.controller.heName,
-              sheName: widget.controller.sheName,
+              player1Name: widget.controller.player1Name,
+              player2Name: widget.controller.player2Name,
+              player1Icon: widget.controller.settingsProvider.player1Icon,
+              player2Icon: widget.controller.settingsProvider.player2Icon,
+              player1Color: widget.controller.player1Color,
+              player2Color: widget.controller.player2Color,
             ),
             const SizedBox(height: 24),
             AnimatedBuilder(
@@ -316,11 +325,11 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
           IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 30), onPressed: () => Navigator.pop(context)),
           Row(
             children: [
-              _scoreChip(c.heName, c.heScore, Colors.blueAccent),
+              _scoreChip(c.player1Name, c.player1Score, Colors.blueAccent),
               const SizedBox(width: 6),
               const Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 12)),
               const SizedBox(width: 6),
-              _scoreChip(c.sheName, c.sheScore, Colors.pinkAccent),
+              _scoreChip(c.player2Name, c.player2Score, Colors.pinkAccent),
             ],
           ),
           const SizedBox(width: 48),

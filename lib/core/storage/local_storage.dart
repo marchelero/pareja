@@ -1,26 +1,117 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
-  static const String _keyHeName = 'he_name';
-  static const String _keySheName = 'she_name';
+  static const String _keyPlayer1Name = 'player1_name';
+  static const String _keyPlayer2Name = 'player2_name';
+  static const String _keyPlayer1Gender = 'player1_gender';
+  static const String _keyPlayer2Gender = 'player2_gender';
+  static const String _keyPlayer1Color = 'player1_color';
+  static const String _keyPlayer2Color = 'player2_color';
+  static const String _keyFriendsMode = 'friends_mode';
   static const String _keySoundEnabled = 'sound_enabled';
   static const String _keyVibrationEnabled = 'vibration_enabled';
   static const String _keyRouletteSpinCount = 'roulette_spin_count';
 
-  static Future<void> saveNames(String heName, String sheName) async {
+  // ── Migration from old keys ──
+  static const String _keyHeName = 'he_name';
+  static const String _keySheName = 'she_name';
+
+  static Future<void> migrateOldKeys() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyHeName, heName.trim());
-    await prefs.setString(_keySheName, sheName.trim());
+    final hasOldHe = prefs.containsKey(_keyHeName);
+    if (!hasOldHe) return;
+    final he = prefs.getString(_keyHeName) ?? '';
+    final she = prefs.getString(_keySheName) ?? '';
+    if (he.isNotEmpty) {
+      await prefs.setString(_keyPlayer1Name, he);
+    }
+    if (she.isNotEmpty) {
+      await prefs.setString(_keyPlayer2Name, she);
+    }
+    if (!prefs.containsKey(_keyPlayer1Gender)) {
+      await prefs.setString(_keyPlayer1Gender, 'male');
+    }
+    if (!prefs.containsKey(_keyPlayer2Gender)) {
+      await prefs.setString(_keyPlayer2Gender, 'female');
+    }
+    if (!prefs.containsKey(_keyPlayer1Color)) {
+      await prefs.setInt(_keyPlayer1Color, 0xFF448AFF); // blueAccent
+    }
+    if (!prefs.containsKey(_keyPlayer2Color)) {
+      await prefs.setInt(_keyPlayer2Color, 0xFFFF4081); // pinkAccent
+    }
+    await prefs.remove(_keyHeName);
+    await prefs.remove(_keySheName);
   }
 
-  static Future<String> getHeName() async {
+  static Future<void> savePlayer1Name(String name) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyHeName) ?? '';
+    await prefs.setString(_keyPlayer1Name, name.trim());
   }
 
-  static Future<String> getSheName() async {
+  static Future<String> getPlayer1Name() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keySheName) ?? '';
+    return prefs.getString(_keyPlayer1Name) ?? '';
+  }
+
+  static Future<void> savePlayer2Name(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyPlayer2Name, name.trim());
+  }
+
+  static Future<String> getPlayer2Name() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyPlayer2Name) ?? '';
+  }
+
+  static Future<void> savePlayer1Gender(String gender) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyPlayer1Gender, gender);
+  }
+
+  static Future<String> getPlayer1Gender() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyPlayer1Gender) ?? '';
+  }
+
+  static Future<void> savePlayer2Gender(String gender) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyPlayer2Gender, gender);
+  }
+
+  static Future<String> getPlayer2Gender() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyPlayer2Gender) ?? '';
+  }
+
+  static Future<void> savePlayer1Color(int colorValue) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyPlayer1Color, colorValue);
+  }
+
+  static Future<int> getPlayer1Color() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyPlayer1Color) ?? 0xFF448AFF;
+  }
+
+  static Future<void> savePlayer2Color(int colorValue) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyPlayer2Color, colorValue);
+  }
+
+  static Future<int> getPlayer2Color() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyPlayer2Color) ?? 0xFFFF4081;
+  }
+
+  static Future<void> setFriendsMode(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyFriendsMode, enabled);
+  }
+
+  static Future<bool> isFriendsMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyFriendsMode) ?? false;
   }
 
   static Future<void> setSoundEnabled(bool enabled) async {

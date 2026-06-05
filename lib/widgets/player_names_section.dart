@@ -3,19 +3,30 @@ import 'package:flutter/material.dart';
 import '../core/storage/local_storage.dart';
 
 class PlayerNamesSection extends StatefulWidget {
-  final void Function(String he, String she)? onChanged;
+  final void Function(String p1, String p2)? onChanged;
+  final IconData player1Icon;
+  final IconData player2Icon;
+  final Color player1Color;
+  final Color player2Color;
 
-  const PlayerNamesSection({super.key, this.onChanged});
+  const PlayerNamesSection({
+    super.key,
+    this.onChanged,
+    required this.player1Icon,
+    required this.player2Icon,
+    required this.player1Color,
+    required this.player2Color,
+  });
 
   @override
   State<PlayerNamesSection> createState() => PlayerNamesSectionState();
 }
 
 class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTickerProviderStateMixin {
-  String _heName = 'ÉL';
-  String _sheName = 'ELLA';
-  late TextEditingController _heController;
-  late TextEditingController _sheController;
+  String _player1Name = 'ÉL';
+  String _player2Name = 'ELLA';
+  late TextEditingController _p1Controller;
+  late TextEditingController _p2Controller;
   bool _isExpanded = false;
   late AnimationController _animController;
   late Animation<double> _expandAnimation;
@@ -23,8 +34,8 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
   @override
   void initState() {
     super.initState();
-    _heController = TextEditingController(text: _heName);
-    _sheController = TextEditingController(text: _sheName);
+    _p1Controller = TextEditingController(text: _player1Name);
+    _p2Controller = TextEditingController(text: _player2Name);
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -34,20 +45,20 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
   }
 
   Future<void> _loadNames() async {
-    final he = await LocalStorage.getHeName();
-    final she = await LocalStorage.getSheName();
+    final p1 = await LocalStorage.getPlayer1Name();
+    final p2 = await LocalStorage.getPlayer2Name();
     if (!mounted) return;
     setState(() {
-      _heName = he.isNotEmpty ? he : 'ÉL';
-      _sheName = she.isNotEmpty ? she : 'ELLA';
-      _heController.text = _heName;
-      _sheController.text = _sheName;
+      _player1Name = p1.isNotEmpty ? p1 : 'ÉL';
+      _player2Name = p2.isNotEmpty ? p2 : 'ELLA';
+      _p1Controller.text = _player1Name;
+      _p2Controller.text = _player2Name;
     });
-    widget.onChanged?.call(_heName, _sheName);
+    widget.onChanged?.call(_player1Name, _player2Name);
   }
 
-  String get heName => _heName;
-  String get sheName => _sheName;
+  String get player1Name => _player1Name;
+  String get player2Name => _player2Name;
 
   void _toggleExpanded() {
     if (_isExpanded) {
@@ -56,39 +67,40 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
     } else {
       setState(() {
         _isExpanded = true;
-        _heController.text = _heName;
-        _sheController.text = _sheName;
+        _p1Controller.text = _player1Name;
+        _p2Controller.text = _player2Name;
       });
       _animController.forward();
     }
   }
 
   Future<void> _save() async {
-    final he = _heController.text.trim();
-    final she = _sheController.text.trim();
-    final finalHe = he.isNotEmpty ? he : 'ÉL';
-    final finalShe = she.isNotEmpty ? she : 'ELLA';
-    await LocalStorage.saveNames(finalHe, finalShe);
+    final p1 = _p1Controller.text.trim();
+    final p2 = _p2Controller.text.trim();
+    final finalP1 = p1.isNotEmpty ? p1 : 'ÉL';
+    final finalP2 = p2.isNotEmpty ? p2 : 'ELLA';
+    await LocalStorage.savePlayer1Name(finalP1);
+    await LocalStorage.savePlayer2Name(finalP2);
     setState(() {
-      _heName = finalHe;
-      _sheName = finalShe;
+      _player1Name = finalP1;
+      _player2Name = finalP2;
     });
-    widget.onChanged?.call(finalHe, finalShe);
+    widget.onChanged?.call(finalP1, finalP2);
     _animController.reverse();
     setState(() => _isExpanded = false);
   }
 
   void _cancel() {
-    _heController.text = _heName;
-    _sheController.text = _sheName;
+    _p1Controller.text = _player1Name;
+    _p2Controller.text = _player2Name;
     _animController.reverse();
     setState(() => _isExpanded = false);
   }
 
   @override
   void dispose() {
-    _heController.dispose();
-    _sheController.dispose();
+    _p1Controller.dispose();
+    _p2Controller.dispose();
     _animController.dispose();
     super.dispose();
   }
@@ -113,7 +125,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
             children: [
               Row(
                 children: [
-                  // He side
+                  // Player 1 side
                   Expanded(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -121,10 +133,10 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent.withValues(alpha: 0.15),
+                            color: widget.player1Color.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.male, color: Colors.blueAccent, size: 22),
+                          child: Icon(widget.player1Icon, color: widget.player1Color, size: 22),
                         ),
                         const SizedBox(width: 10),
                         _isExpanded
@@ -132,23 +144,23 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                                 child: SizedBox(
                                   height: 36,
                                   child: TextField(
-                                    controller: _heController,
+                                    controller: _p1Controller,
                                     style: const TextStyle(color: Colors.white, fontSize: 15),
                                     decoration: InputDecoration(
                                       hintText: 'Nombre...',
                                       hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                                       isDense: true,
                                       contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withValues(alpha: 0.3))),
-                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
+                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: widget.player1Color.withValues(alpha: 0.3))),
+                                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: widget.player1Color)),
                                     ),
                                   ),
                                 ),
                               )
                             : Flexible(
                                 child: Text(
-                                  _heName,
-                                  style: const TextStyle(color: Colors.blueAccent, fontSize: 18, fontWeight: FontWeight.bold),
+                                  _player1Name,
+                                  style: TextStyle(color: widget.player1Color, fontSize: 18, fontWeight: FontWeight.bold),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -160,7 +172,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text('&', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 18, fontWeight: FontWeight.w300)),
                   ),
-                  // She side
+                  // Player 2 side
                   Expanded(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -170,23 +182,23 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                                 child: SizedBox(
                                   height: 36,
                                   child: TextField(
-                                    controller: _sheController,
+                                    controller: _p2Controller,
                                     style: const TextStyle(color: Colors.white, fontSize: 15),
                                     decoration: InputDecoration(
                                       hintText: 'Nombre...',
                                       hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                                       isDense: true,
                                       contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withValues(alpha: 0.3))),
-                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
+                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: widget.player2Color.withValues(alpha: 0.3))),
+                                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: widget.player2Color)),
                                     ),
                                   ),
                                 ),
                               )
                             : Flexible(
                                 child: Text(
-                                  _sheName,
-                                  style: const TextStyle(color: Colors.pinkAccent, fontSize: 18, fontWeight: FontWeight.bold),
+                                  _player2Name,
+                                  style: TextStyle(color: widget.player2Color, fontSize: 18, fontWeight: FontWeight.bold),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -194,10 +206,10 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.pinkAccent.withValues(alpha: 0.15),
+                            color: widget.player2Color.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.female, color: Colors.pinkAccent, size: 22),
+                          child: Icon(widget.player2Icon, color: widget.player2Color, size: 22),
                         ),
                       ],
                     ),
