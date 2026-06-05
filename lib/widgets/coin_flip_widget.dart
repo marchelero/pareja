@@ -102,7 +102,13 @@ class _CoinFlipWidgetState extends State<CoinFlipWidget> with TickerProviderStat
                 ..setEntry(3, 2, 0.003)
                 ..rotateY(angle),
               alignment: Alignment.center,
-              child: isFront ? _buildFace(true, glow) : _buildFace(false, glow),
+              child: isFront
+                  ? _buildFace(true, glow)
+                  : Transform(
+                      transform: Matrix4.identity()..setEntry(0, 0, -1.0),
+                      alignment: Alignment.center,
+                      child: _buildFace(false, glow),
+                    ),
             ),
           ),
         );
@@ -149,7 +155,7 @@ class _CoinFlipWidgetState extends State<CoinFlipWidget> with TickerProviderStat
             ),
             const SizedBox(height: 4),
             Text(
-              isHe ? 'ÉL' : 'ELLA',
+              isHe ? widget.heName.toUpperCase() : widget.sheName.toUpperCase(),
               style: TextStyle(
                 color: faceColor.withValues(alpha: 0.7 + glow * 0.3),
                 fontSize: 18,

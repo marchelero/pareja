@@ -13,6 +13,8 @@ class AudioService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> stop() async => _player.stop();
+
   Future<void> playClick() async => _play(AppConstants.soundClick);
   Future<void> playLevelUp() async => _play(AppConstants.soundLevelUp);
   Future<void> playGameOver() async => _play(AppConstants.soundGameOver);

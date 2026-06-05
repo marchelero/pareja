@@ -85,9 +85,6 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
     setState(() => _isExpanded = false);
   }
 
-  String get _displayHe => _heName;
-  String get _displayShe => _sheName;
-
   @override
   void dispose() {
     _heController.dispose();
@@ -114,189 +111,154 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
           ),
           child: Column(
             children: [
-              GestureDetector(
-                onTap: _toggleExpanded,
-                child: Row(
-                  children: [
-                    // He side
-                    Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(Icons.male, color: Colors.blueAccent, size: 22),
+              Row(
+                children: [
+                  // He side
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          const SizedBox(width: 10),
-                          Flexible(
-                            child: Text(
-                              _displayHe,
-                              style: TextStyle(
-                                color: Colors.blueAccent,
-                                fontSize: _isExpanded ? 14 : 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Separator
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        '&',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          fontSize: _isExpanded ? 14 : 18,
-                          fontWeight: FontWeight.w300,
+                          child: const Icon(Icons.male, color: Colors.blueAccent, size: 22),
                         ),
-                      ),
-                    ),
-                    // She side
-                    Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              _displayShe,
-                              style: TextStyle(
-                                color: Colors.pinkAccent,
-                                fontSize: _isExpanded ? 14 : 18,
-                                fontWeight: FontWeight.bold,
+                        const SizedBox(width: 10),
+                        _isExpanded
+                            ? Expanded(
+                                child: SizedBox(
+                                  height: 36,
+                                  child: TextField(
+                                    controller: _heController,
+                                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                                    decoration: InputDecoration(
+                                      hintText: 'Nombre...',
+                                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                      isDense: true,
+                                      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withValues(alpha: 0.3))),
+                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Flexible(
+                                child: Text(
+                                  _heName,
+                                  style: const TextStyle(color: Colors.blueAccent, fontSize: 18, fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                      ],
+                    ),
+                  ),
+                  // Separator
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text('&', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 18, fontWeight: FontWeight.w300)),
+                  ),
+                  // She side
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _isExpanded
+                            ? Expanded(
+                                child: SizedBox(
+                                  height: 36,
+                                  child: TextField(
+                                    controller: _sheController,
+                                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                                    decoration: InputDecoration(
+                                      hintText: 'Nombre...',
+                                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                                      isDense: true,
+                                      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withValues(alpha: 0.3))),
+                                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Flexible(
+                                child: Text(
+                                  _sheName,
+                                  style: const TextStyle(color: Colors.pinkAccent, fontSize: 18, fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.pinkAccent.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.pinkAccent.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(Icons.female, color: Colors.pinkAccent, size: 22),
-                          ),
-                        ],
+                          child: const Icon(Icons.female, color: Colors.pinkAccent, size: 22),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Edit button - only when collapsed
+                  if (!_isExpanded)
+                    GestureDetector(
+                      onTap: _toggleExpanded,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.edit, color: Colors.white54, size: 18),
                       ),
                     ),
-                    // Edit button
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        _isExpanded ? Icons.close : Icons.edit,
-                        color: Colors.white54,
-                        size: 18,
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
+              // GUARDAR / CANCELAR buttons - only when editing
               SizeTransition(
                 sizeFactor: _expandAnimation,
                 alignment: Alignment.topCenter,
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Divider(color: Colors.white12, height: 1),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('ÉL', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-                              const SizedBox(height: 6),
-                              TextField(
-                                controller: _heController,
-                                style: const TextStyle(color: Colors.white, fontSize: 15),
-                                decoration: InputDecoration(
-                                  hintText: 'Nombre...',
-                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                                  prefixIcon: const Icon(Icons.male, color: Colors.blueAccent, size: 20),
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent.withValues(alpha: 0.3))),
-                                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.blueAccent)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('ELLA', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.pinkAccent)),
-                              const SizedBox(height: 6),
-                              TextField(
-                                controller: _sheController,
-                                style: const TextStyle(color: Colors.white, fontSize: 15),
-                                decoration: InputDecoration(
-                                  hintText: 'Nombre...',
-                                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                                  prefixIcon: const Icon(Icons.female, color: Colors.pinkAccent, size: 20),
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent.withValues(alpha: 0.3))),
-                                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: _cancel,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white.withValues(alpha: 0.1),
-                                foregroundColor: Colors.white70,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                              ),
-                              child: const Text('CANCELAR', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          child: ElevatedButton(
+                            onPressed: _save,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.greenAccent.withValues(alpha: 0.2),
+                              foregroundColor: Colors.greenAccent,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                             ),
+                            child: const Text('GUARDAR', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1)),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: SizedBox(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: _save,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.greenAccent.withValues(alpha: 0.2),
-                                foregroundColor: Colors.greenAccent,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                              ),
-                              child: const Text('GUARDAR', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          child: ElevatedButton(
+                            onPressed: _cancel,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white.withValues(alpha: 0.1),
+                              foregroundColor: Colors.white70,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
                             ),
+                            child: const Text('CANCELAR', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1)),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
