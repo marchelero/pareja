@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/memory_controller.dart';
-import '../../widgets/coin_flip_widget.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
@@ -20,13 +19,10 @@ class MemoryGameScreen extends StatefulWidget {
 }
 
 class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProviderStateMixin {
-  late AnimationController _coinFlipController;
   late AnimationController _shakeController;
   late AnimationController _successFlashController;
-  bool _showCoinFlip = true;
   bool _showRoundBanner = false;
   String _roundBannerText = '';
-  final bool _isP1Start = Random().nextBool();
   final List<AnimationController> _flashControllers = [];
   int _prevLevel = 1;
 
@@ -40,21 +36,6 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
-
-    _coinFlipController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(milliseconds: 800), () {
-          if (mounted) {
-            setState(() => _showCoinFlip = false);
-            widget.controller.setStartingPlayer(_isP1Start);
-            widget.controller.startRound();
-          }
-        });
-      }
-    });
 
     _shakeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     _successFlashController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
@@ -77,7 +58,6 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
       });
     };
 
-    _coinFlipController.forward();
   }
 
   void _onControllerChange() {
@@ -104,7 +84,6 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
   @override
   void dispose() {
     widget.controller.removeListener(_onControllerChange);
-    _coinFlipController.dispose();
     _shakeController.dispose();
     _successFlashController.dispose();
     for (final c in _flashControllers) { c.dispose(); }
@@ -203,7 +182,6 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
     final c = widget.controller;
     final screenWidth = MediaQuery.of(context).size.width;
     final btnSize = (screenWidth - 60) / 2;
-    final starterName = _isP1Start ? c.player1Name : c.player2Name;
 
     return Scaffold(
       body: Stack(
@@ -228,49 +206,9 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
               ),
             ),
           ),
-          if (_showCoinFlip) _buildCoinFlipOverlay(starterName),
           if (_showRoundBanner) _buildRoundBanner(),
           _buildSuccessFlash(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCoinFlipOverlay(String starterName) {
-    return Container(
-      color: Colors.black,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('¿QUIÉN EMPIEZA?', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 3)),
-            const SizedBox(height: 24),
-            CoinFlipWidget(
-              isPlayer1Winner: _isP1Start,
-              controller: _coinFlipController,
-              player1Name: widget.controller.player1Name,
-              player2Name: widget.controller.player2Name,
-              player1Icon: widget.controller.settingsProvider.player1Icon,
-              player2Icon: widget.controller.settingsProvider.player2Icon,
-              player1Color: widget.controller.player1Color,
-              player2Color: widget.controller.player2Color,
-            ),
-            const SizedBox(height: 24),
-            AnimatedBuilder(
-              animation: _coinFlipController,
-              builder: (context, _) {
-                final opacity = (_coinFlipController.value - 0.85) / 0.15;
-                return Opacity(
-                  opacity: opacity.clamp(0.0, 1.0),
-                  child: Text(
-                    '$starterName empieza',
-                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 2),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
       ),
     );
   }

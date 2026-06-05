@@ -2,11 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/memory_controller.dart';
-import '../../services/audio_service.dart';
+import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
+import '../questions/coin_flip_screen.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
-import '../../core/theme/app_colors.dart';
 import 'memory_game_screen.dart';
 
 class MemoryStartScreen extends StatefulWidget {
@@ -88,41 +90,40 @@ class _MemoryStartScreenState extends State<MemoryStartScreen> {
   }
 
   Widget _buildStartButton() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: double.infinity, height: 65,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.modeMemory.withValues(alpha: 0.6), Colors.blue.withValues(alpha: 0.3)],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: GameButton(
+        text: 'EMPEZAR',
+        onPressed: () async {
+          await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
+          await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
+          if (!mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CoinFlipScreen(
+                player1Name: _player1Name,
+                player2Name: _player2Name,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
+                createGameScreen: (isP1Winner) async {
+                  final audioService = context.read<AudioService>();
+                  final settingsProvider = context.read<SettingsProvider>();
+                  final controller = MemoryController(
+                    audioService: audioService,
+                    settingsProvider: settingsProvider,
+                    maxRounds: _maxRounds,
+                  );
+                  await controller.initGame();
+                  controller.setStartingPlayer(isP1Winner);
+                  controller.startRound();
+                  return MemoryGameScreen(controller: controller);
+                },
+              ),
             ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-            boxShadow: [BoxShadow(color: AppColors.modeMemory.withValues(alpha: 0.3), blurRadius: 15, spreadRadius: 2)],
-          ),
-          child: InkWell(
-            onTap: () async {
-              await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
-              await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
-              if (!mounted) return;
-              final audioService = context.read<AudioService>();
-              final settingsProvider = context.read<SettingsProvider>();
-              final controller = MemoryController(
-                audioService: audioService,
-                settingsProvider: settingsProvider,
-                maxRounds: _maxRounds,
-              );
-              await controller.initGame();
-              if (!mounted) return;
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) => MemoryGameScreen(controller: controller),
-              ));
-            },
-            child: const Center(child: Text('¡EMPEZAR!', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 3))),
-          ),
-        ),
+          );
+        },
+        style: GameButtonStyle.primary,
       ),
     );
   }

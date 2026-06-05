@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/russian_roulette_controller.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../core/theme/app_colors.dart';
@@ -174,42 +175,27 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: SizedBox(
-                  width: double.infinity, height: 60,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      _playSound();
-                      final audioService = context.read<AudioService>();
-                      final settingsProvider = context.read<SettingsProvider>();
-                      final controller = RussianRouletteController(
-                        audioService: audioService,
-                        settingsProvider: settingsProvider,
-                        bestOf: _bestOf,
-                        wildMode: _wildMode,
-                        bulletCount: _bulletCount,
-                      );
-                      await controller.initGame();
-                      if (!context.mounted) return;
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => RussianRouletteGameScreen(controller: controller)),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.modeRussianRoulette,
-                      foregroundColor: Colors.white, elevation: 10,
-                      shadowColor: AppColors.modeRussianRoulette,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.gps_fixed, size: 24),
-                        SizedBox(width: 10),
-                        Text('¡EMPEZAR PARTIDA!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
-                      ],
-                    ),
-                  ),
+                child: GameButton(
+                  text: 'EMPEZAR',
+                  onPressed: () async {
+                    _playSound();
+                    final audioService = context.read<AudioService>();
+                    final settingsProvider = context.read<SettingsProvider>();
+                    final controller = RussianRouletteController(
+                      audioService: audioService,
+                      settingsProvider: settingsProvider,
+                      bestOf: _bestOf,
+                      wildMode: _wildMode,
+                      bulletCount: _bulletCount,
+                    );
+                    await controller.initGame();
+                    if (!context.mounted) return;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => RussianRouletteGameScreen(controller: controller)),
+                    );
+                  },
+                  style: GameButtonStyle.primary,
                 ),
               ),
             ],

@@ -2,37 +2,25 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/roulette_controller.dart';
-import '../../controllers/questions_controller.dart';
-import '../../data/questions_repository.dart';
-import '../../services/audio_service.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/coin_flip_widget.dart';
 import '../../widgets/neon_background.dart';
 import '../../core/theme/app_colors.dart';
-import '../roulette/roulette_game_screen.dart';
-import 'questions_game_screen.dart';
 
 class CoinFlipScreen extends StatefulWidget {
-  final int maxRounds;
-  final List<String> categories;
   final String player1Name;
   final String player2Name;
-  final bool isRoulette;
-  final bool isDareMode;
   final Color player1Color;
   final Color player2Color;
+  final Future<Widget> Function(bool isPlayer1Winner) createGameScreen;
 
   const CoinFlipScreen({
     super.key,
-    required this.maxRounds,
-    required this.categories,
     required this.player1Name,
     required this.player2Name,
-    this.isRoulette = false,
-    this.isDareMode = false,
-    this.player1Color = AppColors.defaultPlayer1Color,
-    this.player2Color = AppColors.defaultPlayer2Color,
+    required this.player1Color,
+    required this.player2Color,
+    required this.createGameScreen,
   });
 
   @override
@@ -71,43 +59,12 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
       });
       Future.delayed(const Duration(seconds: 2), () async {
         if (!mounted) return;
-        if (widget.isRoulette) {
-          final audioService = context.read<AudioService>();
-          final settingsProvider = context.read<SettingsProvider>();
-          final controller = RouletteController(
-            audioService: audioService,
-            settingsProvider: settingsProvider,
-            isDareMode: widget.isDareMode,
-            startingPlayerIsP1: _isPlayer1Winner,
-          );
-          await controller.initGame();
-          if (!mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RouletteGameScreen(controller: controller),
-            ),
-          );
-        } else {
-          final audioService = context.read<AudioService>();
-          final settingsProvider = context.read<SettingsProvider>();
-          final controller = QuestionsController(
-            repository: QuestionsRepository(),
-            audioService: audioService,
-            settingsProvider: settingsProvider,
-            maxRounds: widget.maxRounds,
-            categories: widget.categories,
-            startingPlayerIsP1: _isPlayer1Winner,
-          );
-          await controller.initGame();
-          if (!mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => QuestionsGameScreen(controller: controller),
-            ),
-          );
-        }
+        final gameScreen = await widget.createGameScreen(_isPlayer1Winner);
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => gameScreen),
+        );
       });
     });
   }

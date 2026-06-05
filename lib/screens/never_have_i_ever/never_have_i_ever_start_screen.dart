@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/never_have_i_ever_controller.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'never_have_i_ever_game_screen.dart';
@@ -174,36 +175,28 @@ class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: SizedBox(
-                  width: double.infinity, height: 60,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      _playSound();
-                      final audioService = context.read<AudioService>();
-                      final settingsProvider = context.read<SettingsProvider>();
-                      final controller = NeverHaveIEverController(
-                        audioService: audioService,
-                        settingsProvider: settingsProvider,
-                        rounds: _rounds,
-                        pointsToWin: _pointsToWin,
-                        strikesForPenance: _strikesForPenance,
-                        isHotMode: _isHotMode,
-                      );
-                      await controller.initGame();
-                      if (!context.mounted) return;
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => NeverHaveIEverGameScreen(controller: controller)),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isHotMode ? Colors.pink : const Color(0xFFFF416C),
-                      foregroundColor: Colors.white, elevation: 10,
-                      shadowColor: _isHotMode ? Colors.pink : const Color(0xFFFF416C),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: const Text('\u{1F680} \u{A1}EMPEZAR!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
-                  ),
+                child: GameButton(
+                  text: 'EMPEZAR',
+                  onPressed: () async {
+                    _playSound();
+                    final audioService = context.read<AudioService>();
+                    final settingsProvider = context.read<SettingsProvider>();
+                    final controller = NeverHaveIEverController(
+                      audioService: audioService,
+                      settingsProvider: settingsProvider,
+                      rounds: _rounds,
+                      pointsToWin: _pointsToWin,
+                      strikesForPenance: _strikesForPenance,
+                      isHotMode: _isHotMode,
+                    );
+                    await controller.initGame();
+                    if (!context.mounted) return;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => NeverHaveIEverGameScreen(controller: controller)),
+                    );
+                  },
+                  style: GameButtonStyle.primary,
                 ),
               ),
             ],

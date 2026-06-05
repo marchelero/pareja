@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/charades_controller.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'charades_game_screen.dart';
@@ -161,57 +162,36 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   horizontal: 40,
                   vertical: 20,
                 ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _selectedCategories.isEmpty
-                        ? null
-                        : () async {
-                            _playSound();
-                            final audioService = context.read<AudioService>();
-                            final settingsProvider = context
-                                .read<SettingsProvider>();
-                            final controller = CharadesController(
-                              audioService: audioService,
-                              settingsProvider: settingsProvider,
-                              selectedCategories: _selectedCategories.toList(),
-                              singleCategoryMode: _singleCategoryMode,
-                              timerSeconds: _timerSeconds,
-                              pointsToWin: _pointsToWin,
-                              strikesForPenance: _strikesForPenance,
-                              isHotMode: _isHotMode,
-                            );
-                            await controller.initGame();
-                            if (!context.mounted) return;
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CharadesGameScreen(controller: controller),
-                              ),
-                            );
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isHotMode
-                          ? Colors.pink
-                          : Colors.deepPurple,
-                      foregroundColor: Colors.white,
-                      elevation: 10,
-                      shadowColor: _isHotMode ? Colors.pink : Colors.deepPurple,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: const Text(
-                      '\u00a1EMPEZAR!',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ),
+                child: GameButton(
+                  text: 'EMPEZAR',
+                  onPressed: _selectedCategories.isEmpty
+                      ? () {}
+                      : () async {
+                          _playSound();
+                          final audioService = context.read<AudioService>();
+                          final settingsProvider = context
+                              .read<SettingsProvider>();
+                          final controller = CharadesController(
+                            audioService: audioService,
+                            settingsProvider: settingsProvider,
+                            selectedCategories: _selectedCategories.toList(),
+                            singleCategoryMode: _singleCategoryMode,
+                            timerSeconds: _timerSeconds,
+                            pointsToWin: _pointsToWin,
+                            strikesForPenance: _strikesForPenance,
+                            isHotMode: _isHotMode,
+                          );
+                          await controller.initGame();
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CharadesGameScreen(controller: controller),
+                            ),
+                          );
+                        },
+                  style: GameButtonStyle.primary,
                 ),
               ),
             ],

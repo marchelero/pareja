@@ -2,9 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
+import '../../controllers/roulette_controller.dart';
 import '../questions/coin_flip_screen.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
+import 'roulette_game_screen.dart';
 
 class RouletteStartScreen extends StatefulWidget {
   const RouletteStartScreen({super.key});
@@ -201,9 +205,11 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
   }
 
   Widget _buildStartButton(BuildContext context) {
-    return _buildGlassCard(
-      child: InkWell(
-        onTap: () async {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: GameButton(
+        text: 'EMPEZAR',
+        onPressed: () async {
           await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
           await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
 
@@ -213,33 +219,27 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => CoinFlipScreen(
-                maxRounds: 0,
-                categories: const [],
                 player1Name: _player1Name,
                 player2Name: _player2Name,
-                isRoulette: true,
-                isDareMode: _isDareMode,
                 player1Color: context.read<SettingsProvider>().player1Color,
                 player2Color: context.read<SettingsProvider>().player2Color,
+                createGameScreen: (isP1Winner) async {
+                  final audioService = context.read<AudioService>();
+                  final settingsProvider = context.read<SettingsProvider>();
+                  final controller = RouletteController(
+                    audioService: audioService,
+                    settingsProvider: settingsProvider,
+                    isDareMode: _isDareMode,
+                    startingPlayerIsP1: isP1Winner,
+                  );
+                  await controller.initGame();
+                  return RouletteGameScreen(controller: controller);
+                },
               ),
             ),
           );
         },
-        child: Container(
-          width: double.infinity,
-          height: 45,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.pink.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.4)],
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: const Text(
-            '¡EMPEZAR!',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 2),
-          ),
-        ),
+        style: GameButtonStyle.primary,
       ),
     );
   }

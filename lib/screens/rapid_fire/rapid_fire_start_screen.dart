@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../controllers/rapid_fire_controller.dart';
 import '../../services/audio_service.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../core/theme/app_colors.dart';
@@ -205,48 +206,32 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
   }
 
   Widget _buildStartButton() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: double.infinity, height: 65,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.modeRapidFire.withValues(alpha: 0.6), Colors.deepOrange.withValues(alpha: 0.3)],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-            boxShadow: [BoxShadow(color: AppColors.modeRapidFire.withValues(alpha: 0.3), blurRadius: 15, spreadRadius: 2)],
-          ),
-          child: InkWell(
-            onTap: () async {
-              if (_selectedCategories.isEmpty && _allCategories.isNotEmpty) return;
-              final audioService = context.read<AudioService>();
-              final settingsProvider = context.read<SettingsProvider>();
-              if (_player1Name.isNotEmpty && _player2Name.isNotEmpty) {
-                await settingsProvider.setPlayer1Name(_player1Name);
-                await settingsProvider.setPlayer2Name(_player2Name);
-              }
-              final controller = RapidFireController(
-                audioService: audioService,
-                settingsProvider: settingsProvider,
-                targetScore: _targetScore,
-              );
-              controller.setSelectedCategories(_selectedCategories);
-              await controller.initGame();
-              if (!mounted) return;
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) => RapidFireGameScreen(controller: controller),
-              ));
-            },
-            child: Center(
-              child: _selectedCategories.isEmpty && _allCategories.isNotEmpty
-                  ? const Text('SELECCIONA AL MENOS UNA CATEGORÍA', style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1))
-                  : const Text('¡EMPEZAR!', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 3)),
-            ),
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: GameButton(
+        text: 'EMPEZAR',
+        onPressed: () async {
+          if (_selectedCategories.isEmpty && _allCategories.isNotEmpty) return;
+          final audioService = context.read<AudioService>();
+          final settingsProvider = context.read<SettingsProvider>();
+          if (_player1Name.isNotEmpty && _player2Name.isNotEmpty) {
+            await settingsProvider.setPlayer1Name(_player1Name);
+            await settingsProvider.setPlayer2Name(_player2Name);
+          }
+          final controller = RapidFireController(
+            audioService: audioService,
+            settingsProvider: settingsProvider,
+            targetScore: _targetScore,
+          );
+          controller.setSelectedCategories(_selectedCategories);
+          await controller.initGame();
+          if (!mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RapidFireGameScreen(controller: controller)),
+          );
+        },
+        style: GameButtonStyle.primary,
       ),
     );
   }

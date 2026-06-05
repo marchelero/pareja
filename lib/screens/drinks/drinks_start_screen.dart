@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../controllers/drinks_controller.dart';
 import '../../services/audio_service.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/player_names_section.dart';
 import 'drinks_game_screen.dart';
 import '../../widgets/neon_background.dart';
@@ -225,62 +226,36 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
   }
 
   Widget _buildStartButton() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: double.infinity,
-          height: 65,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.pink.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.4)],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: GameButton(
+        text: 'EMPEZAR',
+        onPressed: () async {
+          await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
+          await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
+          if (!mounted) return;
+          final audioService = context.read<AudioService>();
+          final settingsProvider = context.read<SettingsProvider>();
+          final controller = DrinksController(
+            audioService: audioService,
+            settingsProvider: settingsProvider,
+            sipsPerGlass: _sipsPerGlass,
+            initialLevel: _initialLevel,
+            levelingSpeed: _levelingSpeed,
+            isHotMode: _isHotMode,
+            freeMode: _freeMode,
+            totalGlasses: _totalGlasses,
+          );
+          await controller.initGame();
+          if (!mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DrinksGameScreen(controller: controller),
             ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-            boxShadow: [
-              BoxShadow(color: Colors.pink.withValues(alpha: 0.3), blurRadius: 15, spreadRadius: 2),
-            ],
-          ),
-          child: InkWell(
-            onTap: () async {
-              await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
-              await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
-              if (!mounted) return;
-              final audioService = context.read<AudioService>();
-              final settingsProvider = context.read<SettingsProvider>();
-              final controller = DrinksController(
-                audioService: audioService,
-                settingsProvider: settingsProvider,
-                sipsPerGlass: _sipsPerGlass,
-                initialLevel: _initialLevel,
-                levelingSpeed: _levelingSpeed,
-                isHotMode: _isHotMode,
-                freeMode: _freeMode,
-                totalGlasses: _totalGlasses,
-              );
-              await controller.initGame();
-              if (!mounted) return;
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DrinksGameScreen(controller: controller),
-                ),
-              );
-            },
-            child: const Center(
-              child: Text(
-                '¡EMPEZAR!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 3,
-                ),
-              ),
-            ),
-          ),
-        ),
+          );
+        },
+        style: GameButtonStyle.primary,
       ),
     );
   }
