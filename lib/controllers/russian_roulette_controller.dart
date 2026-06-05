@@ -69,7 +69,7 @@ class RussianRouletteController extends ChangeNotifier {
   String get player2Name => _player2Name;
   int get roundNumber => _roundNumber;
   String get activeName => _isPlayer1Turn ? _player1Name : _player2Name;
-  Color get activeColor => _isPlayer1Turn ? const Color(0xFF448AFF) : const Color(0xFFFF4081);
+  Color get activeColor => _isPlayer1Turn ? _player1Color : _player2Color;
   Color get player1Color => _player1Color;
   Color get player2Color => _player2Color;
 

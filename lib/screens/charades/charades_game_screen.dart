@@ -119,8 +119,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
   void _showWinnerDialog(String winnerName) {
     final c = widget.controller;
     final Color winnerColor = winnerName == c.player1Name
-        ? AppColors.defaultPlayer1Color
-        : AppColors.defaultPlayer2Color;
+        ? c.player1Color
+        : c.player2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -194,8 +194,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
     }
 
     final Color activeColor = c.isHeTurn
-        ? AppColors.defaultPlayer1Color
-        : AppColors.defaultPlayer2Color;
+        ? c.player1Color
+        : c.player2Color;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -237,9 +237,9 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildStrikes(c.strikesHe, AppColors.defaultPlayer1Color),
+                  _buildStrikes(c.strikesHe, c.player1Color),
                   const SizedBox(width: 8),
-                  _buildStrikes(c.strikesShe, AppColors.defaultPlayer2Color),
+                  _buildStrikes(c.strikesShe, c.player2Color),
                 ],
               ),
             ],

@@ -284,6 +284,8 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                 categories: _selectedCategories.toList(),
                 player1Name: _player1Name,
                 player2Name: _player2Name,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
               ),
             ),
           );

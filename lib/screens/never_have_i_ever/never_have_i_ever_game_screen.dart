@@ -48,7 +48,7 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
   void _showWinnerDialog(String winnerName) {
     final c = widget.controller;
     final isHe = winnerName == c.player1Name;
-    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    final Color winnerColor = isHe ? c.player1Color : c.player2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -214,8 +214,8 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
     final bool isResultPhase = c.isRevealed;
 
     final Color phaseColor = isHePhase
-        ? AppColors.defaultPlayer1Color
-        : (isShePhase ? AppColors.defaultPlayer2Color : Colors.white);
+        ? c.player1Color
+        : (isShePhase ? c.player2Color : Colors.white);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -254,9 +254,9 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildStrikeDisplay(c.player1Name, c.strikesHe, c.strikesForPenance, AppColors.defaultPlayer1Color),
+                  _buildStrikeDisplay(c.player1Name, c.strikesHe, c.strikesForPenance, c.player1Color),
                   const SizedBox(width: 40),
-                  _buildStrikeDisplay(c.player2Name, c.strikesShe, c.strikesForPenance, AppColors.defaultPlayer2Color),
+                  _buildStrikeDisplay(c.player2Name, c.strikesShe, c.strikesForPenance, c.player2Color),
                 ],
               ),
 
@@ -365,7 +365,7 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen> wit
 
   Widget _buildAnswerButtons({required String phase}) {
     final c = widget.controller;
-    final Color accentColor = phase == 'he' ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    final Color accentColor = phase == 'he' ? c.player1Color : c.player2Color;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),

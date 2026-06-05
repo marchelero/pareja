@@ -31,11 +31,11 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
 
     widget.controller.onGameFinished = (Player player1, Player player2) {
       final c = widget.controller;
+      final settingsProvider = context.read<SettingsProvider>();
+      final audioService = context.read<AudioService>();
       final isTie = player1.score == player2.score;
       final winner = player1.score > player2.score ? player1 : player2;
-      final winnerColor = winner.name == player1.name ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
-      final audioService = context.read<AudioService>();
-      final settingsProvider = context.read<SettingsProvider>();
+      final winnerColor = winner.name == player1.name ? settingsProvider.player1Color : settingsProvider.player2Color;
 
       Navigator.pushReplacement(
         context,

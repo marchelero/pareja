@@ -4,7 +4,6 @@ import 'package:flutter/painting.dart';
 import '../core/models/player.dart';
 import '../core/models/question.dart';
 import '../data/questions_repository.dart';
-import '../core/theme/app_colors.dart';
 import '../services/audio_service.dart';
 import '../providers/settings_provider.dart';
 
@@ -116,7 +115,7 @@ class QuestionsController extends ChangeNotifier {
       }
 
       _currentQuestion = validQuestions[Random().nextInt(validQuestions.length)];
-      _backgroundColor = _currentPlayer == _player1 ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+      _backgroundColor = _currentPlayer == _player1 ? settingsProvider.player1Color : settingsProvider.player2Color;
       notifyListeners();
       return;
     }
@@ -147,7 +146,7 @@ class QuestionsController extends ChangeNotifier {
 
     _currentQuestion = validQuestions[Random().nextInt(validQuestions.length)];
     _availableQuestions.remove(_currentQuestion);
-    _backgroundColor = _currentPlayer == _player1 ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    _backgroundColor = _currentPlayer == _player1 ? settingsProvider.player1Color : settingsProvider.player2Color;
     notifyListeners();
   }
 

@@ -45,7 +45,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
   void _showResultScreen(String winnerName, String loserName) {
     final c = widget.controller;
     final bool isHe = winnerName == c.player1Name;
-    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    final Color winnerColor = isHe ? c.player1Color : c.player2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -141,11 +141,11 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
           ),
           Row(
             children: [
-              _buildScoreChip(c.player1Name, c.player1Score, Colors.blueAccent),
+              _buildScoreChip(c.player1Name, c.player1Score, c.player1Color),
               const SizedBox(width: 8),
               const Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 14)),
               const SizedBox(width: 8),
-              _buildScoreChip(c.player2Name, c.player2Score, Colors.pinkAccent),
+              _buildScoreChip(c.player2Name, c.player2Score, c.player2Color),
             ],
           ),
           const SizedBox(width: 48),
@@ -259,8 +259,8 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
                 child: _buildClaimButton(
                   '${c.player1Name} lo hizo',
                   Icons.male,
-                  Colors.blueAccent,
-                  c.claimHe,
+                  c.player1Color,
+                   c.claimHe,
                 ),
               ),
               const SizedBox(width: 12),
@@ -268,8 +268,8 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
                 child: _buildClaimButton(
                   '${c.player2Name} lo hizo',
                   Icons.female,
-                  Colors.pinkAccent,
-                  c.claimShe,
+                  c.player2Color,
+                   c.claimShe,
                 ),
               ),
             ],

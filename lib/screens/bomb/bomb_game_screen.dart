@@ -150,8 +150,8 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
 
     if (c.isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
-    Color activeColor = c.isGoldenRound ? Colors.amber : (c.isHeTurn ? Colors.blueAccent : Colors.pinkAccent);
-    Color bgColor = c.isGoldenRound ? Colors.amber.withValues(alpha: 0.2) : (c.isHeTurn ? Colors.blue.withValues(alpha: 0.15) : Colors.pink.withValues(alpha: 0.15));
+    Color activeColor = c.isGoldenRound ? Colors.amber : (c.isHeTurn ? c.player1Color : c.player2Color);
+    Color bgColor = c.isGoldenRound ? Colors.amber.withValues(alpha: 0.2) : (c.isHeTurn ? c.player1Color.withValues(alpha: 0.15) : c.player2Color.withValues(alpha: 0.15));
 
     return Scaffold(
       backgroundColor: Colors.black,

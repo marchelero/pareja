@@ -20,6 +20,8 @@ class CoinFlipScreen extends StatefulWidget {
   final String player2Name;
   final bool isRoulette;
   final bool isDareMode;
+  final Color player1Color;
+  final Color player2Color;
 
   const CoinFlipScreen({
     super.key,
@@ -29,6 +31,8 @@ class CoinFlipScreen extends StatefulWidget {
     required this.player2Name,
     this.isRoulette = false,
     this.isDareMode = false,
+    this.player1Color = AppColors.defaultPlayer1Color,
+    this.player2Color = AppColors.defaultPlayer2Color,
   });
 
   @override
@@ -179,7 +183,7 @@ class _CoinFlipScreenState extends State<CoinFlipScreen> with TickerProviderStat
                   curve: Curves.elasticOut,
                   builder: (context, value, child) {
                     final isHe = _isPlayer1Winner;
-                    final Color winnerColor = isHe ? Colors.blueAccent : Colors.pinkAccent;
+                    final Color winnerColor = isHe ? widget.player1Color : widget.player2Color;
                     final playerName = isHe
                         ? (widget.player1Name.isEmpty ? 'ÉL' : widget.player1Name)
                         : (widget.player2Name.isEmpty ? 'ELLA' : widget.player2Name);

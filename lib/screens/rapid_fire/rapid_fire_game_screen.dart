@@ -56,7 +56,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
   void _showResult(String winnerName, String loserName) {
     final c = widget.controller;
     final bool isHe = winnerName == c.player1Name;
-    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    final Color winnerColor = isHe ? c.player1Color : c.player2Color;
     final audioService = context.read<AudioService>();
     final settingsProvider = context.read<SettingsProvider>();
 
@@ -124,11 +124,11 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.blueAccent.withValues(alpha: 0.15),
+              color: c.player1Color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.4)),
+              border: Border.all(color: c.player1Color.withValues(alpha: 0.4)),
             ),
-            child: Text(c.player1Name.toUpperCase(), style: const TextStyle(color: Colors.blueAccent, fontSize: 11, fontWeight: FontWeight.w900)),
+            child: Text(c.player1Name.toUpperCase(), style: TextStyle(color: c.player1Color, fontSize: 11, fontWeight: FontWeight.w900)),
           ),
           const SizedBox(width: 6),
           Text('${c.player1Score}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
@@ -141,11 +141,11 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.pinkAccent.withValues(alpha: 0.15),
+              color: c.player2Color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.pinkAccent.withValues(alpha: 0.4)),
+              border: Border.all(color: c.player2Color.withValues(alpha: 0.4)),
             ),
-            child: Text(c.player2Name.toUpperCase(), style: const TextStyle(color: Colors.pinkAccent, fontSize: 11, fontWeight: FontWeight.w900)),
+            child: Text(c.player2Name.toUpperCase(), style: TextStyle(color: c.player2Color, fontSize: 11, fontWeight: FontWeight.w900)),
           ),
         ],
       ),
@@ -278,7 +278,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
 
   Widget _buildSide(RapidFireController c, {required bool isHe}) {
     final name = isHe ? c.player1Name : c.player2Name;
-    final Color color = isHe ? Colors.blueAccent : Colors.pinkAccent;
+    final Color color = isHe ? c.player1Color : c.player2Color;
 
     if (c.state == RapidFireState.showingResult) {
       return _buildSideResult(c, isHe: isHe, color: color);

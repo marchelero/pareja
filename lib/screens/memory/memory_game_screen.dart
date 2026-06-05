@@ -166,7 +166,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
   void _showResult(String winnerName, String loserName) {
     final c = widget.controller;
     final bool isHe = winnerName == c.player1Name;
-    final Color winnerColor = isHe ? AppColors.defaultPlayer1Color : AppColors.defaultPlayer2Color;
+    final Color winnerColor = isHe ? c.player1Color : c.player2Color;
     final settingsProvider = context.read<SettingsProvider>();
 
     Navigator.pushReplacement(context, MaterialPageRoute(
@@ -325,11 +325,11 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
           IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 30), onPressed: () => Navigator.pop(context)),
           Row(
             children: [
-              _scoreChip(c.player1Name, c.player1Score, Colors.blueAccent),
+              _scoreChip(c.player1Name, c.player1Score, c.player1Color),
               const SizedBox(width: 6),
               const Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 12)),
               const SizedBox(width: 6),
-              _scoreChip(c.player2Name, c.player2Score, Colors.pinkAccent),
+              _scoreChip(c.player2Name, c.player2Score, c.player2Color),
             ],
           ),
           const SizedBox(width: 48),
@@ -383,7 +383,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
       info = Column(
         key: const ValueKey('transition'),
         children: [
-          Text(c.activeName.toUpperCase(), style: TextStyle(color: c.isHeTurn ? Colors.blueAccent : Colors.pinkAccent, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 3)),
+          Text(c.activeName.toUpperCase(), style: TextStyle(color: c.isHeTurn ? c.player1Color : c.player2Color, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 3)),
           const SizedBox(height: 4),
           Text('SIGUIENTE', style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 3)),
         ],
@@ -394,14 +394,14 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
         children: [
           const Text('¡MEMORIZA!', style: TextStyle(color: Colors.amberAccent, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 5)),
           const SizedBox(height: 4),
-          Text(c.activeName.toUpperCase(), style: TextStyle(color: c.isHeTurn ? Colors.blueAccent : Colors.pinkAccent, fontSize: 14, fontWeight: FontWeight.w700, letterSpacing: 2)),
+          Text(c.activeName.toUpperCase(), style: TextStyle(color: c.isHeTurn ? c.player1Color : c.player2Color, fontSize: 14, fontWeight: FontWeight.w700, letterSpacing: 2)),
         ],
       );
     } else if (c.isPlayerTurn) {
       info = Column(
         key: const ValueKey('repeat'),
         children: [
-          Text('${c.activeName.toUpperCase()} — REPITE', style: TextStyle(color: c.isHeTurn ? Colors.blueAccent : Colors.pinkAccent, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 3)),
+          Text('${c.activeName.toUpperCase()} — REPITE', style: TextStyle(color: c.isHeTurn ? c.player1Color : c.player2Color, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 3)),
           const SizedBox(height: 4),
           Text('${c.inputIndex}/${c.sequence.length}', style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.w700)),
         ],

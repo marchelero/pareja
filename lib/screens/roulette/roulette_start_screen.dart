@@ -219,6 +219,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                 player2Name: _player2Name,
                 isRoulette: true,
                 isDareMode: _isDareMode,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
               ),
             ),
           );
