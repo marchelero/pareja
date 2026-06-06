@@ -14,6 +14,7 @@ import 'rapid_fire/rapid_fire_start_screen.dart';
 import 'memory/memory_start_screen.dart';
 import 'pairs/pairs_start_screen.dart';
 import 'tiradedos/tiradedos_start_screen.dart';
+import 'atiempo/atiempo_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
 import '../widgets/route_transitions.dart';
@@ -246,6 +247,20 @@ class GamesMenuScreen extends StatelessWidget {
                         context,
                         RouteTransitions.slideFromBottom(
                             const TiradedosStartScreen()),
+                      );
+                    },
+                  ),
+                  GameCard(
+                    title: 'A Tiempo',
+                    icon: Icons.timer,
+                    accentColor: AppColors.modeATiempo,
+                    animationDelay: 1200,
+                    onTap: () {
+                      audioService.playClick();
+                      Navigator.push(
+                        context,
+                        RouteTransitions.slideFromBottom(
+                            const ATiempoStartScreen()),
                       );
                     },
                   ),
