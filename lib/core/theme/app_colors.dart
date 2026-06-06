@@ -29,6 +29,8 @@ class AppColors {
   static const Color modeDuel = Color(0xFFFF4081);
   static const Color modeRapidFire = Color(0xFFFF6D00);
   static const Color modeMemory = Color(0xFF00BFA5);
+  static const Color modePairs = Color(0xFF7C4DFF);
+  static const Color modeTiradedos = Color(0xFFFFD740);
 
   static Color glassBackground(double opacity) => Colors.white.withValues(alpha: opacity);
   static Color glassBorder(double opacity) => Colors.white.withValues(alpha: opacity);

@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/russian_roulette_controller.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
@@ -141,167 +141,66 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
 
   void _showRoundResultDialog(String loserName) {
     final c = widget.controller;
-    final scoreHe = c.scoreHe;
-    final scoreShe = c.scoreShe;
-    final TextStyle titleStyle = GoogleFonts.creepster(
-      fontSize: 56,
-      fontWeight: FontWeight.w400,
-      color: AppColors.modeRussianRoulette,
-      letterSpacing: 8,
-      height: 1.1,
-      shadows: [
-        Shadow(color: AppColors.modeRussianRoulette.withValues(alpha: 0.8), blurRadius: 40),
-        Shadow(color: Colors.black87, blurRadius: 4, offset: const Offset(2, 3)),
-      ],
-    );
-    showGeneralDialog(
+    final winnerName = loserName == c.player1Name ? c.player2Name : c.player1Name;
+
+    showDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.80),
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SizedBox.expand(
-            child: Column(
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.5)),
+        ),
+        title: const Text(
+          '¡BANG!',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w900, fontSize: 28),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('💀', style: TextStyle(fontSize: 48)),
+            const SizedBox(height: 12),
+            Text(
+              '$loserName cayó',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Punto para $winnerName',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('DISPARO\nMORTAL', style: titleStyle, textAlign: TextAlign.center),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Text(
-                    loserName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 700),
-                  curve: Curves.elasticOut,
-                  builder: (context, scale, child) {
-                    return Transform.scale(scale: scale, child: child);
-                  },
-                  child: SizedBox(
-                    width: 80,
-                    height: 100,
-                    child: Image.asset(
-                      'assets/images/tombstone.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.black87,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.modeRussianRoulette.withValues(alpha: 0.5),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(c.player1Name.toUpperCase(),
-                            style: TextStyle(
-                              color: const Color(0xFF448AFF),
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Wrap(
-                            spacing: 2,
-                            runSpacing: 2,
-                            children: List.generate(
-                              scoreShe,
-                              (_) => const Text('💀', style: TextStyle(fontSize: 22)),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text('†',
-                          style: TextStyle(
-                            color: AppColors.modeRussianRoulette.withValues(alpha: 0.4),
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(c.player2Name.toUpperCase(),
-                            style: TextStyle(
-                              color: const Color(0xFFFF4081),
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Wrap(
-                            spacing: 2,
-                            runSpacing: 2,
-                            children: List.generate(
-                              scoreHe,
-                              (_) => const Text('💀', style: TextStyle(fontSize: 22)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 50),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      c.nextRoundAfterDialog();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.modeRussianRoulette,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      elevation: 10,
-                      shadowColor: AppColors.modeRussianRoulette,
-                    ),
-                    child: const Text(
-                      'SIGUIENTE RONDA',
-                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 2),
-                    ),
-                  ),
-                ),
+                Text(c.player1Name, style: TextStyle(color: c.player1Color, fontSize: 14, fontWeight: FontWeight.bold)),
+                Text(' ${c.scoreHe} - ${c.scoreShe} ', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(c.player2Name, style: TextStyle(color: c.player2Color, fontSize: 14, fontWeight: FontWeight.bold)),
               ],
             ),
+          ],
+        ),
+        actions: [
+          Center(
+            child: SizedBox(
+              width: 200,
+              height: 50,
+              child: GameButton(
+                text: 'CONTINUAR',
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  c.nextRoundAfterDialog();
+                },
+                style: GameButtonStyle.primary,
+              ),
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -420,7 +319,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                           children: [
                             Text(c.player1Name.toUpperCase(),
                               style: TextStyle(
-                                color: const Color(0xFF448AFF),
+                                color: c.player1Color,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
@@ -452,7 +351,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                           children: [
                             Text(c.player2Name.toUpperCase(),
                               style: TextStyle(
-                                color: const Color(0xFFFF4081),
+                                color: c.player2Color,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
@@ -636,9 +535,6 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
             // Trigger button
             if (!c.isSpinning)
               _buildTriggerButton(c),
-            // Pre-carga emojis y fuente Creepster para evitar retardos en diálogos
-            const Text('💀🪦', style: TextStyle(fontSize: 0.1, color: Colors.transparent)),
-            Text('x', style: GoogleFonts.creepster(fontSize: 0.1, color: Colors.transparent)),
             const Spacer(),
           ],
         ),
