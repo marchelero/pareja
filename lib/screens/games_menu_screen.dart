@@ -41,9 +41,10 @@ class GamesMenuScreen extends StatelessWidget {
                   color: Colors.white,
                   shadows: [
                     Shadow(
-                        color: Colors.black45,
-                        blurRadius: 10,
-                        offset: Offset(0, 2))
+                      color: Colors.black45,
+                      blurRadius: 10,
+                      offset: Offset(0, 2),
+                    ),
                   ],
                 ),
               ),
@@ -63,7 +64,10 @@ class GamesMenuScreen extends StatelessWidget {
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.settings_rounded, color: Colors.white54),
+                  icon: const Icon(
+                    Icons.settings_rounded,
+                    color: Colors.white54,
+                  ),
                   onPressed: () {
                     audioService.playClick();
                     Navigator.push(
@@ -92,7 +96,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const QuestionsStartScreen()),
+                          const QuestionsStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -106,7 +111,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const RouletteStartScreen()),
+                          const RouletteStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -120,7 +126,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const DrinksStartScreen()),
+                          const DrinksStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -134,7 +141,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const BombStartScreen()),
+                          const BombStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -148,12 +156,13 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const NeverHaveIEverStartScreen()),
+                          const NeverHaveIEverStartScreen(),
+                        ),
                       );
                     },
                   ),
                   GameCard(
-                    title: 'Dígalo con Mímica',
+                    title: 'Sin Palabras',
                     icon: Icons.theater_comedy,
                     accentColor: AppColors.modeCharades,
                     animationDelay: 500,
@@ -162,7 +171,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const CharadesStartScreen()),
+                          const CharadesStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -176,7 +186,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const RussianRouletteStartScreen()),
+                          const RussianRouletteStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -190,7 +201,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const DuelStartScreen()),
+                          const DuelStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -204,7 +216,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const RapidFireStartScreen()),
+                          const RapidFireStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -218,7 +231,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const MemoryStartScreen()),
+                          const MemoryStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -232,7 +246,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const PairsStartScreen()),
+                          const PairsStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -246,7 +261,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const TiradedosStartScreen()),
+                          const TiradedosStartScreen(),
+                        ),
                       );
                     },
                   ),
@@ -260,7 +276,8 @@ class GamesMenuScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                            const ATiempoStartScreen()),
+                          const ATiempoStartScreen(),
+                        ),
                       );
                     },
                   ),

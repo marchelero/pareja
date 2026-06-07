@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/charades_controller.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
-import '../../widgets/score_board.dart';
 import '../../widgets/neon_background.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
@@ -14,10 +14,7 @@ import '../games_menu_screen.dart';
 class CharadesGameScreen extends StatefulWidget {
   final CharadesController controller;
 
-  const CharadesGameScreen({
-    super.key,
-    required this.controller,
-  });
+  const CharadesGameScreen({super.key, required this.controller});
 
   @override
   State<CharadesGameScreen> createState() => _CharadesGameScreenState();
@@ -36,7 +33,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
     };
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!widget.controller.isLoading && widget.controller.currentWord == null) {
+      if (!widget.controller.isLoading &&
+          widget.controller.currentWord == null) {
         widget.controller.showNewWord();
       }
     });
@@ -74,25 +72,49 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5)),
+                border: Border.all(
+                  color: Colors.redAccent.withValues(alpha: 0.5),
+                ),
                 boxShadow: [
-                  BoxShadow(color: Colors.redAccent.withValues(alpha: 0.2), blurRadius: 30, spreadRadius: 5),
+                  BoxShadow(
+                    color: Colors.redAccent.withValues(alpha: 0.2),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
                 ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.warning_amber_rounded, size: 80, color: Colors.redAccent),
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    size: 80,
+                    color: Colors.redAccent,
+                  ),
                   const SizedBox(height: 20),
-                  const Text('\u00a1PENITENCIA!',
-                    style: TextStyle(color: Colors.redAccent, fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: 3)),
+                  const Text(
+                    '\u00a1PENITENCIA!',
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 3,
+                    ),
+                  ),
                   const SizedBox(height: 20),
-                  Text(penanceText,
+                  Text(
+                    penanceText,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 30),
                   SizedBox(
-                    width: double.infinity, height: 55,
+                    width: double.infinity,
+                    height: 55,
                     child: ElevatedButton(
                       onPressed: () {
                         widget.controller.clearPenance();
@@ -102,9 +124,17 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      child: const Text('ACEPTAR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      child: const Text(
+                        'ACEPTAR',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -128,14 +158,14 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => GameResultScreen(
-          gameName: 'Dígalo con Mímica',
+          gameName: 'Sin palabras',
           gameColor: AppColors.modeCharades,
           winnerName: winnerName,
           winnerColor: winnerColor,
           player1Name: c.player1Name,
           player2Name: c.player2Name,
           player1Icon: settingsProvider.player1Icon,
-          player2Icon: settingsProvider.player2Icon,
+          player2Icon: settingsProvider.player2Icon,r
           player1Color: c.player1Color,
           player2Color: c.player2Color,
           scoreP1: c.scoreHe,
@@ -158,7 +188,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CharadesGameScreen(controller: newController),
+                  builder: (context) =>
+                      CharadesGameScreen(controller: newController),
                 ),
               );
             });
@@ -166,7 +197,9 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           onGameMenu: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const CharadesStartScreen()),
+              MaterialPageRoute(
+                builder: (context) => const CharadesStartScreen(),
+              ),
             );
           },
           onMainMenu: () {
@@ -178,6 +211,33 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           },
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step(
+          '1',
+          'Tu pareja debe adivinar la palabra que aparece en pantalla.',
+        ),
+        GameHelpModal.step(
+          '2',
+          'T\u00fa haces gestos y se\u00f1as sin hablar ni deletrear.',
+        ),
+        GameHelpModal.step(
+          '3',
+          'Tienes 60 segundos para adivinar. Si aciertas, ganan.',
+        ),
+        GameHelpModal.bullet(
+          'Adivina',
+          'suman un punto.',
+          Colors.greenAccent,
+          '',
+        ),
+        GameHelpModal.bullet('No adivina', 'penitencia.', Colors.redAccent, ''),
+      ],
     );
   }
 
@@ -193,9 +253,7 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
       );
     }
 
-    final Color activeColor = c.isHeTurn
-        ? c.player1Color
-        : c.player2Color;
+    final Color activeColor = c.isHeTurn ? c.player1Color : c.player2Color;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -227,11 +285,16 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           ),
           Column(
             children: [
-              ScoreBoard(
-                player1Name: c.player1Name,
-                player2Name: c.player2Name,
-                player1Score: c.scoreHe,
-                player2Score: c.scoreShe,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildScoreChip(c.player1Name, c.scoreHe, c.player1Color),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 12)),
+                  ),
+                  _buildScoreChip(c.player2Name, c.scoreShe, c.player2Color),
+                ],
               ),
               const SizedBox(height: 4),
               Row(
@@ -244,7 +307,7 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
               ),
             ],
           ),
-          const SizedBox(width: 48),
+          GameHelpModal.helpButton(_showHelpModal),
         ],
       ),
     );
@@ -253,8 +316,9 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
   Widget _buildStrikes(int count, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(count.clamp(0, 10), (_) =>
-        Padding(
+      children: List.generate(
+        count.clamp(0, 10),
+        (_) => Padding(
           padding: const EdgeInsets.only(right: 1),
           child: Icon(Icons.bolt, color: color, size: 14),
         ),
@@ -314,14 +378,25 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
                 fontSize: 40,
                 fontWeight: FontWeight.w900,
                 height: 1.2,
-                shadows: [Shadow(color: Colors.black, blurRadius: 15, offset: Offset(0, 3))],
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 15,
+                    offset: Offset(0, 3),
+                  ),
+                ],
               ),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _categoryDisplayName(c.currentWord!.category),
-            style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2),
+            style: const TextStyle(
+              color: Colors.white54,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
           ),
           const Spacer(flex: 1),
           Container(
@@ -335,13 +410,21 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.warning_amber_rounded, color: Colors.amber, size: 18),
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.amber,
+                  size: 18,
+                ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Solo el m\u00edmico debe ver la pantalla',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.amber, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -373,8 +456,8 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
     final Color timerColor = progress > 0.5
         ? Colors.greenAccent
         : progress > 0.25
-            ? Colors.amberAccent
-            : Colors.redAccent;
+        ? Colors.amberAccent
+        : Colors.redAccent;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -396,7 +479,10 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
                     color: timerColor,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
-                      BoxShadow(color: timerColor.withValues(alpha: 0.4), blurRadius: 10),
+                      BoxShadow(
+                        color: timerColor.withValues(alpha: 0.4),
+                        blurRadius: 10,
+                      ),
                     ],
                   ),
                 ),
@@ -411,11 +497,21 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
             color: timerColor,
             fontSize: 80,
             fontWeight: FontWeight.w900,
-            shadows: [Shadow(color: timerColor.withValues(alpha: 0.3), blurRadius: 20)],
+            shadows: [
+              Shadow(color: timerColor.withValues(alpha: 0.3), blurRadius: 20),
+            ],
           ),
         ),
         const SizedBox(height: 10),
-        const Text('segundos', style: TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2)),
+        const Text(
+          'segundos',
+          style: TextStyle(
+            color: Colors.white54,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+          ),
+        ),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
@@ -442,12 +538,23 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
         if (c.wasGuessed) ...[
           const Icon(Icons.celebration, size: 80, color: Colors.greenAccent),
           const SizedBox(height: 20),
-          const Text('\u00a1ADIVINADO!',
-            style: TextStyle(color: Colors.greenAccent, fontSize: 36, fontWeight: FontWeight.w900, letterSpacing: 3)),
+          const Text(
+            '\u00a1ADIVINADO!',
+            style: TextStyle(
+              color: Colors.greenAccent,
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 3,
+            ),
+          ),
           const SizedBox(height: 15),
           Text(
             '+1 PUNTO para ${c.currentPlayerName}',
-            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ] else ...[
           TweenAnimationBuilder<double>(
@@ -458,14 +565,25 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
                 opacity: value,
                 child: Transform.scale(
                   scale: 1.0 + (1.0 - value) * 0.2,
-                  child: const Icon(Icons.question_mark, size: 80, color: Colors.redAccent),
+                  child: const Icon(
+                    Icons.question_mark,
+                    size: 80,
+                    color: Colors.redAccent,
+                  ),
                 ),
               );
             },
           ),
           const SizedBox(height: 20),
-          const Text('\u00a1SE ACAB\u00d3 EL TIEMPO!',
-            style: TextStyle(color: Colors.redAccent, fontSize: 30, fontWeight: FontWeight.w900, letterSpacing: 3)),
+          const Text(
+            '\u00a1SE ACAB\u00d3 EL TIEMPO!',
+            style: TextStyle(
+              color: Colors.redAccent,
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 3,
+            ),
+          ),
           const SizedBox(height: 15),
           _buildStrikeResult(c),
         ],
@@ -489,20 +607,38 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
 
   Widget _buildStrikeResult(CharadesController c) {
     final List<String> strikedPlayers = [];
-    if (c.strikesHe > 0) strikedPlayers.add('${c.player1Name}: ${"⚡" * c.strikesHe}');
-    if (c.strikesShe > 0) strikedPlayers.add('${c.player2Name}: ${"⚡" * c.strikesShe}');
+    if (c.strikesHe > 0)
+      strikedPlayers.add('${c.player1Name}: ${"⚡" * c.strikesHe}');
+    if (c.strikesShe > 0)
+      strikedPlayers.add('${c.player2Name}: ${"⚡" * c.strikesShe}');
 
     if (strikedPlayers.isEmpty) {
-      return const Text('Nadie recibi\u00f3 strike',
-        style: TextStyle(color: Colors.white54, fontSize: 18, fontWeight: FontWeight.bold));
+      return const Text(
+        'Nadie recibi\u00f3 strike',
+        style: TextStyle(
+          color: Colors.white54,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      );
     }
 
     return Column(
-      children: strikedPlayers.map((text) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Text(text,
-          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-      )).toList(),
+      children: strikedPlayers
+          .map(
+            (text) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -528,5 +664,24 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
       'bailes': 'Bailes',
     };
     return names[category] ?? category;
+  }
+
+  Widget _buildScoreChip(String name, int score, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(name.toUpperCase(), style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w900)),
+          const SizedBox(width: 4),
+          Text('$score', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900)),
+        ],
+      ),
+    );
   }
 }

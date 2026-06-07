@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/duel_controller.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
@@ -101,6 +102,18 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
     );
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Sale una frase: "\u00bfQui\u00e9n es m\u00e1s probable que...".'),
+        GameHelpModal.step('2', 'Discutan y elijan qui\u00e9n se lleva la frase (t\u00fa o \u00e9l/ella).'),
+        GameHelpModal.bullet('Pierdes', 'si tu pareja no coincide contigo.', Colors.redAccent, ''),
+        GameHelpModal.bullet('Ganas', 'si tu pareja coincide contigo.', Colors.greenAccent, ''),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -148,7 +161,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
               _buildScoreChip(c.player2Name, c.player2Score, c.player2Color),
             ],
           ),
-          const SizedBox(width: 48),
+          GameHelpModal.helpButton(_showHelpModal),
         ],
       ),
     );

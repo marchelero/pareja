@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/pairs_controller.dart';
 import '../../core/theme/app_colors.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../../widgets/game_result_screen.dart';
@@ -299,6 +300,19 @@ class _PairsGameScreenState extends State<PairsGameScreen>
     );
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestran cartas boca abajo en una cuadr\u00edcula.'),
+        GameHelpModal.step('2', 'Encuentra las parejas de cartas iguales.'),
+        GameHelpModal.step('3', 'Altern\u00e1is turnos para encontrar las parejas.'),
+        GameHelpModal.bullet('Encuentras una pareja', 'vuelves a jugar.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien consiga m\u00e1s parejas al final.', Colors.amberAccent, ''),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -362,7 +376,7 @@ class _PairsGameScreenState extends State<PairsGameScreen>
               _scoreChip(c.player2Name, c.player2Score, c.player2Color),
             ],
           ),
-          const SizedBox(width: 48),
+          GameHelpModal.helpButton(_showHelpModal),
         ],
       ),
     );

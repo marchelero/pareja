@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../controllers/tiradedos_controller.dart';
 import '../../core/theme/app_colors.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../services/haptics_service.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
@@ -153,6 +154,19 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
     });
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Cada jugador coloca un dedo en la pantalla.'),
+        GameHelpModal.step('2', 'Cuando ambos tocan, se selecciona aleatoriamente a uno.'),
+        GameHelpModal.step('3', 'El seleccionado pierde la ronda y el otro suma un punto.'),
+        GameHelpModal.bullet('Te seleccionan', 'pierdes la ronda, rival suma 1.', Colors.redAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuaci\u00f3n objetivo.', Colors.greenAccent, ''),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -259,6 +273,22 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
 
           if (_isBothReady)
             _buildCountdownOverlay(),
+
+          Positioned(
+            right: 8,
+            top: 8,
+            child: GameHelpModal.helpButton(_showHelpModal),
+          ),
+          Positioned(
+            left: 8,
+            top: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white70, size: 28),
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            ),
+          ),
         ],
       ),
     );

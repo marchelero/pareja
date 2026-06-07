@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/bomb_controller.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/round_result_dialog.dart';
-import '../../widgets/score_board.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
@@ -144,6 +144,19 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
     );
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestra una categor\u00eda y un tiempo l\u00edmite.'),
+        GameHelpModal.step('2', 'Di una palabra relacionada con la categor\u00eda y toca la pantalla para pasar la bomba.'),
+        GameHelpModal.step('3', 'El que se quede sin respuestas cuando explote la bomba pierde.'),
+        GameHelpModal.bullet(null, 'Pierde la ronda', Colors.redAccent, 'el rival suma 1 punto'),
+        GameHelpModal.text('Configuraci\u00f3n adicional: P\u00e1nico (oculta el tiempo), Acelerar (menos tiempo cada vez), Dorado (rondas especiales de 2 puntos), Comod\u00edn (una ayuda por partida).'),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -179,13 +192,18 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
                         icon: const Icon(Icons.close, color: Colors.white70, size: 30),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      ScoreBoard(
-                        player1Name: c.settingsProvider.player1Name,
-                        player2Name: c.settingsProvider.player2Name,
-                        player1Score: c.scoreHe,
-                        player2Score: c.scoreShe,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildScoreChip(c.settingsProvider.player1Name, c.scoreHe, c.player1Color),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 12)),
+                          ),
+                          _buildScoreChip(c.settingsProvider.player2Name, c.scoreShe, c.player2Color),
+                        ],
                       ),
-                      const SizedBox(width: 48),
+                      GameHelpModal.helpButton(_showHelpModal),
                     ],
                   ),
                 ),
@@ -331,6 +349,25 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildScoreChip(String name, int score, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(name.toUpperCase(), style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w900)),
+          const SizedBox(width: 4),
+          Text('$score', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900)),
+        ],
       ),
     );
   }

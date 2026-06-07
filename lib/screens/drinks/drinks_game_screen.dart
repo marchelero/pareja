@@ -6,6 +6,7 @@ import '../../controllers/drinks_controller.dart';
 import '../../core/models/drink_task.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
@@ -203,6 +204,18 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
     );
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestran desaf\u00edos y tragos para cada jugador.'),
+        GameHelpModal.step('2', 'Cada jugador cumple su reto o bebe.'),
+        GameHelpModal.step('3', 'El primero en llegar al l\u00edmite de tragos pierde.'),
+        GameHelpModal.text('Los desaf\u00edos pueden ser: tomar un trago, hacer una pregunta, o una acci\u00f3n especial.'),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -253,6 +266,10 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () => Navigator.pop(context),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -293,10 +310,7 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                         ),
                     ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white70),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                  GameHelpModal.helpButton(_showHelpModal),
                 ],
               ),
               const SizedBox(height: 10),

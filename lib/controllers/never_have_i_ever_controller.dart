@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/models/never_have_i_ever_question.dart';
@@ -30,15 +29,15 @@ class NeverHaveIEverController extends ChangeNotifier {
 
   bool _isLoading = true;
   int _roundNumber = 1;
-  int _scoreHe = 0;
-  int _scoreShe = 0;
-  int _strikesHe = 0;
-  int _strikesShe = 0;
+  int _scorePlayer1 = 0;
+  int _scorePlayer2 = 0;
+  int _strikesPlayer1 = 0;
+  int _strikesPlayer2 = 0;
 
-  bool _heAnswered = false;
-  bool _sheAnswered = false;
-  bool? _heSaidYo;
-  bool? _sheSaidYo;
+  bool _player1Answered = false;
+  bool _player2Answered = false;
+  bool? _player1SaidYes;
+  bool? _player2SaidYes;
 
   bool _phaseReadyToReveal = false;
   bool _isRevealed = false;
@@ -55,14 +54,14 @@ class NeverHaveIEverController extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   NeverHaveIEverQuestion? get currentQuestion => _currentQuestion;
-  int get scoreHe => _scoreHe;
-  int get scoreShe => _scoreShe;
-  int get strikesHe => _strikesHe;
-  int get strikesShe => _strikesShe;
-  bool get heAnswered => _heAnswered;
-  bool get sheAnswered => _sheAnswered;
-  bool? get heSaidYo => _heSaidYo;
-  bool? get sheSaidYo => _sheSaidYo;
+  int get scorePlayer1 => _scorePlayer1;
+  int get scorePlayer2 => _scorePlayer2;
+  int get strikesPlayer1 => _strikesPlayer1;
+  int get strikesPlayer2 => _strikesPlayer2;
+  bool get player1Answered => _player1Answered;
+  bool get player2Answered => _player2Answered;
+  bool? get player1SaidYes => _player1SaidYes;
+  bool? get player2SaidYes => _player2SaidYes;
   bool get phaseReadyToReveal => _phaseReadyToReveal;
   bool get isRevealed => _isRevealed;
   int get roundNumber => _roundNumber;
@@ -117,47 +116,44 @@ class NeverHaveIEverController extends ChangeNotifier {
     _currentQuestion = _availableQuestions.removeAt(0);
   }
 
-  void answerHe(bool saidYo) {
-    _heAnswered = true;
-    _heSaidYo = saidYo;
+  void answerPlayer1(bool saidYes) {
+    _player1Answered = true;
+    _player1SaidYes = saidYes;
     notifyListeners();
 
-    if (_sheAnswered) {
+    if (_player2Answered) {
       _phaseReadyToReveal = true;
       notifyListeners();
     }
   }
 
-  void answerShe(bool saidYo) {
-    _sheAnswered = true;
-    _sheSaidYo = saidYo;
+  void answerPlayer2(bool saidYes) {
+    _player2Answered = true;
+    _player2SaidYes = saidYes;
     notifyListeners();
 
-    if (_heAnswered) {
+    if (_player1Answered) {
       _phaseReadyToReveal = true;
       notifyListeners();
     }
   }
 
   void reveal() {
-    if (_heSaidYo == null || _sheSaidYo == null) return;
+    if (_player1SaidYes == null || _player2SaidYes == null) return;
 
-    _disparity = _heSaidYo != _sheSaidYo;
+    _disparity = _player1SaidYes != _player2SaidYes;
 
     if (_disparity) {
-      // Quien dijo YO (lo ha hecho) recibe strike
-      // Quien dijo NUNCA (no lo ha hecho) suma punto por ganar la ronda
-      if (_heSaidYo == true && _sheSaidYo == false) {
-        _strikesHe++;
+      if (_player1SaidYes == true && _player2SaidYes == false) {
+        _strikesPlayer1++;
         _strikePlayerName = player1Name;
-        _scoreShe++; // Ella gana la ronda
+        _scorePlayer2++;
       } else {
-        _strikesShe++;
+        _strikesPlayer2++;
         _strikePlayerName = player2Name;
-        _scoreHe++; // Él gana la ronda
+        _scorePlayer1++;
       }
     }
-    // Si hay paridad (ambos YO o ambos NUNCA), nadie suma puntos
 
     _isRevealed = true;
     notifyListeners();
@@ -166,9 +162,9 @@ class NeverHaveIEverController extends ChangeNotifier {
   }
 
   void _checkPenance() {
-    if (_strikesHe >= strikesForPenance) {
+    if (_strikesPlayer1 >= strikesForPenance) {
       _assignPenance();
-    } else if (_strikesShe >= strikesForPenance) {
+    } else if (_strikesPlayer2 >= strikesForPenance) {
       _assignPenance();
     }
   }
@@ -186,34 +182,34 @@ class NeverHaveIEverController extends ChangeNotifier {
 
   void clearPenance() {
     _penanceText = null;
-    _strikesHe = 0;
-    _strikesShe = 0;
+    _strikesPlayer1 = 0;
+    _strikesPlayer2 = 0;
     notifyListeners();
   }
 
   void nextRound() {
-    if (_scoreHe >= pointsToWin) {
+    if (_scorePlayer1 >= pointsToWin) {
       onWinner?.call(player1Name);
       return;
     }
-    if (_scoreShe >= pointsToWin) {
+    if (_scorePlayer2 >= pointsToWin) {
       onWinner?.call(player2Name);
       return;
     }
 
     if (_roundNumber >= rounds) {
-      final winnerName = _scoreHe > _scoreShe
+      final winnerName = _scorePlayer1 > _scorePlayer2
           ? player1Name
-          : (_scoreShe > _scoreHe ? player2Name : 'EMPATE');
+          : (_scorePlayer2 > _scorePlayer1 ? player2Name : 'EMPATE');
       onWinner?.call(winnerName);
       return;
     }
 
     _roundNumber++;
-    _heAnswered = false;
-    _sheAnswered = false;
-    _heSaidYo = null;
-    _sheSaidYo = null;
+    _player1Answered = false;
+    _player2Answered = false;
+    _player1SaidYes = null;
+    _player2SaidYes = null;
     _phaseReadyToReveal = false;
     _isRevealed = false;
     _disparity = false;

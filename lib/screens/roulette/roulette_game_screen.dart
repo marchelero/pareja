@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../controllers/roulette_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../services/haptics_service.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 
 class RouletteGameScreen extends StatefulWidget {
@@ -127,6 +128,18 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
     super.dispose();
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Gira la ruleta para ver tu desaf\u00edo.'),
+        GameHelpModal.step('2', 'Cumple el desaf\u00edo que aparezca.'),
+        GameHelpModal.step('3', 'El modo \u00c1trevida a\u00f1ade desaf\u00edos m\u00e1s intensos.'),
+        GameHelpModal.text('Los desaf\u00edos pueden ser preguntas, acciones, o pruebas para ambos.'),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -206,6 +219,10 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.white70, size: 30),
+            onPressed: () => Navigator.pop(context),
+          ),
           if (isHotUnlocked)
             Row(
               children: [
@@ -235,10 +252,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2),
               ),
             ),
-          IconButton(
-            icon: const Icon(Icons.close, color: Colors.white70, size: 30),
-            onPressed: () => Navigator.pop(context),
-          ),
+          GameHelpModal.helpButton(_showHelpModal),
         ],
       ),
     );

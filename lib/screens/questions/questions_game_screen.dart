@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import '../../controllers/questions_controller.dart';
 import '../../core/models/player.dart';
-import '../../widgets/game_result_screen.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
-import '../../core/theme/app_colors.dart';
-import '../../providers/settings_provider.dart';
-import '../../services/audio_service.dart';
-import 'questions_start_screen.dart';
 import '../games_menu_screen.dart';
 
 class QuestionsGameScreen extends StatefulWidget {
@@ -24,84 +19,26 @@ class QuestionsGameScreen extends StatefulWidget {
 }
 
 class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(_onControllerChange);
+  String _generatedQuestion = '';
+  bool _showQuestion = false;
+  bool _showAnswer = false;
+  int _selectedScore = 3;
 
-    widget.controller.onGameFinished = (Player player1, Player player2) {
-      final c = widget.controller;
-      final settingsProvider = context.read<SettingsProvider>();
-      final audioService = context.read<AudioService>();
-      final isTie = player1.score == player2.score;
-      final winner = player1.score > player2.score ? player1 : player2;
-      final winnerColor = winner.name == player1.name ? settingsProvider.player1Color : settingsProvider.player2Color;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GameResultScreen(
-            gameName: 'Preguntas',
-            gameColor: AppColors.modeQuestions,
-            winnerName: winner.name,
-            winnerColor: winnerColor,
-            player1Name: player1.name,
-            player2Name: player2.name,
-            player1Icon: settingsProvider.player1Icon,
-            player2Icon: settingsProvider.player2Icon,
-            player1Color: settingsProvider.player1Color,
-            player2Color: settingsProvider.player2Color,
-            scoreP1: player1.score,
-            scoreP2: player2.score,
-            maxScore: c.maxRounds,
-            isTie: isTie,
-            p1StatsSection: _QuestionsPlayerStats(player: player1),
-            p2StatsSection: _QuestionsPlayerStats(player: player2),
-            onReplay: () {
-              final newController = QuestionsController(
-                repository: c.repository,
-                audioService: audioService,
-                settingsProvider: settingsProvider,
-                maxRounds: c.maxRounds,
-                categories: c.categories,
-                startingPlayerIsP1: true,
-              );
-              newController.initGame().then((_) {
-                if (!context.mounted) return;
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuestionsGameScreen(controller: newController),
-                  ),
-                );
-              });
-            },
-            onGameMenu: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const QuestionsStartScreen()),
-              );
-            },
-            onMainMenu: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const GamesMenuScreen()),
-                (route) => false,
-              );
-            },
-          ),
-        ),
-      );
-    };
-  }
-
-  void _onControllerChange() {
-    if (mounted) setState(() {});
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestra una pregunta para el jugador activo.'),
+        GameHelpModal.step('2', 'El jugador responde y su pareja tasa la respuesta del 1 al 5.'),
+        GameHelpModal.step('3', 'Si la puntuaci\u00f3n es 4 o 5, el jugador gana puntos. Si es 3 o menos, no suma.'),
+        GameHelpModal.bullet('Respuesta bien valorada', 'sumas puntos.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuaci\u00f3n objetivo.', Colors.amberAccent, ''),
+      ],
+    );
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(_onControllerChange);
     super.dispose();
   }
 
@@ -214,11 +151,12 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Ronda ${c.currentRound}/${c.maxRounds}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
                           IconButton(
                             icon: const Icon(Icons.close, color: Colors.white70),
                             onPressed: () => Navigator.pop(context),
                           ),
+                          Text('Ronda ${c.currentRound}/${c.maxRounds}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+                          GameHelpModal.helpButton(_showHelpModal),
                         ],
                       ),
                       const SizedBox(height: 10),

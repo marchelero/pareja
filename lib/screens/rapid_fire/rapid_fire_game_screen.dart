@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/rapid_fire_controller.dart';
 import '../../widgets/game_result_screen.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
@@ -88,6 +89,19 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
     ));
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Sale una pregunta de opci\u00f3n m\u00faltiple.'),
+        GameHelpModal.step('2', 'El primero en responder correctamente gana el punto.'),
+        GameHelpModal.step('3', 'Si respondes mal, el otro puede robar la respuesta.'),
+        GameHelpModal.bullet('Respuesta correcta', 'sumas 1 punto.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuaci\u00f3n objetivo.', Colors.amberAccent, ''),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -147,6 +161,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
             ),
             child: Text(c.player2Name.toUpperCase(), style: TextStyle(color: c.player2Color, fontSize: 11, fontWeight: FontWeight.w900)),
           ),
+          GameHelpModal.helpButton(_showHelpModal),
         ],
       ),
     );

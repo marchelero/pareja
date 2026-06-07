@@ -4,6 +4,7 @@ import '../../controllers/atiempo_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../services/haptics_service.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/route_transitions.dart';
@@ -74,6 +75,19 @@ class _ATiempoGameScreenState extends State<ATiempoGameScreen>
     return '${seconds.toString().padLeft(2, '0')}.${centiseconds.toString().padLeft(2, '0')}';
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Cada jugador debe parar el cron\u00f3metro lo m\u00e1s cerca posible del tiempo objetivo.'),
+        GameHelpModal.step('2', 'El jugador activo pulsa "PARAR" para detener el tiempo.'),
+        GameHelpModal.step('3', 'El que se acerque m\u00e1s al objetivo gana la ronda.'),
+        GameHelpModal.bullet('Gana la ronda', 'quien se acerque m\u00e1s al tiempo objetivo.', Colors.greenAccent, 'suma 1 punto'),
+        GameHelpModal.bullet('Gana la partida', 'quien gane m\u00e1s rondas.', Colors.amberAccent, 'mejor de 3/5'),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -107,45 +121,61 @@ class _ATiempoGameScreenState extends State<ATiempoGameScreen>
   Widget _buildScoreHeader(ATiempoController c) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(child: _buildPlayerScore(c.player1Name, c.player1Color, c.player1Icon, c.p1Points, true)),
-          Column(
-            mainAxisSize: MainAxisSize.min,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('RONDA ${c.currentRound}', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2)),
-              const SizedBox(height: 4),
-              Text('${c.p1Rounds} - ${c.p2Rounds}', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 22, fontWeight: FontWeight.w900)),
-              Text('rondas', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 1)),
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.white70, size: 28),
+                onPressed: () => Navigator.pop(context),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('RONDA ${c.currentRound}', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2)),
+                  const SizedBox(height: 4),
+                  Text('${c.p1Rounds} - ${c.p2Rounds}', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 22, fontWeight: FontWeight.w900)),
+                  Text('rondas', style: TextStyle(color: Colors.white.withValues(alpha: 0.3), fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                ],
+              ),
+              GameHelpModal.helpButton(_showHelpModal),
             ],
           ),
-          Expanded(child: _buildPlayerScore(c.player2Name, c.player2Color, c.player2Icon, c.p2Points, false)),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildScoreChip(c.player1Name, c.p1Points, c.player1Color),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text('VS', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.w900, fontSize: 13)),
+              ),
+              _buildScoreChip(c.player2Name, c.p2Points, c.player2Color),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPlayerScore(String name, Color color, IconData icon, int points, bool isLeft) {
-    return Column(
-      crossAxisAlignment: isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isLeft) ...[
-              Icon(icon, color: color, size: 16),
-              const SizedBox(width: 4),
-              Flexible(child: Text(name, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
-            ] else ...[
-              Flexible(child: Text(name, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis)),
-              const SizedBox(width: 4),
-              Icon(icon, color: color, size: 16),
-            ],
-          ],
-        ),
-        const SizedBox(height: 2),
-        Text('$points pts', style: TextStyle(color: color.withValues(alpha: 0.8), fontSize: 16, fontWeight: FontWeight.w900)),
-      ],
+  Widget _buildScoreChip(String name, int score, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(name.toUpperCase(), style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w900)),
+          const SizedBox(width: 4),
+          Text('$score', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900)),
+        ],
+      ),
     );
   }
 
@@ -160,6 +190,9 @@ class _ATiempoGameScreenState extends State<ATiempoGameScreen>
       ATiempoPhase.turnDone => _formatTime(c.isPlayer1Turn ? (c.p1Time ?? 0) : (c.p2Time ?? 0)),
       _ => '00.00',
     };
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final timerFontSize = ((screenWidth - 80) / 3).clamp(60.0, 120.0);
 
     return Column(
       key: ValueKey(c.phase),
@@ -213,7 +246,7 @@ class _ATiempoGameScreenState extends State<ATiempoGameScreen>
               final isWaiting = c.phase == ATiempoPhase.waitingTurn;
               final alpha = isWaiting ? 0.3 + p * 0.15 : 1.0;
               return Text(time, style: TextStyle(
-                fontSize: 110,
+                fontSize: timerFontSize,
                 fontWeight: FontWeight.w900,
                 fontFamily: 'monospace',
                 color: const Color(0xFFFF2020).withValues(alpha: alpha),

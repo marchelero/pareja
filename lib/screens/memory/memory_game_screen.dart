@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/memory_controller.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
@@ -177,6 +178,19 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
     ));
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se ilumina una secuencia de colores.'),
+        GameHelpModal.step('2', 'Repite la secuencia tocando los botones en el mismo orden.'),
+        GameHelpModal.step('3', 'Cada ronda a\u00f1ade un color m\u00e1s. Si fallas, pierdes la ronda.'),
+        GameHelpModal.bullet('Pierde la ronda', 'quien falle al repetir la secuencia.', Colors.redAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien gane m\u00e1s rondas.', Colors.greenAccent, ''),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -270,7 +284,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
               _scoreChip(c.player2Name, c.player2Score, c.player2Color),
             ],
           ),
-          const SizedBox(width: 48),
+          GameHelpModal.helpButton(_showHelpModal),
         ],
       ),
     );

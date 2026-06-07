@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/russian_roulette_controller.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
@@ -263,6 +264,19 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
     );
   }
 
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Cada ronda se carga una bala en una posici\u00f3n aleatoria.'),
+        GameHelpModal.step('2', 'Por turnos, cada jugador aprieta el gatillo.'),
+        GameHelpModal.step('3', 'Si te disparan, pierdes la ronda. El otro suma un punto.'),
+        GameHelpModal.bullet('Te disparan', 'pierdes la ronda, el rival suma 1.', Colors.redAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuaci\u00f3n objetivo.', Colors.greenAccent, ''),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.controller;
@@ -371,7 +385,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  GameHelpModal.helpButton(_showHelpModal),
                 ],
               ),
             ),
