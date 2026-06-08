@@ -8,6 +8,7 @@ import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/section_title.dart';
 import '../../widgets/setting_row.dart';
 import 'premiado_game_screen.dart';
 
@@ -40,7 +41,7 @@ class _PremiadoStartScreenState extends State<PremiadoStartScreen> {
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
-              _buildSectionTitle('JUGADORES', Icons.people),
+              SectionTitle(text: 'JUGADORES', icon: Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
                 player1Icon: context.read<SettingsProvider>().player1Icon,
@@ -50,7 +51,7 @@ class _PremiadoStartScreenState extends State<PremiadoStartScreen> {
                 onChanged: (p1, p2) {},
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle('CONFIGURACIÓN', Icons.tune),
+              SectionTitle(text: 'CONFIGURACIÓN', icon: Icons.tune),
               const SizedBox(height: 8),
               GlassCard(
                 child: SettingRow(
@@ -94,24 +95,6 @@ class _PremiadoStartScreenState extends State<PremiadoStartScreen> {
         Padding(
           padding: const EdgeInsets.only(right: 8),
           child: GameHelpModal.helpButton(_showHelpModal),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSectionTitle(String text, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.pinkAccent, size: 24),
-        const SizedBox(width: 10),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            color: Colors.white70,
-            letterSpacing: 2,
-          ),
         ),
       ],
     );

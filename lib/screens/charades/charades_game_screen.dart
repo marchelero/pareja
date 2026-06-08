@@ -115,26 +115,16 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
                   SizedBox(
                     width: double.infinity,
                     height: 55,
-                    child: ElevatedButton(
+                    child: GameButton(
+                      text: 'ACEPTAR',
+                      icon: Icons.check,
                       onPressed: () {
                         widget.controller.clearPenance();
                         _showingPenance = false;
                         Navigator.pop(context);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: const Text(
-                        'ACEPTAR',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                      style: GameButtonStyle.danger,
+                      height: 55,
                     ),
                   ),
                 ],
@@ -607,10 +597,12 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
 
   Widget _buildStrikeResult(CharadesController c) {
     final List<String> strikedPlayers = [];
-    if (c.strikesHe > 0)
+    if (c.strikesHe > 0) {
       strikedPlayers.add('${c.player1Name}: ${"⚡" * c.strikesHe}');
-    if (c.strikesShe > 0)
+    }
+    if (c.strikesShe > 0) {
       strikedPlayers.add('${c.player2Name}: ${"⚡" * c.strikesShe}');
+    }
 
     if (strikedPlayers.isEmpty) {
       return const Text(

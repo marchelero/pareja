@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   final file = File('assets/data/drinks_tasks.json');
   if (!await file.exists()) {
-    print('File not found!');
+    debugPrint('File not found!');
     return;
   }
   
@@ -17,20 +18,23 @@ void main() async {
     String category = task['category'] ?? '';
     int intensity = task['intensity'] ?? 1;
 
-    // Fix 0 sips
     if (sips == 0) {
       fixedCount++;
       if (category == 'challenge' || category == 'decision') {
-        sips = 2; // Default base
-        if (intensity >= 7) sips = 4; // High intensity
-        else if (intensity >= 5) sips = 3;
+        sips = 2;
+        if (intensity >= 7) {
+          sips = 4;
+        } else if (intensity >= 5) {
+          sips = 3;
+        }
       } else {
         sips = 1;
-        if (intensity >= 7) sips = 3;
+        if (intensity >= 7) {
+          sips = 3;
+        }
       }
     }
 
-    // Cap at 4
     if (sips > 4) {
       sips = 4;
     }
@@ -39,5 +43,5 @@ void main() async {
   }
 
   await file.writeAsString(const JsonEncoder.withIndent('    ').convert(json));
-  print('Fixed $fixedCount tasks.');
+  debugPrint('Fixed $fixedCount tasks.');
 }

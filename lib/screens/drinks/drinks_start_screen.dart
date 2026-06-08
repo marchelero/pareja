@@ -414,12 +414,9 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
-          await context
-              .read<SettingsProvider>()
-              .setPlayer1Name(_player1Name);
-          await context
-              .read<SettingsProvider>()
-              .setPlayer2Name(_player2Name);
+          final settings = context.read<SettingsProvider>();
+          await settings.setPlayer1Name(_player1Name);
+          await settings.setPlayer2Name(_player2Name);
           if (!mounted) return;
           final audioService =
               context.read<AudioService>();

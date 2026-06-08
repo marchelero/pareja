@@ -330,8 +330,9 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
-          if (_selectedCategories.isEmpty &&
-              _allCategories.isNotEmpty) return;
+          if (_selectedCategories.isEmpty && _allCategories.isNotEmpty) {
+            return;
+          }
           final audioService = context.read<AudioService>();
           final settingsProvider =
               context.read<SettingsProvider>();

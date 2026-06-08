@@ -18,6 +18,10 @@ class SettingsProvider extends ChangeNotifier {
   int _rouletteSpinCount = 0;
   bool _isLoaded = false;
   bool _namesCustomized = false;
+  bool _guestMode = false;
+  int _gamesPlayed = 0;
+  String _favoriteGame = '';
+  int _playTimeMinutes = 0;
 
   String get player1Name => _player1Name;
   String get player2Name => _player2Name;
@@ -31,6 +35,20 @@ class SettingsProvider extends ChangeNotifier {
   int get rouletteSpinCount => _rouletteSpinCount;
   bool get isLoaded => _isLoaded;
   bool get namesCustomized => _namesCustomized;
+  bool get guestMode => _guestMode;
+  int get gamesPlayed => _gamesPlayed;
+  String get favoriteGame => _favoriteGame;
+  int get playTimeMinutes => _playTimeMinutes;
+
+  String get displayName1 => _guestMode ? 'J1' : _player1Name;
+  String get displayName2 => _guestMode ? 'J2' : _player2Name;
+
+  String get estimatedPlayTime {
+    final hours = _playTimeMinutes ~/ 60;
+    final minutes = _playTimeMinutes % 60;
+    if (hours > 0) return '${hours}h ${minutes}m';
+    return '${minutes}m';
+  }
 
   IconData get player1Icon => _player1Gender == PlayerGender.male ? Icons.male : Icons.female;
   IconData get player2Icon => _player2Gender == PlayerGender.male ? Icons.male : Icons.female;
@@ -76,6 +94,12 @@ class SettingsProvider extends ChangeNotifier {
     _soundEnabled = await LocalStorage.isSoundEnabled();
     _vibrationEnabled = await LocalStorage.isVibrationEnabled();
     _rouletteSpinCount = await LocalStorage.getRouletteSpinCount();
+
+    _guestMode = await LocalStorage.isGuestMode();
+    _gamesPlayed = await LocalStorage.getGamesPlayed();
+    _favoriteGame = await LocalStorage.getFavoriteGame();
+    _playTimeMinutes = await LocalStorage.getPlayTimeMinutes();
+
     _isLoaded = true;
     notifyListeners();
   }
@@ -182,6 +206,47 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> clearUsedDrinkTasks() async {
     await LocalStorage.clearUsedDrinkTasks();
+    notifyListeners();
+  }
+
+  // ── Guest mode ──
+
+  Future<void> setGuestMode(bool value) async {
+    _guestMode = value;
+    await LocalStorage.setGuestMode(value);
+    notifyListeners();
+  }
+
+  // ── Stats tracking ──
+
+  Future<void> incrementGamePlayed(String gameName) async {
+    _gamesPlayed++;
+    _playTimeMinutes += 15;
+    if (_favoriteGame.isEmpty) {
+      _favoriteGame = gameName;
+    }
+    await LocalStorage.saveGamesPlayed(_gamesPlayed);
+    await LocalStorage.saveFavoriteGame(_favoriteGame);
+    await LocalStorage.savePlayTimeMinutes(_playTimeMinutes);
+    notifyListeners();
+  }
+
+  Future<void> resetAllData() async {
+    await LocalStorage.clearAll();
+    _player1Name = _defaultName(1);
+    _player2Name = _defaultName(2);
+    _player1Gender = PlayerGender.male;
+    _player2Gender = PlayerGender.female;
+    _assignDefaultColors();
+    _friendsMode = false;
+    _soundEnabled = true;
+    _vibrationEnabled = true;
+    _rouletteSpinCount = 0;
+    _guestMode = false;
+    _gamesPlayed = 0;
+    _favoriteGame = '';
+    _playTimeMinutes = 0;
+    _namesCustomized = false;
     notifyListeners();
   }
 }

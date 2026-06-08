@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../core/storage/local_storage.dart';
+import 'game_button.dart';
 
 class PlayerNamesSection extends StatefulWidget {
   final void Function(String p1, String p2)? onChanged;
@@ -241,15 +242,12 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                       Expanded(
                         child: SizedBox(
                           height: 40,
-                          child: ElevatedButton(
+                          child: GameButton(
+                            text: 'GUARDAR',
                             onPressed: _save,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.greenAccent.withValues(alpha: 0.2),
-                              foregroundColor: Colors.greenAccent,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            child: const Text('GUARDAR', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                            style: GameButtonStyle.primary,
+                            height: 40,
+                            customColor: Colors.greenAccent,
                           ),
                         ),
                       ),
@@ -257,15 +255,11 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                       Expanded(
                         child: SizedBox(
                           height: 40,
-                          child: ElevatedButton(
+                          child: GameButton(
+                            text: 'CANCELAR',
                             onPressed: _cancel,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white.withValues(alpha: 0.1),
-                              foregroundColor: Colors.white70,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            child: const Text('CANCELAR', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                            style: GameButtonStyle.secondary,
+                            height: 40,
                           ),
                         ),
                       ),

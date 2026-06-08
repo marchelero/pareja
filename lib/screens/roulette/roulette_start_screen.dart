@@ -239,14 +239,11 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
-          await context
-              .read<SettingsProvider>()
-              .setPlayer1Name(_player1Name);
-          await context
-              .read<SettingsProvider>()
-              .setPlayer2Name(_player2Name);
+          final settings = context.read<SettingsProvider>();
+          await settings.setPlayer1Name(_player1Name);
+          await settings.setPlayer2Name(_player2Name);
 
-          if (!context.mounted) return;
+          if (!mounted) return;
 
           Navigator.push(
             context,

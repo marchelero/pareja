@@ -54,12 +54,11 @@ class _GameButtonState extends State<GameButton>
     final bool isPrimary = widget.style == GameButtonStyle.primary;
 
     return GestureDetector(
-      onTapDown: (_) => setState(() => _scale = 0.95),
-      onTapUp: (_) {
-        setState(() => _scale = 1.0);
+      onTap: () {
         HapticsService.light();
         widget.onPressed();
       },
+      onTapDown: (_) => setState(() => _scale = 0.95),
       onTapCancel: () => setState(() => _scale = 1.0),
       child: AnimatedScale(
         scale: _scale,

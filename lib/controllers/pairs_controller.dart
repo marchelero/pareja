@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../services/audio_service.dart';
 import '../providers/settings_provider.dart';
 
-class _CardData {
+class CardData {
   final String emoji;
   bool isFlipped = false;
   bool isMatched = false;
   final int pairId;
 
-  _CardData({required this.emoji, required this.pairId});
+  CardData({required this.emoji, required this.pairId});
 }
 
 class PairsController extends ChangeNotifier {
@@ -34,7 +34,7 @@ class PairsController extends ChangeNotifier {
     '🥭', '🫐', '🍈', '🍐', '🍏',
   ];
 
-  final List<_CardData> _cards = [];
+  final List<CardData> _cards = [];
   int? _firstIndex;
   bool _isChecking = false;
   bool _isPlayer1Turn = true;
@@ -54,7 +54,7 @@ class PairsController extends ChangeNotifier {
   Color _player1Color = Colors.blueAccent;
   Color _player2Color = Colors.pinkAccent;
 
-  List<_CardData> get cards => _cards;
+  List<CardData> get cards => _cards;
   bool get isPlayer1Turn => _isPlayer1Turn;
   int get player1Score => _player1Score;
   int get player2Score => _player2Score;
@@ -76,7 +76,7 @@ class PairsController extends ChangeNotifier {
   int get matchedPairs => _cards.where((c) => c.isMatched).length ~/ 2;
   bool get isRoundOver => matchedPairs >= pairCount;
 
-  void initGame() {
+  Future<void> initGame() async {
     _player1Name = settingsProvider.player1Name;
     _player2Name = settingsProvider.player2Name;
     _player1Color = settingsProvider.player1Color;
@@ -106,8 +106,8 @@ class PairsController extends ChangeNotifier {
     _isChecking = false;
 
     for (int i = 0; i < pairCount; i++) {
-      _cards.add(_CardData(emoji: _emojis[i], pairId: i));
-      _cards.add(_CardData(emoji: _emojis[i], pairId: i));
+      _cards.add(CardData(emoji: _emojis[i], pairId: i));
+      _cards.add(CardData(emoji: _emojis[i], pairId: i));
     }
     _cards.shuffle(Random());
 

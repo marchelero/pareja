@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import 'game_button.dart';
 
 class GameHelpModal {
   static void show({
@@ -58,14 +59,12 @@ class GameHelpModal {
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
+                    child: GameButton(
+                      text: 'ENTENDIDO',
+                      icon: Icons.check,
                       onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: const Text('ENTENDIDO', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, letterSpacing: 2)),
+                      style: GameButtonStyle.primary,
+                      height: 50,
                     ),
                   ),
                 ],

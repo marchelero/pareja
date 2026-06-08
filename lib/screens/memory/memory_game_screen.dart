@@ -40,6 +40,11 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
 
     _shakeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     _successFlashController = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
+    _successFlashController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _successFlashController.reverse();
+      }
+    });
 
     for (int i = 0; i < 4; i++) {
       _flashControllers.add(AnimationController(

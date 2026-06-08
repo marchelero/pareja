@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'game_button.dart';
 import 'score_board.dart';
 
 class RoundResultDialog extends StatelessWidget {
@@ -73,14 +74,12 @@ class RoundResultDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: 60,
-              child: ElevatedButton(
+              child: GameButton(
+                text: 'SIGUIENTE RONDA',
+                icon: Icons.skip_next,
                 onPressed: onSiguienteRonda,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
-                child: const Text('SIGUIENTE RONDA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                style: GameButtonStyle.primary,
+                height: 60,
               ),
             ),
           ],

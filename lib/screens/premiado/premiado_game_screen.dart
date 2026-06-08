@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../controllers/premiado_controller.dart';
 import '../../core/theme/app_colors.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../services/haptics_service.dart';
 import '../../widgets/game_button.dart';
@@ -40,6 +42,9 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SettingsProvider>().incrementGamePlayed('Premiado');
+    });
     _pulseCtrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
 
     _glowCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));

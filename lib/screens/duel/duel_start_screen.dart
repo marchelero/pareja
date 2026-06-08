@@ -78,7 +78,7 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
                             fontWeight: FontWeight.w900,
                             shadows: [
                               Shadow(
-                                color: AppColors.modeMostLikely,
+                                color: AppColors.modeDuel,
                                 blurRadius: 10,
                               )
                             ],
@@ -91,7 +91,7 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
                       min: 5,
                       max: 20,
                       divisions: 15,
-                      activeColor: AppColors.modeMostLikely,
+                      activeColor: AppColors.modeDuel,
                       inactiveColor: Colors.white10,
                       onChanged: (val) =>
                           setState(() => _maxRounds = val.toInt()),

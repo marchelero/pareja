@@ -118,18 +118,22 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                 SizedBox(
                   width: 250,
                   height: 56,
-                  child: ElevatedButton(
+                  child: GameButton(
+                    text: 'SIGUIENTE',
+                    icon: Icons.skip_next,
                     onPressed: () {
                       Navigator.pop(context);
                       c.resetPlayerGlasses(playerName);
+                      if (c.heSipsLeft <= 0 && playerName != c.player1Name) {
+                        c.resetPlayerGlasses(c.player1Name);
+                      }
+                      if (c.sheSipsLeft <= 0 && playerName != c.player2Name) {
+                        c.resetPlayerGlasses(c.player2Name);
+                      }
                       c.advanceAfterGameOver();
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: const Text('SIGUIENTE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 2)),
+                    style: GameButtonStyle.primary,
+                    height: 56,
                   ),
                 ),
               ],
@@ -479,8 +483,8 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
             _buildDrinkButton(
               c.currentTask!.sips == 99 ? '¡TOMAR TODO EL VASO!' : '¡TOMAMOS AMBOS!',
               () {
-                c.applySips(DrinkTarget.both, c.currentTask!.sips);
-                c.nextTurnFromUI();
+                bool vacated = c.applySips(DrinkTarget.both, c.currentTask!.sips);
+                if (!vacated) c.nextTurnFromUI();
               },
               Colors.amber,
               isLarge: true,
@@ -502,15 +506,15 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
           children: [
             Expanded(
               child: _buildDrinkButton('TOMA ${c.player1Name}$sipsText', () {
-                c.applySips(DrinkTarget.he, c.currentTask!.sips);
-                c.nextTurnFromUI();
+                bool vacated = c.applySips(DrinkTarget.he, c.currentTask!.sips);
+                if (!vacated) c.nextTurnFromUI();
               }, c.player1Color),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _buildDrinkButton('TOMA ${c.player2Name}$sipsText', () {
-                c.applySips(DrinkTarget.she, c.currentTask!.sips);
-                c.nextTurnFromUI();
+                bool vacated = c.applySips(DrinkTarget.she, c.currentTask!.sips);
+                if (!vacated) c.nextTurnFromUI();
               }, c.player2Color),
             ),
           ],
@@ -532,8 +536,8 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
           children: [
             Expanded(
               child: _buildDrinkButton('TOMA $name$sipsText', () {
-                c.applySips(applyTarget, c.currentTask!.sips);
-                c.nextTurnFromUI();
+                bool vacated = c.applySips(applyTarget, c.currentTask!.sips);
+                if (!vacated) c.nextTurnFromUI();
               }, color),
             ),
             const SizedBox(width: 10),

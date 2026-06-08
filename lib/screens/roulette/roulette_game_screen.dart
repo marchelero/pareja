@@ -1,8 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../controllers/roulette_controller.dart';
 import '../../core/theme/app_colors.dart';
+import '../../providers/settings_provider.dart';
 import '../../services/haptics_service.dart';
+import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 
@@ -32,6 +35,10 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SettingsProvider>().incrementGamePlayed('Ruleta');
+    });
 
     widget.controller.addListener(_onControllerChange);
 
@@ -480,7 +487,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
               height: 55,
-              child: ElevatedButton.icon(
+              child: GameButton(
+                text: 'SIGUIENTE TURNO',
+                icon: Icons.skip_next,
                 onPressed: () {
                   setState(() {
                     _result = null;
@@ -488,14 +497,9 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
                   });
                   c.nextTurnFromUI();
                 },
-                icon: const Icon(Icons.skip_next),
-                label: const Text('SIGUIENTE TURNO', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: c.isDareMode ? Colors.red : Colors.blue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  elevation: 8,
-                ),
+                style: GameButtonStyle.primary,
+                height: 55,
+                customColor: c.isDareMode ? Colors.red : Colors.blue,
               ),
             ),
           ],

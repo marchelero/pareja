@@ -50,7 +50,7 @@ class PremiadoController extends ChangeNotifier {
   bool get hasWinner => _scoreP1 >= pointsToWin || _scoreP2 >= pointsToWin;
   int get winnerIndex => _scoreP1 >= pointsToWin ? 0 : (_scoreP2 >= pointsToWin ? 1 : -1);
 
-  void initGame() {
+  Future<void> initGame() async {
     _player1Name = settingsProvider.player1Name;
     _player2Name = settingsProvider.player2Name;
     _player1Color = settingsProvider.player1Color;

@@ -49,6 +49,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  void _confirmReset(SettingsProvider settings) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        title: const Text('Resetear datos', style: TextStyle(color: Colors.white)),
+        content: const Text(
+          '¿Borrar todos los datos? Los nombres, colores, ajustes y estadísticas volverán a sus valores de fábrica.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('CANCELAR', style: TextStyle(color: Colors.white54)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              settings.resetAllData();
+              _p1Controller.text = settings.player1Name;
+              _p2Controller.text = settings.player2Name;
+            },
+            child: const Text('RESETEAR', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _p1Controller.dispose();
@@ -89,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: settings.player1Icon,
                       color: settings.player1Color,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
                     GlassCard(
                       child: _PlayerConfigSection(
                         nameController: _p1Controller,
@@ -100,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onColorChanged: (c) => settings.setPlayer1Color(c),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // ── JUGADOR 2 ──
                     SectionTitle(
@@ -108,7 +137,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: settings.player2Icon,
                       color: settings.player2Color,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
                     GlassCard(
                       child: _PlayerConfigSection(
                         nameController: _p2Controller,
@@ -119,7 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onColorChanged: (c) => settings.setPlayer2Color(c),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // ── MODO ──
                     SectionTitle(
@@ -127,10 +156,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: settings.friendsMode ? Icons.people : Icons.favorite,
                       color: AppColors.primaryNeon,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
                     GlassCard(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -140,7 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               isSelected: !settings.friendsMode,
                               onTap: () => settings.setFriendsMode(false),
                             ),
-                            const SizedBox(width: 24),
+                            const SizedBox(width: 16),
                             _ModeButton(
                               icon: Icons.people,
                               label: 'AMIGOS',
@@ -151,22 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    // ── Save names button ──
-                    NeonButton(
-                      text: 'GUARDAR NOMBRES',
-                      onPressed: () async {
-                        await settings.setPlayer1Name(_p1Controller.text);
-                        await settings.setPlayer2Name(_p2Controller.text);
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Nombres guardados')),
-                          );
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 16),
 
                     // ── AJUSTES DE JUEGO ──
                     SectionTitle(
@@ -174,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: Icons.tune,
                       color: AppColors.primaryNeon,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
                     GlassCard(
                       child: Column(
                         children: [
@@ -184,17 +198,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             icon: Icons.volume_up,
                             activeColor: AppColors.primaryNeon,
                           ),
-                          const Divider(color: Colors.white10, height: 24),
+                          const Divider(color: Colors.white10, height: 12),
                           NeonToggle(
                             value: settings.vibrationEnabled,
                             onChanged: (_) => settings.toggleVibration(),
                             icon: Icons.vibration,
                             activeColor: AppColors.primaryNeon,
                           ),
+                          const Divider(color: Colors.white10, height: 12),
+                          _GuestModeRow(
+                            value: settings.guestMode,
+                            onChanged: (v) => settings.setGuestMode(v),
+                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 16),
+
+                    // ── ESTADÍSTICAS ──
+                    SectionTitle(
+                      text: 'ESTADÍSTICAS',
+                      icon: Icons.bar_chart,
+                      color: AppColors.primaryNeon,
+                    ),
+                    const SizedBox(height: 6),
+                    _StatsSection(
+                      gamesPlayed: settings.gamesPlayed,
+                      favoriteGame: settings.favoriteGame,
+                      estimatedPlayTime: settings.estimatedPlayTime,
+                    ),
+                    const SizedBox(height: 16),
+                    NeonButton(
+                      text: 'RESETEAR DATOS',
+                      icon: Icons.delete_forever,
+                      variant: NeonButtonVariant.ghost,
+                      onPressed: () => _confirmReset(settings),
+                    ),
+                    const SizedBox(height: 12),
+                    NeonButton(
+                      text: 'GUARDAR CAMBIOS',
+                      icon: Icons.save,
+                      onPressed: () async {
+                        await settings.setPlayer1Name(_p1Controller.text);
+                        await settings.setPlayer2Name(_p2Controller.text);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Configuración guardada')),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
                     const Center(
                       child: Text(
                         'Pareja v1.0.0',
@@ -304,7 +357,7 @@ class _PlayerConfigSection extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
                 itemCount: _presetColors.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 6),
+                separatorBuilder: (_, _) => const SizedBox(width: 6),
                 itemBuilder: (context, index) {
                   final c = _presetColors[index];
                   final isSelected = c.toARGB32() == color.toARGB32();
@@ -387,6 +440,146 @@ class _GenderChip extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _GuestModeRow extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const _GuestModeRow({
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const SizedBox(width: 4),
+        Icon(
+          Icons.visibility_off,
+          color: value ? AppColors.primaryNeon : Colors.white38,
+          size: 24,
+        ),
+        const SizedBox(width: 12),
+        Text(
+          'Modo invitado (oculta nombres)',
+          style: TextStyle(
+            color: value ? Colors.white70 : Colors.white38,
+            fontSize: 14,
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap: () => onChanged(!value),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 50,
+            height: 30,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: value ? AppColors.primaryNeon.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.15),
+              border: Border.all(
+                color: value ? AppColors.primaryNeon.withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.1),
+              ),
+            ),
+            child: Stack(
+              children: [
+                AnimatedAlign(
+                  duration: const Duration(milliseconds: 200),
+                  alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.all(2),
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: value ? AppColors.primaryNeon.withValues(alpha: 0.4) : Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 6,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatsSection extends StatelessWidget {
+  final int gamesPlayed;
+  final String favoriteGame;
+  final String estimatedPlayTime;
+
+  const _StatsSection({
+    required this.gamesPlayed,
+    required this.favoriteGame,
+    required this.estimatedPlayTime,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          children: [
+            _StatRow(icon: Icons.videogame_asset, label: 'Partidas totales', value: '$gamesPlayed'),
+            const Divider(color: Colors.white10, height: 12),
+            _StatRow(
+              icon: Icons.emoji_events,
+              label: 'Modo favorito',
+              value: favoriteGame.isEmpty ? '—' : favoriteGame,
+            ),
+            const Divider(color: Colors.white10, height: 12),
+            _StatRow(icon: Icons.access_time, label: 'Tiempo estimado', value: estimatedPlayTime),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _StatRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white54, size: 20),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white54, fontSize: 14),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+        ],
       ),
     );
   }

@@ -56,7 +56,7 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen>
       MaterialPageRoute(
         builder: (context) => GameResultScreen(
           gameName: 'Yo Nunca',
-          gameColor: AppColors.modeMostLikely,
+          gameColor: AppColors.modeNeverHaveIEver,
           winnerName: winnerName,
           winnerColor: winnerColor,
           player1Name: c.player1Name,
@@ -171,27 +171,17 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen>
                   SizedBox(
                     width: double.infinity,
                     height: 55,
-                    child: ElevatedButton(
+                    child: GameButton(
+                      text: 'ACEPTAR',
+                      icon: Icons.check,
                       onPressed: () {
                         c.clearPenance();
                         _showingPenance = false;
                         Navigator.pop(context);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pinkAccent,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: const Text(
-                        'ACEPTAR',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          letterSpacing: 2,
-                        ),
-                      ),
+                      style: GameButtonStyle.primary,
+                      height: 55,
+                      customColor: Colors.pinkAccent,
                     ),
                   ),
                 ],

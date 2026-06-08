@@ -23,13 +23,13 @@ class AppColors {
   static const Color modeRoulette = Color(0xFF2196F3);
   static const Color modeDrinks = Color(0xFF00E676);
   static const Color modeBomb = Color(0xFFFF5722);
-  static const Color modeMostLikely = Color(0xFF009688);
+  static const Color modeNeverHaveIEver = Color(0xFF009688);
   static const Color modeCharades = Color(0xFF7C4DFF);
   static const Color modeRussianRoulette = Color(0xFFFF1744);
   static const Color modeDuel = Color(0xFFFF4081);
   static const Color modeRapidFire = Color(0xFFFF6D00);
   static const Color modeMemory = Color(0xFF00BFA5);
-  static const Color modePairs = Color(0xFF7C4DFF);
+  static const Color modePairs = Color(0xFF6A1B9A);
   static const Color modePremiado = Color(0xFFFFD740);
   static const Color modeATiempo = Color(0xFF00BCD4);
 

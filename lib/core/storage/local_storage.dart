@@ -11,6 +11,11 @@ class LocalStorage {
   static const String _keySoundEnabled = 'sound_enabled';
   static const String _keyVibrationEnabled = 'vibration_enabled';
   static const String _keyRouletteSpinCount = 'roulette_spin_count';
+  static const String _keyGuestMode = 'guest_mode';
+
+  static const String _keyGamesPlayed = 'stats_games_played';
+  static const String _keyFavoriteGame = 'stats_favorite_game';
+  static const String _keyPlayTimeMinutes = 'stats_play_time_minutes';
 
   // ── Migration from old keys ──
   static const String _keyHeName = 'he_name';
@@ -168,5 +173,56 @@ class LocalStorage {
   static Future<void> clearUsedDrinkTasks() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyUsedDrinkTasks);
+  }
+
+  // ── Guest mode ──
+
+  static Future<void> setGuestMode(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyGuestMode, enabled);
+  }
+
+  static Future<bool> isGuestMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyGuestMode) ?? false;
+  }
+
+  // ── Stats ──
+
+  static Future<void> saveGamesPlayed(int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyGamesPlayed, count);
+  }
+
+  static Future<int> getGamesPlayed() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyGamesPlayed) ?? 0;
+  }
+
+  static Future<void> saveFavoriteGame(String gameName) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyFavoriteGame, gameName);
+  }
+
+  static Future<String> getFavoriteGame() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyFavoriteGame) ?? '';
+  }
+
+  static Future<void> savePlayTimeMinutes(int minutes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyPlayTimeMinutes, minutes);
+  }
+
+  static Future<int> getPlayTimeMinutes() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyPlayTimeMinutes) ?? 0;
+  }
+
+  // ── Reset all data ──
+
+  static Future<void> clearAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 }

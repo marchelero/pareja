@@ -55,7 +55,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
       MaterialPageRoute(
         builder: (context) => GameResultScreen(
           gameName: 'Duelo Nocturno',
-          gameColor: AppColors.modeMostLikely,
+          gameColor: AppColors.modeDuel,
           winnerName: winnerName,
           winnerColor: winnerColor,
           player1Name: c.player1Name,
@@ -204,7 +204,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
               value: progress.clamp(0.0, 1.0),
               minHeight: 6,
               backgroundColor: Colors.white10,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.modeMostLikely),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.modeDuel),
             ),
           ),
           const SizedBox(height: 5),
@@ -234,7 +234,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
         border: Border.all(color: Colors.white12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.modeMostLikely.withValues(alpha: 0.1),
+            color: AppColors.modeDuel.withValues(alpha: 0.1),
             blurRadius: 30,
             spreadRadius: 5,
           ),
@@ -242,7 +242,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
       ),
       child: Column(
         children: [
-          const Icon(Icons.favorite, color: AppColors.modeMostLikely, size: 40),
+          const Icon(Icons.favorite, color: AppColors.modeDuel, size: 40),
           const SizedBox(height: 20),
           Text(
             c.currentTask!,

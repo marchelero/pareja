@@ -193,7 +193,7 @@ class DrinksController extends ChangeNotifier {
     }
   }
 
-  void applySips(DrinkTarget target, int sips) {
+  bool applySips(DrinkTarget target, int sips) {
     int sipsToApply = sips;
 
     if (target == DrinkTarget.he || target == DrinkTarget.both) {
@@ -219,13 +219,14 @@ class DrinksController extends ChangeNotifier {
       }
     }
 
+    bool vacated = _heSipsLeft == 0 || _sheSipsLeft == 0;
     notifyListeners();
 
-    // Reproducir sonido cuando un vaso se vacía
-    if (_heSipsLeft <= 0 || _sheSipsLeft <= 0) {
+    if (vacated) {
       audioService.playDrink();
       _checkGameOver();
     }
+    return vacated;
   }
 
   void _checkGameOver() {
@@ -264,8 +265,13 @@ class DrinksController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _nextTask() {
+    _currentTask = _getNextTask();
+    notifyListeners();
+  }
+
   void advanceAfterGameOver() {
-    _nextTurn();
+    _nextTask();
   }
 
   void nextTurnFromUI() {

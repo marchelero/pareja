@@ -188,7 +188,11 @@ class QuestionsController extends ChangeNotifier {
   }
 
   void _finishGame() {
-    onGameFinished?.call(_player1, _player2);
+    final callback = onGameFinished;
+    if (callback == null) return;
+    onGameFinished = null;
+    notifyListeners();
+    callback(_player1, _player2);
   }
 
 }

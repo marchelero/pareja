@@ -45,8 +45,8 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
-    final p1Name = settings.player1Name;
-    final p2Name = settings.player2Name;
+    final p1Name = settings.displayName1;
+    final p2Name = settings.displayName2;
     final isFriends = settings.friendsMode;
 
     return Scaffold(
@@ -280,16 +280,25 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
               const SizedBox(width: 12),
-              Transform.scale(
-                scale: isFriends ? 1.0 : scale,
-                child: Icon(
-                  isFriends ? Icons.remove : Icons.favorite,
-                  color: isFriends
-                      ? Colors.white.withValues(alpha: 0.4)
-                      : AppColors.primaryNeon.withValues(alpha: 0.8),
-                  size: 16,
+              if (isFriends)
+                Text(
+                  'VS',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white.withValues(alpha: 0.4),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
+                )
+              else
+                Transform.scale(
+                  scale: scale,
+                  child: Icon(
+                    Icons.favorite,
+                    color: AppColors.primaryNeon.withValues(alpha: 0.8),
+                    size: 16,
+                  ),
                 ),
-              ),
               const SizedBox(width: 12),
               Text(
                 p2Name.toUpperCase(),

@@ -345,7 +345,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   isHotMode: _isHotMode,
                 );
                 await controller.initGame();
-                if (!context.mounted) return;
+                if (!mounted) return;
                 Navigator.push(
                   context,
                   MaterialPageRoute(

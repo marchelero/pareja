@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../providers/settings_provider.dart';
 import '../services/audio_service.dart';
 import 'neon_background.dart';
 
@@ -61,9 +62,10 @@ class _GameResultScreenState extends State<GameResultScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => context.read<AudioService>().playGameOver(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AudioService>().playGameOver();
+      context.read<SettingsProvider>().incrementGamePlayed(widget.gameName);
+    });
     _entryController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -471,7 +473,7 @@ class _PlayerResultCard extends StatelessWidget {
             ),
             if (statsSection != null) const SizedBox(height: 16),
           ],
-          if (statsSection != null) statsSection!,
+          ?statsSection,
         ],
       ),
     );

@@ -314,12 +314,9 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
         text: 'EMPEZAR',
         onPressed: () async {
           final navigator = Navigator.of(context);
-          await context
-              .read<SettingsProvider>()
-              .setPlayer1Name(_player1Name);
-          await context
-              .read<SettingsProvider>()
-              .setPlayer2Name(_player2Name);
+          final settings = context.read<SettingsProvider>();
+          await settings.setPlayer1Name(_player1Name);
+          await settings.setPlayer2Name(_player2Name);
           if (!mounted) return;
           navigator.push(
             MaterialPageRoute(

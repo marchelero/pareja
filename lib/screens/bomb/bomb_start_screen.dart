@@ -355,7 +355,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
             optAccel: _optAccel,
           );
           await controller.initGame();
-          if (!context.mounted) return;
+          if (!mounted) return;
           Navigator.push(
             context,
             MaterialPageRoute(

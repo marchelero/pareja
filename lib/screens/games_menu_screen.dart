@@ -34,7 +34,7 @@ class GamesMenuScreen extends StatelessWidget {
           children: [
             AppBar(
               title: const Text(
-                'TWO PLAYERS • JUEGOS',
+                'TWO PLAYERS',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -149,7 +149,7 @@ class GamesMenuScreen extends StatelessWidget {
                   GameCard(
                     title: 'Yo Nunca',
                     icon: Icons.psychology,
-                    accentColor: AppColors.modeMostLikely,
+                    accentColor: AppColors.modeNeverHaveIEver,
                     animationDelay: 400,
                     onTap: () {
                       audioService.playClick();
