@@ -1,27 +1,26 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../services/audio_service.dart';
-import '../../controllers/russian_roulette_controller.dart';
+import '../../controllers/premiado_controller.dart';
 import '../../providers/settings_provider.dart';
+import '../../services/audio_service.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
-import '../../core/theme/app_colors.dart';
-import 'russian_roulette_game_screen.dart';
+import 'premiado_game_screen.dart';
 
-class RussianRouletteStartScreen extends StatefulWidget {
-  const RussianRouletteStartScreen({super.key});
+class PremiadoStartScreen extends StatefulWidget {
+  const PremiadoStartScreen({super.key});
 
   @override
-  State<RussianRouletteStartScreen> createState() => _RussianRouletteStartScreenState();
+  State<PremiadoStartScreen> createState() => _PremiadoStartScreenState();
 }
 
-class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen> {
+class _PremiadoStartScreenState extends State<PremiadoStartScreen> {
   int _bestOf = 3;
-  bool _wildMode = false;
-  int _bulletCount = 2;
+
+  int get _pointsToWin => (_bestOf / 2).floor() + 1;
 
   void _playSound() {
     context.read<AudioService>().playClick();
@@ -46,7 +45,7 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
                       },
                     ),
                     const Expanded(
-                      child: Text('RULETA RUSA', textAlign: TextAlign.center,
+                      child: Text('PREMIADO', textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 3)),
                     ),
                     const SizedBox(width: 48),
@@ -57,7 +56,7 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
               const SizedBox(height: 5),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 40),
-                child: Text('Tira del gatillo… pero no sabes en qué cámara está la bala.\n¡El que se lleva el disparo pierde la ronda!',
+                child: Text('Cada uno pone un dedo y uno es elegido al azar.\nEl otro suma 1 punto.',
                   textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
               ),
               const SizedBox(height: 15),
@@ -110,60 +109,6 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
                                       },
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
-                                  _buildSettingRow(
-                                    icon: Icons.flash_on, title: 'Modo Salvaje:',
-                                    child: Switch.adaptive(
-                                      value: _wildMode,
-                                      activeTrackColor: AppColors.modeRussianRoulette,
-                                      activeThumbColor: AppColors.modeRussianRoulette,
-                                      onChanged: (v) => setState(() => _wildMode = v),
-                                    ),
-                                  ),
-                                  if (_wildMode) ...[
-                                    const SizedBox(height: 15),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [2, 3, 4, 5].map((n) {
-                                        final selected = _bulletCount == n;
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                                          child: GestureDetector(
-                                            onTap: () => setState(() => _bulletCount = n),
-                                            child: Container(
-                                              width: 48, height: 48,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: selected
-                                                    ? AppColors.modeRussianRoulette
-                                                    : Colors.white.withValues(alpha: 0.1),
-                                                border: Border.all(
-                                                  color: selected
-                                                      ? AppColors.modeRussianRoulette
-                                                      : Colors.white.withValues(alpha: 0.2),
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  '$n',
-                                                  style: TextStyle(
-                                                    color: selected ? Colors.white : Colors.white54,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w900,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 6),
-                                      child: Text('balas', style: TextStyle(color: Colors.white38, fontSize: 12)),
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),
@@ -181,20 +126,18 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
                   text: 'EMPEZAR',
                   onPressed: () async {
                     _playSound();
+                    final settings = context.read<SettingsProvider>();
                     final audioService = context.read<AudioService>();
-                    final settingsProvider = context.read<SettingsProvider>();
-                    final controller = RussianRouletteController(
+                    final controller = PremiadoController(
                       audioService: audioService,
-                      settingsProvider: settingsProvider,
-                      bestOf: _bestOf,
-                      wildMode: _wildMode,
-                      bulletCount: _bulletCount,
+                      settingsProvider: settings,
+                      pointsToWin: _pointsToWin,
                     );
-                    await controller.initGame();
+                    controller.initGame();
                     if (!context.mounted) return;
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RussianRouletteGameScreen(controller: controller)),
+                      MaterialPageRoute(builder: (context) => PremiadoGameScreen(controller: controller)),
                     );
                   },
                   style: GameButtonStyle.primary,
@@ -227,10 +170,10 @@ class _RussianRouletteStartScreenState extends State<RussianRouletteStartScreen>
     GameHelpModal.show(
       context: context,
       sections: [
-        GameHelpModal.step('1', 'Cada ronda se carga una bala en una posición aleatoria.'),
-        GameHelpModal.step('2', 'Por turnos, cada jugador aprieta el gatillo.'),
-        GameHelpModal.step('3', 'Si te disparan, pierdes la ronda. El otro suma un punto.'),
-        GameHelpModal.bullet('Te disparan', 'pierdes la ronda, el rival suma 1.', Colors.redAccent, ''),
+        GameHelpModal.step('1', 'Cada jugador coloca un dedo en la pantalla.'),
+        GameHelpModal.step('2', 'Cuando ambos tocan, se selecciona aleatoriamente a uno.'),
+        GameHelpModal.step('3', 'El seleccionado pierde la ronda y el otro suma un punto.'),
+        GameHelpModal.bullet('Te seleccionan', 'pierdes la ronda, rival suma 1.', Colors.redAccent, ''),
         GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuación objetivo.', Colors.greenAccent, ''),
       ],
     );

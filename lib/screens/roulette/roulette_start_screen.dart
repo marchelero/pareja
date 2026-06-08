@@ -6,6 +6,7 @@ import '../../services/audio_service.dart';
 import '../../controllers/roulette_controller.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'roulette_game_screen.dart';
@@ -42,6 +43,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               elevation: 0,
               centerTitle: true,
               foregroundColor: Colors.white,
+              actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -241,6 +243,18 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
         },
         style: GameButtonStyle.primary,
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Gira la ruleta para ver tu desafío.'),
+        GameHelpModal.step('2', 'Cumple el desafío que aparezca.'),
+        GameHelpModal.step('3', 'El mode Atrevida añade desafíos más intensos.'),
+        GameHelpModal.text('Los desafíos pueden ser preguntas, acciones, o pruebas para ambos.'),
+      ],
     );
   }
 }

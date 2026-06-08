@@ -5,6 +5,7 @@ import '../../providers/settings_provider.dart';
 import '../../controllers/duel_controller.dart';
 import '../../services/audio_service.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../core/theme/app_colors.dart';
 import 'duel_game_screen.dart';
@@ -38,6 +39,7 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
       body: NeonBackground(
         child: SafeArea(
@@ -138,6 +140,18 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
           child: child,
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Sale una frase: "¿Quién es más probable que...".'),
+        GameHelpModal.step('2', 'Discutan y elijan quién se lleva la frase (tú o él/ella).'),
+        GameHelpModal.bullet('Pierdes', 'si tu pareja no coincide contigo.', Colors.redAccent, ''),
+        GameHelpModal.bullet('Ganas', 'si tu pareja coincide contigo.', Colors.greenAccent, ''),
+      ],
     );
   }
 }

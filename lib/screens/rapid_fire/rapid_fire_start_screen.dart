@@ -7,6 +7,7 @@ import '../../providers/settings_provider.dart';
 import '../../controllers/rapid_fire_controller.dart';
 import '../../services/audio_service.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../core/theme/app_colors.dart';
@@ -89,6 +90,7 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
       body: NeonBackground(
         child: SafeArea(
@@ -258,6 +260,19 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
           child: child,
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Sale una pregunta de opción múltiple.'),
+        GameHelpModal.step('2', 'El primero en responder correctamente gana el punto.'),
+        GameHelpModal.step('3', 'Si respondes mal, el otro puede robar la respuesta.'),
+        GameHelpModal.bullet('Respuesta correcta', 'sumas 1 punto.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuación objetivo.', Colors.amberAccent, ''),
+      ],
     );
   }
 }

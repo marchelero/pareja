@@ -7,6 +7,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'atiempo_game_screen.dart';
@@ -43,6 +44,7 @@ class _ATiempoStartScreenState extends State<ATiempoStartScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
       body: NeonBackground(
         child: SafeArea(
@@ -244,6 +246,19 @@ class _ATiempoStartScreenState extends State<ATiempoStartScreen> {
           child: child,
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Cada jugador debe parar el cronómetro lo más cerca posible del tiempo objetivo.'),
+        GameHelpModal.step('2', 'El jugador activo pulsa "PARAR" para detener el tiempo.'),
+        GameHelpModal.step('3', 'El que se acerque más al objetivo gana la ronda.'),
+        GameHelpModal.bullet('Gana la ronda', 'quien se acerque más al tiempo objetivo.', Colors.greenAccent, 'suma 1 punto'),
+        GameHelpModal.bullet('Gana la partida', 'quien gane más rondas.', Colors.amberAccent, 'mejor de 3/5'),
+      ],
     );
   }
 }

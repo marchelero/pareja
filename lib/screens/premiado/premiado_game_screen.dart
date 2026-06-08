@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../controllers/tiradedos_controller.dart';
+import '../../controllers/premiado_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../services/haptics_service.dart';
@@ -10,16 +10,16 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/route_transitions.dart';
 import '../../screens/games_menu_screen.dart';
 
-class TiradedosGameScreen extends StatefulWidget {
-  final TiradedosController controller;
+class PremiadoGameScreen extends StatefulWidget {
+  final PremiadoController controller;
 
-  const TiradedosGameScreen({super.key, required this.controller});
+  const PremiadoGameScreen({super.key, required this.controller});
 
   @override
-  State<TiradedosGameScreen> createState() => _TiradedosGameScreenState();
+  State<PremiadoGameScreen> createState() => _PremiadoGameScreenState();
 }
 
-class _TiradedosGameScreenState extends State<TiradedosGameScreen>
+class _PremiadoGameScreenState extends State<PremiadoGameScreen>
     with TickerProviderStateMixin {
   final Map<int, Offset> _pointers = {};
   Offset? _p1Pos;
@@ -30,6 +30,7 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
   bool _isSelected = false;
   bool? _isP1Selected;
   Offset? _selectedPos;
+  bool _gameOver = false;
 
   late AnimationController _pulseCtrl;
   late AnimationController _glowCtrl;
@@ -136,10 +137,23 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
 
     _glowCtrl.forward();
     _resultEntryCtrl.forward();
+
+    final c = widget.controller;
+    if (isP1) {
+      c.incrementP2();
+    } else {
+      c.incrementP1();
+    }
   }
 
   void _resetGame() {
     _countdownTimer?.cancel();
+
+    if (widget.controller.hasWinner) {
+      setState(() => _gameOver = true);
+      return;
+    }
+
     setState(() {
       _pointers.clear();
       _p1Pos = null;
@@ -174,25 +188,25 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Listener(
-        onPointerDown: _onPointerDown,
-        onPointerMove: _onPointerMove,
-        onPointerUp: _onPointerUp,
-        behavior: HitTestBehavior.translucent,
-        child: NeonBackground(
-          child: _isSelected
-              ? _buildResultContent(c, isP1)
-              : _buildGameContent(c),
-        ),
+      body: NeonBackground(
+        child: _gameOver
+            ? _buildGameOverContent(c)
+            : (_isSelected
+                ? _buildResultContent(c, isP1)
+                : _buildGameContent(c)),
       ),
     );
   }
 
-  Widget _buildGameContent(TiradedosController c) {
+  Widget _buildGameContent(PremiadoController c) {
     return SafeArea(
       child: Stack(
         children: [
-          Column(
+          Listener(
+            onPointerDown: _onPointerDown,
+            onPointerMove: _onPointerMove,
+            onPointerUp: _onPointerUp,
+            child: Column(
             children: [
               const SizedBox(height: 40),
               Row(
@@ -202,17 +216,19 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.modeTiradedos.withValues(alpha: 0.15),
+                      color: AppColors.modePremiado.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.modeTiradedos.withValues(alpha: 0.3)),
+                      border: Border.all(color: AppColors.modePremiado.withValues(alpha: 0.3)),
                     ),
                     child: Text('VS', style: TextStyle(
-                      color: AppColors.modeTiradedos, fontWeight: FontWeight.w900, fontSize: 12,
+                      color: AppColors.modePremiado, fontWeight: FontWeight.w900, fontSize: 12,
                     )),
                   ),
                   _buildPlayerLabel(c.player2Name, c.player2Color, c.player2Icon),
                 ],
               ),
+              const SizedBox(height: 16),
+              _buildScoreChips(c),
               const Spacer(),
               AnimatedBuilder(
                 animation: _pulseCtrl,
@@ -221,7 +237,7 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
                   return Icon(
                     Icons.touch_app,
                     size: 100 + p * 20,
-                    color: AppColors.modeTiradedos.withValues(alpha: 0.3 + p * 0.3),
+                    color: AppColors.modePremiado.withValues(alpha: 0.3 + p * 0.3),
                   );
                 },
               ),
@@ -242,7 +258,7 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
                   '¡${c.player1Name} YA TOCÓ!\nFALTA ${c.player2Name.toUpperCase()}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors.modeTiradedos,
+                    color: AppColors.modePremiado,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,
@@ -252,9 +268,9 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Text(
-                  '⚡ TIRADEDOS ⚡',
+                  '🏆 PREMIADO 🏆',
                   style: TextStyle(
-                    color: AppColors.modeTiradedos.withValues(alpha: 0.3),
+                    color: AppColors.modePremiado.withValues(alpha: 0.3),
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 5,
@@ -262,6 +278,7 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
                 ),
               ),
             ],
+            ),
           ),
 
           if (_p1Pos != null && !_isBothReady)
@@ -351,8 +368,8 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
               style: TextStyle(
                 fontSize: 72,
                 fontWeight: FontWeight.w900,
-                color: AppColors.modeTiradedos,
-                shadows: [Shadow(color: AppColors.modeTiradedos.withValues(alpha: 0.6), blurRadius: 30)],
+                color: AppColors.modePremiado,
+                shadows: [Shadow(color: AppColors.modePremiado.withValues(alpha: 0.6), blurRadius: 30)],
               ),
             ),
           ),
@@ -366,7 +383,7 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
     );
   }
 
-  Widget _buildResultContent(TiradedosController c, bool isP1) {
+  Widget _buildResultContent(PremiadoController c, bool isP1) {
     final victimName = isP1 ? c.player1Name : c.player2Name;
     final victimColor = isP1 ? c.player1Color : c.player2Color;
     final victimIcon = isP1 ? c.player1Icon : c.player2Icon;
@@ -410,6 +427,8 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
                   _buildStatusCard(victimName, victimIcon, victimColor, 'LA VÍCTIMA', Colors.redAccent, true, isP1),
                 ],
               ),
+              const SizedBox(height: 24),
+              _buildScoreChips(c),
               const Spacer(),
               AnimatedBuilder(
                 animation: _resultEntryCtrl,
@@ -592,6 +611,137 @@ class _TiradedosGameScreenState extends State<TiradedosGameScreen>
           ],
         );
       },
+    );
+  }
+
+  Widget _buildScoreChips(PremiadoController c) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: c.player1Color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: c.player1Color.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(c.player1Icon, size: 14, color: c.player1Color),
+              const SizedBox(width: 6),
+              Text(c.player1Name.toUpperCase(), style: TextStyle(color: c.player1Color, fontSize: 12, fontWeight: FontWeight.w800)),
+              const SizedBox(width: 8),
+              Text('${c.scoreP1}', style: TextStyle(color: c.player1Color, fontSize: 18, fontWeight: FontWeight.w900)),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text('VS', style: TextStyle(
+            color: AppColors.modePremiado, fontWeight: FontWeight.w900, fontSize: 14,
+          )),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: c.player2Color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: c.player2Color.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(c.player2Icon, size: 14, color: c.player2Color),
+              const SizedBox(width: 6),
+              Text(c.player2Name.toUpperCase(), style: TextStyle(color: c.player2Color, fontSize: 12, fontWeight: FontWeight.w800)),
+              const SizedBox(width: 8),
+              Text('${c.scoreP2}', style: TextStyle(color: c.player2Color, fontSize: 18, fontWeight: FontWeight.w900)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGameOverContent(PremiadoController c) {
+    final isP1Winner = c.winnerIndex == 0;
+    final winnerName = isP1Winner ? c.player1Name : c.player2Name;
+    final winnerColor = isP1Winner ? c.player1Color : c.player2Color;
+    final winnerIcon = isP1Winner ? c.player1Icon : c.player2Icon;
+
+    return SafeArea(
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              const SizedBox(height: 60),
+              _buildScoreChips(c),
+              const Spacer(),
+              Icon(winnerIcon, size: 72, color: winnerColor.withValues(alpha: 0.8)),
+              const SizedBox(height: 16),
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: [winnerColor, Colors.white, winnerColor],
+                  stops: const [0.0, 0.5, 1.0],
+                ).createShader(bounds),
+                child: Text(winnerName.toUpperCase(), style: const TextStyle(
+                  fontSize: 44, fontWeight: FontWeight.w900, color: Colors.white,
+                  letterSpacing: 6,
+                )),
+              ),
+              const SizedBox(height: 12),
+              Text('🏆 CAMPEÓN 🏆', style: TextStyle(
+                color: winnerColor, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 4,
+              )),
+              const SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: GameButton(
+                  text: 'VOLVER A JUGAR',
+                  customColor: winnerColor,
+                  onPressed: () {
+                    c.resetScores();
+                    setState(() => _gameOver = false);
+                    _resetGame();
+                  },
+                  style: GameButtonStyle.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    RouteTransitions.slideFromBottom(const GamesMenuScreen()),
+                    (route) => false,
+                  );
+                },
+                child: Text('MENÚ PRINCIPAL', style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  fontWeight: FontWeight.w700, letterSpacing: 3, fontSize: 13,
+                )),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+          Positioned(
+            right: 8,
+            top: 8,
+            child: GameHelpModal.helpButton(_showHelpModal),
+          ),
+          Positioned(
+            left: 8,
+            top: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white70, size: 28),
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import '../../services/audio_service.dart';
 import '../../controllers/charades_controller.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'charades_game_screen.dart';
@@ -122,7 +123,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 48),
+                    GameHelpModal.helpButton(_showHelpModal),
                   ],
                 ),
               ),
@@ -479,6 +480,19 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
           ],
         ),
         child,
+      ],
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Tu pareja debe adivinar la palabra que aparece en pantalla.'),
+        GameHelpModal.step('2', 'Tú haces gestos y señas sin hablar ni deletrear.'),
+        GameHelpModal.step('3', 'Tienes 60 segundos para adivinar. Si aciertas, ganan.'),
+        GameHelpModal.bullet('Adivina', 'suman un punto.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('No adivina', 'penitencia.', Colors.redAccent, ''),
       ],
     );
   }

@@ -165,7 +165,7 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
           player1Name: c.player1Name,
           player2Name: c.player2Name,
           player1Icon: settingsProvider.player1Icon,
-          player2Icon: settingsProvider.player2Icon,r
+          player2Icon: settingsProvider.player2Icon,
           player1Color: c.player1Color,
           player2Color: c.player2Color,
           scoreP1: c.scoreHe,

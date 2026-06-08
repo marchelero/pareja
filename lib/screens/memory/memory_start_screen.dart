@@ -7,6 +7,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'memory_game_screen.dart';
@@ -40,6 +41,7 @@ class _MemoryStartScreenState extends State<MemoryStartScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
       body: NeonBackground(
         child: SafeArea(
@@ -150,6 +152,19 @@ class _MemoryStartScreenState extends State<MemoryStartScreen> {
           child: child,
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se ilumina una secuencia de colores.'),
+        GameHelpModal.step('2', 'Repite la secuencia tocando los botones en el mismo orden.'),
+        GameHelpModal.step('3', 'Cada ronda añade un color más. Si fallas, pierdes la ronda.'),
+        GameHelpModal.bullet('Pierde la ronda', 'quien falle al repetir la secuencia.', Colors.redAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien gane más rondas.', Colors.greenAccent, ''),
+      ],
     );
   }
 }

@@ -7,6 +7,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'pairs_game_screen.dart';
@@ -50,6 +51,7 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
       body: NeonBackground(
         child: SafeArea(
@@ -216,6 +218,19 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
           child: child,
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestran cartas boca abajo en una cuadrícula.'),
+        GameHelpModal.step('2', 'Encuentra las parejas de cartas iguales.'),
+        GameHelpModal.step('3', 'Alternáis turnos para encontrar las parejas.'),
+        GameHelpModal.bullet('Encuentras una pareja', 'vuelves a jugar.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien consiga más parejas al final.', Colors.amberAccent, ''),
+      ],
     );
   }
 }

@@ -6,6 +6,7 @@ import '../../services/audio_service.dart';
 import '../../controllers/questions_controller.dart';
 import '../../data/questions_repository.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import 'coin_flip_screen.dart';
@@ -71,6 +72,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
               elevation: 0,
               centerTitle: true,
               foregroundColor: Colors.white,
+              actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -311,6 +313,19 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
         },
         style: GameButtonStyle.primary,
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestra una pregunta para el jugador activo.'),
+        GameHelpModal.step('2', 'El jugador responde y su pareja tasa la respuesta del 1 al 5.'),
+        GameHelpModal.step('3', 'Si la puntuación es 4 o 5, el jugador gana puntos. Si es 3 o menos, no suma.'),
+        GameHelpModal.bullet('Respuesta bien valorada', 'sumas puntos.', Colors.greenAccent, ''),
+        GameHelpModal.bullet('Gana la partida', 'quien llegue primero a la puntuación objetivo.', Colors.amberAccent, ''),
+      ],
     );
   }
 }

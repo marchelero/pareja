@@ -5,9 +5,10 @@ import '../../providers/settings_provider.dart';
 import '../../controllers/drinks_controller.dart';
 import '../../services/audio_service.dart';
 import '../../widgets/game_button.dart';
+import '../../widgets/game_help_modal.dart';
 import '../../widgets/player_names_section.dart';
-import 'drinks_game_screen.dart';
 import '../../widgets/neon_background.dart';
+import 'drinks_game_screen.dart';
 
 class DrinksStartScreen extends StatefulWidget {
   const DrinksStartScreen({super.key});
@@ -43,6 +44,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
+        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
       body: NeonBackground(
         child: SafeArea(
@@ -318,6 +320,18 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showHelpModal() {
+    GameHelpModal.show(
+      context: context,
+      sections: [
+        GameHelpModal.step('1', 'Se muestran desafíos y tragos para cada jugador.'),
+        GameHelpModal.step('2', 'Cada jugador cumple su reto o bebe.'),
+        GameHelpModal.step('3', 'El primero en llegar al límite de tragos pierde.'),
+        GameHelpModal.text('Los desafíos pueden ser: tomar un trago, hacer una pregunta, o una acción especial.'),
+      ],
     );
   }
 }

@@ -13,7 +13,7 @@ import 'duel/duel_start_screen.dart';
 import 'rapid_fire/rapid_fire_start_screen.dart';
 import 'memory/memory_start_screen.dart';
 import 'pairs/pairs_start_screen.dart';
-import 'tiradedos/tiradedos_start_screen.dart';
+import 'premiado/premiado_start_screen.dart';
 import 'atiempo/atiempo_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
@@ -252,16 +252,16 @@ class GamesMenuScreen extends StatelessWidget {
                     },
                   ),
                   GameCard(
-                    title: 'Tiradedos',
+                    title: 'Premiado',
                     icon: Icons.touch_app,
-                    accentColor: AppColors.modeTiradedos,
+                    accentColor: AppColors.modePremiado,
                     animationDelay: 1100,
                     onTap: () {
                       audioService.playClick();
                       Navigator.push(
                         context,
                         RouteTransitions.slideFromBottom(
-                          const TiradedosStartScreen(),
+                          const PremiadoStartScreen(),
                         ),
                       );
                     },
