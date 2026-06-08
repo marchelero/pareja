@@ -15,6 +15,7 @@ import 'memory/memory_start_screen.dart';
 import 'pairs/pairs_start_screen.dart';
 import 'premiado/premiado_start_screen.dart';
 import 'atiempo/atiempo_start_screen.dart';
+import 'mentiroso/mentiroso_start_screen.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/game_card.dart';
 import '../widgets/route_transitions.dart';
@@ -277,6 +278,21 @@ class GamesMenuScreen extends StatelessWidget {
                         context,
                         RouteTransitions.slideFromBottom(
                           const ATiempoStartScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  GameCard(
+                    title: 'Mentiroso',
+                    icon: Icons.blur_on,
+                    accentColor: AppColors.modeMentiroso,
+                    animationDelay: 1300,
+                    onTap: () {
+                      audioService.playClick();
+                      Navigator.push(
+                        context,
+                        RouteTransitions.slideFromBottom(
+                          const MentirosoStartScreen(),
                         ),
                       );
                     },

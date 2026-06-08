@@ -32,6 +32,7 @@ class AppColors {
   static const Color modePairs = Color(0xFF6A1B9A);
   static const Color modePremiado = Color(0xFFFFD740);
   static const Color modeATiempo = Color(0xFF00BCD4);
+  static const Color modeMentiroso = Color(0xFF7C4DFF);
 
   static Color glassBackground(double opacity) => Colors.white.withValues(alpha: opacity);
   static Color glassBorder(double opacity) => Colors.white.withValues(alpha: opacity);

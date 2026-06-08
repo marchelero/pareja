@@ -18,6 +18,7 @@ class AppConstants {
   static const String soundDrink = 'drink.mp3';
   static const String soundShot = 'shot.mp3';
   static const String soundEmptyShot = 'empty_shot.mp3';
+  static const String soundDice = 'dice.mp3';
 
   static const int rouletteMaxSpinsForHot = 8;
   static const int maxIconsNeonBackground = 15;
