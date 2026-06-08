@@ -7,6 +7,7 @@ import '../../services/audio_service.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
+import '../../widgets/player_names_section.dart';
 import '../../core/theme/app_colors.dart';
 import 'duel_game_screen.dart';
 
@@ -18,16 +19,11 @@ class DuelStartScreen extends StatefulWidget {
 }
 
 class _DuelStartScreenState extends State<DuelStartScreen> {
-  String _player1Name = 'ÉL';
-  String _player2Name = 'ELLA';
   int _maxRounds = 10;
 
   @override
   void initState() {
     super.initState();
-    final settings = context.read<SettingsProvider>();
-    _player1Name = settings.player1Name;
-    _player2Name = settings.player2Name;
   }
 
   @override
@@ -38,6 +34,7 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
         title: const Text('DUELO NOCTURNO', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         foregroundColor: Colors.white,
         actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
@@ -46,6 +43,11 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
           child: ListView(
             padding: const EdgeInsets.all(24),
             children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Text('Adivinen quién es más probable de hacer algo. Gana quien acierte más.',
+                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
+              ),
               _buildSectionTitle('RONDAS'),
               _buildCard(
                 child: Column(
@@ -70,6 +72,18 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
                 ),
               ),
               const SizedBox(height: 40),
+              _buildSectionTitle('JUGADORES'),
+              PlayerNamesSection(
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
+                onChanged: (p1, p2) {
+                  context.read<SettingsProvider>().setPlayer1Name(p1);
+                  context.read<SettingsProvider>().setPlayer2Name(p2);
+                },
+              ),
+              const SizedBox(height: 24),
               _buildStartButton(),
               const SizedBox(height: 40),
             ],
@@ -85,8 +99,6 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
-          await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
-          await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
           if (!mounted) return;
           final audioService = context.read<AudioService>();
           final settingsProvider = context.read<SettingsProvider>();

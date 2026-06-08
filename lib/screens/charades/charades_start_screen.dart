@@ -95,36 +95,21 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        _playSound();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'SIN PALABRAS',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
-                    GameHelpModal.helpButton(_showHelpModal),
-                  ],
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    onPressed: () {
+                      _playSound();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  title: const Text('SIN PALABRAS', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
+                  centerTitle: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  foregroundColor: Colors.white,
+                  actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
                 ),
               ),
               const SizedBox(height: 5),
@@ -157,6 +142,10 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                           player2Color: context
                               .read<SettingsProvider>()
                               .player2Color,
+                          onChanged: (p1, p2) {
+                            context.read<SettingsProvider>().setPlayer1Name(p1);
+                            context.read<SettingsProvider>().setPlayer2Name(p2);
+                          },
                         ),
                       ),
                       const SizedBox(height: 20),

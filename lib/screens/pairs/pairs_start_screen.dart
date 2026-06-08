@@ -50,6 +50,7 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
         title: const Text('PARES', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         foregroundColor: Colors.white,
         actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
       ),
@@ -58,6 +59,11 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
           child: ListView(
             padding: const EdgeInsets.all(24),
             children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Text('Descubran todas las parejas de cartas. Gana quien encuentre más.',
+                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
+              ),
               _buildSectionTitle('JUGADORES'),
               const SizedBox(height: 8),
               PlayerNamesSection(
@@ -65,10 +71,14 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
                 player2Icon: context.read<SettingsProvider>().player2Icon,
                 player1Color: context.read<SettingsProvider>().player1Color,
                 player2Color: context.read<SettingsProvider>().player2Color,
-                onChanged: (p1, p2) => setState(() {
-                  _player1Name = p1;
-                  _player2Name = p2;
-                }),
+                onChanged: (p1, p2) {
+                  context.read<SettingsProvider>().setPlayer1Name(p1);
+                  context.read<SettingsProvider>().setPlayer2Name(p2);
+                  setState(() {
+                    _player1Name = p1;
+                    _player2Name = p2;
+                  });
+                },
               ),
               const SizedBox(height: 24),
               _buildSectionTitle('RONDAS'),

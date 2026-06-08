@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/questions_controller.dart';
-import '../../core/models/player.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
-import '../games_menu_screen.dart';
 
 class QuestionsGameScreen extends StatefulWidget {
   final QuestionsController controller;
@@ -19,11 +16,6 @@ class QuestionsGameScreen extends StatefulWidget {
 }
 
 class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
-  String _generatedQuestion = '';
-  bool _showQuestion = false;
-  bool _showAnswer = false;
-  int _selectedScore = 3;
-
   void _showHelpModal() {
     GameHelpModal.show(
       context: context,
@@ -282,98 +274,6 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _QuestionsPlayerStats extends StatelessWidget {
-  final Player player;
-
-  const _QuestionsPlayerStats({
-    required this.player,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final hasSuddenDeath = player.suddenDeathPoints > 0 || player.suddenDeathCorrect;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _StatBadge(label: 'Perfectas', value: player.perfectAnswers * 2, icon: Icons.star, color: const Color(0xFF2ECC71)),
-            Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.08)),
-            _StatBadge(label: 'Medias', value: player.partialAnswers * 1, icon: Icons.star_half, color: const Color(0xFFF39C12)),
-            Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.08)),
-            _StatBadge(label: 'Falladas', value: player.failedAnswers, icon: Icons.close, color: const Color(0xFFE74C3C)),
-            if (hasSuddenDeath) ...[
-              Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.08)),
-              _SuddenDeathBadge(player: player),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _StatBadge extends StatelessWidget {
-  final String label;
-  final int value;
-  final IconData icon;
-  final Color color;
-
-  const _StatBadge({required this.label, required this.value, required this.icon, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 18),
-            const SizedBox(width: 4),
-            Text('$value', style: GoogleFonts.playfairDisplay(fontSize: 22, fontWeight: FontWeight.w700, color: color)),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white54, letterSpacing: 0.5)),
-      ],
-    );
-  }
-}
-
-class _SuddenDeathBadge extends StatelessWidget {
-  final Player player;
-
-  const _SuddenDeathBadge({required this.player});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.flash_on, color: Colors.amber, size: 18),
-            const SizedBox(width: 4),
-            Text(
-              player.suddenDeathCorrect ? '+${player.suddenDeathPoints}' : '0',
-              style: GoogleFonts.playfairDisplay(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: player.suddenDeathCorrect ? Colors.greenAccent : Colors.redAccent,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text('M. Súbita', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.amber, letterSpacing: 0.5)),
-      ],
     );
   }
 }

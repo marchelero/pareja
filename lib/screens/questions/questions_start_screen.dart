@@ -65,8 +65,8 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
           children: [
             AppBar(
               title: const Text(
-                'CONFIGURAR PARTIDA',
-                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2),
+                'PREGUNTAS',
+                style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold),
               ),
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -82,6 +82,11 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 20),
+                        child: Text('Respondan preguntas de diferentes categorías y acumulen puntos.',
+                          textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
+                      ),
                       _buildSectionTitle('Jugadores', Icons.people),
                       const SizedBox(height: 15),
                       PlayerNamesSection(
@@ -89,10 +94,14 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                         player2Icon: context.read<SettingsProvider>().player2Icon,
                         player1Color: context.read<SettingsProvider>().player1Color,
                         player2Color: context.read<SettingsProvider>().player2Color,
-                        onChanged: (p1, p2) => setState(() {
-                          _player1Name = p1;
-                          _player2Name = p2;
-                        }),
+                        onChanged: (p1, p2) {
+                          context.read<SettingsProvider>().setPlayer1Name(p1);
+                          context.read<SettingsProvider>().setPlayer2Name(p2);
+                          setState(() {
+                            _player1Name = p1;
+                            _player2Name = p2;
+                          });
+                        },
                       ),
                       const SizedBox(height: 30),
                       _buildSectionTitle('Número de Preguntas', Icons.timer),

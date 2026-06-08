@@ -36,22 +36,20 @@ class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                      onPressed: () {
-                        _playSound();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    const Expanded(
-                      child: Text('YO NUNCA \u{1F48B}', textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 3)),
-                    ),
-                    const SizedBox(width: 48),
-                    GameHelpModal.helpButton(_showHelpModal),
-                  ],
+                child: AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                    onPressed: () {
+                      _playSound();
+                      Navigator.pop(context);
+                    },
+                  ),
+                  title: const Text('YO NUNCA', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
+                  centerTitle: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  foregroundColor: Colors.white,
+                  actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
                 ),
               ),
               const SizedBox(height: 5),
