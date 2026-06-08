@@ -57,6 +57,7 @@ class ATiempoController extends ChangeNotifier {
   int _p2Rounds = 0;
   int _currentRound = 1;
   Timer? _timer;
+  final Stopwatch _stopwatch = Stopwatch();
   String? _winnerName;
   int _roundPointsAwarded = 1;
   bool _isDouble = false;
@@ -104,6 +105,9 @@ class ATiempoController extends ChangeNotifier {
     _winnerName = null;
     _isDouble = false;
     _roundPointsAwarded = 1;
+    _stopwatch
+      ..reset()
+      ..stop();
     if (wildMode) _generateWildTarget();
     _needsNewTarget = false;
     notifyListeners();
@@ -122,8 +126,10 @@ class ATiempoController extends ChangeNotifier {
     _currentTime = 0.0;
     _phase = ATiempoPhase.running;
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 10), (_) {
-      _currentTime += 0.01;
+    _stopwatch.reset();
+    _stopwatch.start();
+    _timer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      _currentTime = _stopwatch.elapsedMilliseconds / 1000.0;
       notifyListeners();
     });
     notifyListeners();
@@ -132,6 +138,7 @@ class ATiempoController extends ChangeNotifier {
   void stopTimer() {
     _timer?.cancel();
     _timer = null;
+    _stopwatch.stop();
     if (_isPlayer1Turn) {
       _p1Time = _currentTime;
     } else {
@@ -144,6 +151,9 @@ class ATiempoController extends ChangeNotifier {
   void startNextTurn({bool resetMatch = false}) {
     _isPlayer1Turn = !_isPlayer1Turn;
     _currentTime = 0.0;
+    _stopwatch
+      ..reset()
+      ..stop();
     if (resetMatch) {
       _p1Time = null;
       _p2Time = null;
@@ -217,6 +227,7 @@ class ATiempoController extends ChangeNotifier {
   @override
   void dispose() {
     _timer?.cancel();
+    _stopwatch.stop();
     super.dispose();
   }
 }

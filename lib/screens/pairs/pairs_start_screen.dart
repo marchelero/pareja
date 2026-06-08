@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/pairs_controller.dart';
@@ -10,6 +9,7 @@ import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
+import '../../widgets/glass_card.dart';
 import 'pairs_game_screen.dart';
 
 class PairsStartScreen extends StatefulWidget {
@@ -23,8 +23,8 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
   String _player1Name = 'ÉL';
   String _player2Name = 'ELLA';
   int _maxRounds = 3;
-  int _gridRows = 4;
-  int _gridCols = 5;
+  int _gridRows = 3;
+  int _gridCols = 4;
 
   static const _gridOptions = [
     ('3×3', 3, 3),
@@ -45,35 +45,39 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text('PARES', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        foregroundColor: Colors.white,
-        actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
-      ),
+      appBar: _buildAppBar(context),
       body: NeonBackground(
         child: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20),
             children: [
               const Padding(
                 padding: EdgeInsets.only(bottom: 20),
-                child: Text('Descubran todas las parejas de cartas. Gana quien encuentre más.',
-                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
+                child: Text(
+                  'Descubran todas las parejas de cartas. '
+                  'Gana quien encuentre más.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
               ),
-              _buildSectionTitle('JUGADORES'),
+              _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon: context.read<SettingsProvider>().player1Icon,
-                player2Icon: context.read<SettingsProvider>().player2Icon,
-                player1Color: context.read<SettingsProvider>().player1Color,
-                player2Color: context.read<SettingsProvider>().player2Color,
+                player1Icon:
+                    context.read<SettingsProvider>().player1Icon,
+                player2Icon:
+                    context.read<SettingsProvider>().player2Icon,
+                player1Color:
+                    context.read<SettingsProvider>().player1Color,
+                player2Color:
+                    context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {
-                  context.read<SettingsProvider>().setPlayer1Name(p1);
-                  context.read<SettingsProvider>().setPlayer2Name(p2);
+                  context
+                      .read<SettingsProvider>()
+                      .setPlayer1Name(p1);
+                  context
+                      .read<SettingsProvider>()
+                      .setPlayer2Name(p2);
                   setState(() {
                     _player1Name = p1;
                     _player2Name = p2;
@@ -81,70 +85,134 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle('RONDAS'),
-              _buildCard(
+              _buildSectionTitle('RONDAS', Icons.repeat),
+              const SizedBox(height: 8),
+              GlassCard(
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Rondas:', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                        Text('$_maxRounds', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900, shadows: [Shadow(color: AppColors.modePairs, blurRadius: 10)])),
+                        const Text(
+                          'Rondas:',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        Text(
+                          '$_maxRounds',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            shadows: [
+                              Shadow(
+                                color: AppColors.modePairs,
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     Slider(
-                      value: _maxRounds.toDouble(), min: 1, max: 7, divisions: 3,
+                      value: _maxRounds.toDouble(),
+                      min: 1,
+                      max: 7,
+                      divisions: 3,
                       activeColor: AppColors.modePairs,
                       inactiveColor: Colors.white10,
-                      onChanged: (val) => setState(() => _maxRounds = val.toInt()),
+                      onChanged: (val) =>
+                          setState(() => _maxRounds = val.toInt()),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle('TABLERO'),
-              _buildCard(
+              _buildSectionTitle('TABLERO', Icons.grid_view),
+              const SizedBox(height: 8),
+              GlassCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Tamaño del tablero', style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                    Text(
+                      'Tamaño del tablero',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Row(
-                      children: [1, 2, 3].asMap().entries.map((e) {
-                        final (label, rows, cols) = _gridOptions[e.value];
-                        final selected = _gridRows == rows && _gridCols == cols;
+                      children: [0, 1, 2].map((idx) {
+                        final (label, rows, cols) =
+                            _gridOptions[idx];
+                        final selected = _gridRows == rows &&
+                            _gridCols == cols;
                         return Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(left: e.key > 0 ? 8 : 0),
+                            padding: EdgeInsets.only(
+                                left: idx > 0 ? 8 : 0),
                             child: GestureDetector(
                               onTap: () => setState(() {
                                 _gridRows = rows;
                                 _gridCols = cols;
                               }),
                               child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                duration:
+                                    const Duration(milliseconds: 200),
+                                padding:
+                                    const EdgeInsets.symmetric(
+                                        vertical: 14),
                                 decoration: BoxDecoration(
-                                  color: selected ? AppColors.modePairs.withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.06),
-                                  borderRadius: BorderRadius.circular(14),
+                                  color: selected
+                                      ? AppColors.modePairs
+                                          .withValues(alpha: 0.25)
+                                      : Colors.white
+                                          .withValues(alpha: 0.06),
+                                  borderRadius:
+                                      BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: selected ? AppColors.modePairs.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.15),
+                                    color: selected
+                                        ? AppColors.modePairs
+                                            .withValues(alpha: 0.6)
+                                        : Colors.white
+                                            .withValues(alpha: 0.15),
                                   ),
                                 ),
                                 child: Column(
                                   children: [
-                                    Text(label, style: TextStyle(
-                                      color: selected ? Colors.white : Colors.white.withValues(alpha: 0.7),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w900,
-                                    )),
+                                    Text(
+                                      label,
+                                      style: TextStyle(
+                                        color: selected
+                                            ? Colors.white
+                                            : Colors.white
+                                                .withValues(
+                                                    alpha: 0.7),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
                                     const SizedBox(height: 4),
-                                    Text('${rows * cols} fichas', style: TextStyle(
-                                      color: selected ? AppColors.modePairs : Colors.white.withValues(alpha: 0.4),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1,
-                                    )),
+                                    Text(
+                                      '${rows * cols} fichas',
+                                      style: TextStyle(
+                                        color: selected
+                                            ? AppColors.modePairs
+                                            : Colors.white
+                                                .withValues(
+                                                    alpha: 0.4),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -166,14 +234,59 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
     );
   }
 
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: const Text(
+        'PARES',
+        style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      foregroundColor: Colors.white,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios),
+        onPressed: () => Navigator.pop(context),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GameHelpModal.helpButton(_showHelpModal),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String text, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.pinkAccent, size: 24),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            color: Colors.white70,
+            letterSpacing: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildStartButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
-          await context.read<SettingsProvider>().setPlayer1Name(_player1Name);
-          await context.read<SettingsProvider>().setPlayer2Name(_player2Name);
+          await context
+              .read<SettingsProvider>()
+              .setPlayer1Name(_player1Name);
+          await context
+              .read<SettingsProvider>()
+              .setPlayer2Name(_player2Name);
           if (!mounted) return;
           Navigator.push(
             context,
@@ -181,11 +294,14 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
               builder: (context) => CoinFlipScreen(
                 player1Name: _player1Name,
                 player2Name: _player2Name,
-                player1Color: context.read<SettingsProvider>().player1Color,
-                player2Color: context.read<SettingsProvider>().player2Color,
+                player1Color:
+                    context.read<SettingsProvider>().player1Color,
+                player2Color:
+                    context.read<SettingsProvider>().player2Color,
                 createGameScreen: (isP1Winner) async {
                   final audioService = context.read<AudioService>();
-                  final settingsProvider = context.read<SettingsProvider>();
+                  final settingsProvider =
+                      context.read<SettingsProvider>();
                   final controller = PairsController(
                     audioService: audioService,
                     settingsProvider: settingsProvider,
@@ -206,40 +322,22 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 8),
-      child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 2, shadows: [Shadow(color: Colors.black, blurRadius: 5)])),
-    );
-  }
-
-  Widget _buildCard({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-          ),
-          child: child,
-        ),
-      ),
-    );
-  }
-
   void _showHelpModal() {
     GameHelpModal.show(
       context: context,
       sections: [
-        GameHelpModal.step('1', 'Se muestran cartas boca abajo en una cuadrícula.'),
-        GameHelpModal.step('2', 'Encuentra las parejas de cartas iguales.'),
-        GameHelpModal.step('3', 'Alternáis turnos para encontrar las parejas.'),
-        GameHelpModal.bullet('Encuentras una pareja', 'vuelves a jugar.', Colors.greenAccent, ''),
-        GameHelpModal.bullet('Gana la partida', 'quien consiga más parejas al final.', Colors.amberAccent, ''),
+        GameHelpModal.step(
+            '1', 'Se muestran cartas boca abajo en una cuadrícula.'),
+        GameHelpModal.step(
+            '2', 'Encuentra las parejas de cartas iguales.'),
+        GameHelpModal.step(
+            '3', 'Alternáis turnos para encontrar las parejas.'),
+        GameHelpModal.bullet(
+            null, 'Encuentras una pareja', Colors.greenAccent,
+            'vuelves a jugar.'),
+        GameHelpModal.bullet(
+            null, 'Gana la partida', Colors.amberAccent,
+            'quien consiga más parejas al final.'),
       ],
     );
   }

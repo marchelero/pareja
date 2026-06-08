@@ -6,6 +6,7 @@ class SectionTitle extends StatelessWidget {
   final IconData? icon;
   final Color? color;
   final double fontSize;
+  final EdgeInsets padding;
 
   const SectionTitle({
     super.key,
@@ -13,26 +14,30 @@ class SectionTitle extends StatelessWidget {
     this.icon,
     this.color,
     this.fontSize = 14,
+    this.padding = const EdgeInsets.only(left: 8, bottom: 8),
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (icon != null) ...[
-          Icon(icon, color: color ?? AppColors.defaultPlayer2Color, size: 24),
-          const SizedBox(width: 10),
-        ],
-        Text(
-          text.toUpperCase(),
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w900,
-            color: color ?? AppColors.textSecondary,
-            letterSpacing: 2,
+    return Padding(
+      padding: padding,
+      child: Row(
+        children: [
+          if (icon != null) ...[
+            Icon(icon, color: color ?? AppColors.defaultPlayer2Color, size: 24),
+            const SizedBox(width: 10),
+          ],
+          Text(
+            text.toUpperCase(),
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w900,
+              color: color ?? AppColors.textSecondary,
+              letterSpacing: 2,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

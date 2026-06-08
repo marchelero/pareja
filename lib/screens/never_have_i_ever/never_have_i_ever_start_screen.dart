@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
@@ -8,197 +7,130 @@ import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
+import '../../widgets/glass_card.dart';
+import '../../widgets/setting_row.dart';
 import 'never_have_i_ever_game_screen.dart';
 
 class NeverHaveIEverStartScreen extends StatefulWidget {
   const NeverHaveIEverStartScreen({super.key});
 
   @override
-  State<NeverHaveIEverStartScreen> createState() => _NeverHaveIEverStartScreenState();
+  State<NeverHaveIEverStartScreen> createState() =>
+      _NeverHaveIEverStartScreenState();
 }
 
-class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
+class _NeverHaveIEverStartScreenState
+    extends State<NeverHaveIEverStartScreen> {
   int _rounds = 10;
   int _pointsToWin = 5;
   int _strikesForPenance = 3;
   bool _isHotMode = false;
 
-  void _playSound() {
-    context.read<AudioService>().playClick();
-  }
+  void _playSound() => context.read<AudioService>().playClick();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _buildAppBar(context),
       body: NeonBackground(
         child: SafeArea(
-          child: Column(
+          child: ListView(
+            padding: const EdgeInsets.all(20),
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: AppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    onPressed: () {
-                      _playSound();
-                      Navigator.pop(context);
-                    },
-                  ),
-                  title: const Text('YO NUNCA', style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
-                  centerTitle: true,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  foregroundColor: Colors.white,
-                  actions: [Padding(padding: const EdgeInsets.only(right: 8), child: GameHelpModal.helpButton(_showHelpModal))],
-                ),
-              ),
-              const SizedBox(height: 5),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40),
-                child: Text('Responde YO o NUNCA. Si hay disparidad, quien dijo YO recibe un strike.',
-                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 14)),
-              ),
-              const SizedBox(height: 15),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: PlayerNamesSection(
-                          player1Icon: context.read<SettingsProvider>().player1Icon,
-                          player2Icon: context.read<SettingsProvider>().player2Icon,
-                          player1Color: context.read<SettingsProvider>().player1Color,
-                          player2Color: context.read<SettingsProvider>().player2Color,
-                          onChanged: (p1, p2) {
-                            context.read<SettingsProvider>().setPlayer1Name(p1);
-                            context.read<SettingsProvider>().setPlayer2Name(p2);
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              padding: const EdgeInsets.all(25),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.05),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Column(
-                                children: [
-                                  _buildSettingRow(
-                                    icon: Icons.repeat, title: 'Rondas:',
-                                    child: DropdownButton<int>(
-                                      value: _rounds,
-                                      dropdownColor: Colors.black87,
-                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                                      underline: const SizedBox(),
-                                      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-                                      items: [5, 10, 15, 20].map((int value) {
-                                        return DropdownMenuItem<int>(value: value, child: Text('$value rondas'));
-                                      }).toList(),
-                                      onChanged: (int? newValue) {
-                                        if (newValue != null) { _playSound(); setState(() => _rounds = newValue); }
-                                      },
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Divider(color: Colors.white12, height: 1),
-                                  ),
-                                  _buildSettingRow(
-                                    icon: Icons.emoji_events, title: 'Puntos para ganar:',
-                                    child: DropdownButton<int>(
-                                      value: _pointsToWin,
-                                      dropdownColor: Colors.black87,
-                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                                      underline: const SizedBox(),
-                                      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-                                      items: [3, 5, 7].map((int value) {
-                                        return DropdownMenuItem<int>(value: value, child: Text('$value puntos'));
-                                      }).toList(),
-                                      onChanged: (int? newValue) {
-                                        if (newValue != null) { _playSound(); setState(() => _pointsToWin = newValue); }
-                                      },
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Divider(color: Colors.white12, height: 1),
-                                  ),
-                                  _buildSettingRow(
-                                    icon: Icons.bolt, title: 'Strikes por penitencia:',
-                                    child: DropdownButton<int>(
-                                      value: _strikesForPenance,
-                                      dropdownColor: Colors.black87,
-                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                                      underline: const SizedBox(),
-                                      icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
-                                      items: [3, 5].map((int value) {
-                                        return DropdownMenuItem<int>(value: value, child: Text('$value strikes'));
-                                      }).toList(),
-                                      onChanged: (int? newValue) {
-                                        if (newValue != null) { _playSound(); setState(() => _strikesForPenance = newValue); }
-                                      },
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                    child: Divider(color: Colors.white12, height: 1),
-                                  ),
-                                  _buildSettingRow(
-                                    icon: Icons.whatshot, iconColor: Colors.pinkAccent, title: 'Modo Hot',
-                                    child: Switch(
-                                      value: _isHotMode,
-                                      onChanged: (value) { _playSound(); setState(() => _isHotMode = value); },
-                                      activeThumbColor: Colors.pinkAccent,
-                                      activeTrackColor: Colors.pinkAccent.withValues(alpha: 0.5),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                padding: EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'Responde YO o NUNCA. '
+                  'Si hay disparidad, quien dijo YO recibe un strike.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: GameButton(
-                  text: 'EMPEZAR',
-                  onPressed: () async {
-                    _playSound();
-                    final audioService = context.read<AudioService>();
-                    final settingsProvider = context.read<SettingsProvider>();
-                    final controller = NeverHaveIEverController(
-                      audioService: audioService,
-                      settingsProvider: settingsProvider,
-                      rounds: _rounds,
-                      pointsToWin: _pointsToWin,
-                      strikesForPenance: _strikesForPenance,
-                      isHotMode: _isHotMode,
-                    );
-                    await controller.initGame();
-                    if (!context.mounted) return;
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => NeverHaveIEverGameScreen(controller: controller)),
-                    );
-                  },
-                  style: GameButtonStyle.primary,
+              _buildSectionTitle('JUGADORES', Icons.people),
+              const SizedBox(height: 8),
+              PlayerNamesSection(
+                player1Icon:
+                    context.read<SettingsProvider>().player1Icon,
+                player2Icon:
+                    context.read<SettingsProvider>().player2Icon,
+                player1Color:
+                    context.read<SettingsProvider>().player1Color,
+                player2Color:
+                    context.read<SettingsProvider>().player2Color,
+                onChanged: (p1, p2) {},
+              ),
+              const SizedBox(height: 24),
+              _buildSectionTitle('CONFIGURACIÓN', Icons.tune),
+              const SizedBox(height: 8),
+              GlassCard(
+                child: Column(
+                  children: [
+                    SettingRow(
+                      icon: Icons.repeat,
+                      title: 'Rondas:',
+                      child: SettingDropdown<int>(
+                        value: _rounds,
+                        items: [5, 10, 15, 20],
+                        labelBuilder: (v) => '$v rondas',
+                        onChanged: (v) {
+                          if (v != null) {
+                            _playSound();
+                            setState(() => _rounds = v);
+                          }
+                        },
+                      ),
+                    ),
+                    const SettingDivider(),
+                    SettingRow(
+                      icon: Icons.emoji_events,
+                      title: 'Puntos para ganar:',
+                      child: SettingDropdown<int>(
+                        value: _pointsToWin,
+                        items: [3, 5, 7],
+                        labelBuilder: (v) => '$v puntos',
+                        onChanged: (v) {
+                          if (v != null) {
+                            _playSound();
+                            setState(() => _pointsToWin = v);
+                          }
+                        },
+                      ),
+                    ),
+                    const SettingDivider(),
+                    SettingRow(
+                      icon: Icons.bolt,
+                      title: 'Strikes por penitencia:',
+                      child: SettingDropdown<int>(
+                        value: _strikesForPenance,
+                        items: [3, 5],
+                        labelBuilder: (v) => '$v strikes',
+                        onChanged: (v) {
+                          if (v != null) {
+                            _playSound();
+                            setState(() => _strikesForPenance = v);
+                          }
+                        },
+                      ),
+                    ),
+                    const SettingDivider(),
+                    SettingRow(
+                      icon: Icons.whatshot,
+                      iconColor: Colors.pinkAccent,
+                      title: 'Modo Hot',
+                      child: SettingSwitch(
+                        value: _isHotMode,
+                        onChanged: (v) {
+                          _playSound();
+                          setState(() => _isHotMode = v);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(height: 40),
+              _buildStartButton(),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -206,19 +138,79 @@ class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
     );
   }
 
-  Widget _buildSettingRow({required IconData icon, Color iconColor = Colors.white70, required String title, required Widget child}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: iconColor, size: 24),
-            const SizedBox(width: 15),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          ],
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: const Text(
+        'YO NUNCA',
+        style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      foregroundColor: Colors.white,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios),
+        onPressed: () {
+          _playSound();
+          Navigator.pop(context);
+        },
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GameHelpModal.helpButton(_showHelpModal),
         ),
-        child,
       ],
+    );
+  }
+
+  Widget _buildSectionTitle(String text, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.pinkAccent, size: 24),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            color: Colors.white70,
+            letterSpacing: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStartButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: GameButton(
+        text: 'EMPEZAR',
+        onPressed: () async {
+          _playSound();
+          final audioService = context.read<AudioService>();
+          final settingsProvider = context.read<SettingsProvider>();
+          final controller = NeverHaveIEverController(
+            audioService: audioService,
+            settingsProvider: settingsProvider,
+            rounds: _rounds,
+            pointsToWin: _pointsToWin,
+            strikesForPenance: _strikesForPenance,
+            isHotMode: _isHotMode,
+          );
+          await controller.initGame();
+          if (!mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NeverHaveIEverGameScreen(
+                  controller: controller),
+            ),
+          );
+        },
+        style: GameButtonStyle.primary,
+      ),
     );
   }
 
@@ -228,11 +220,15 @@ class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
       sections: [
         GameHelpModal.step('1', 'Se muestra una pregunta.'),
         GameHelpModal.step('2', 'Cada jugador responde por turno:'),
-        GameHelpModal.bullet('SI', 'SI, LO HE HECHO', Colors.greenAccent, 'lo has hecho'),
-        GameHelpModal.bullet('NO', 'NUNCA', Colors.orangeAccent, 'nunca lo has hecho'),
+        GameHelpModal.bullet(
+            'SI', 'SI, LO HE HECHO', Colors.greenAccent, 'lo has hecho'),
+        GameHelpModal.bullet(
+            'NO', 'NUNCA', Colors.orangeAccent, 'nunca lo has hecho'),
         GameHelpModal.step('3', 'RESULTADO:'),
-        GameHelpModal.bullet(null, 'Si uno dice SI y el otro NO', Colors.orangeAccent, 'el que dijo NO gana 1 punto'),
-        GameHelpModal.bullet(null, 'Si ambos dicen igual', Colors.grey, 'nadie gana puntos'),
+        GameHelpModal.bullet(null, 'Si uno dice SI y el otro NO',
+            Colors.orangeAccent, 'el que dijo NO gana 1 punto'),
+        GameHelpModal.bullet(null, 'Si ambos dicen igual', Colors.grey,
+            'nadie gana puntos'),
         GameHelpModal.step('4', '3 strikes = penitencia'),
       ],
     );
