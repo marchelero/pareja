@@ -9,6 +9,7 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/setting_row.dart';
+import '../../services/haptics_service.dart';
 import 'never_have_i_ever_game_screen.dart';
 
 class NeverHaveIEverStartScreen extends StatefulWidget {
@@ -151,6 +152,7 @@ class _NeverHaveIEverStartScreenState
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
         onPressed: () {
+          HapticsService.light();
           _playSound();
           Navigator.pop(context);
         },

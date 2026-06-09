@@ -10,6 +10,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import 'russian_roulette_start_screen.dart';
 import '../games_menu_screen.dart';
+import '../../services/haptics_service.dart';
 
 class RussianRouletteGameScreen extends StatefulWidget {
   final RussianRouletteController controller;
@@ -309,7 +310,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white70, size: 24),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () { HapticsService.light(); Navigator.pop(context); },
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
@@ -559,7 +560,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
 
   Widget _buildTriggerButton(RussianRouletteController c) {
     Widget button = GestureDetector(
-      onTap: c.isPlaying ? () => c.pullTrigger() : null,
+      onTap: c.isPlaying ? () { HapticsService.light(); c.pullTrigger(); } : null,
       child: AnimatedBuilder(
         animation: _shakeController,
         builder: (context, child) {

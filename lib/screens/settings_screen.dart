@@ -6,6 +6,7 @@ import '../widgets/neon_background.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/section_title.dart';
 import '../widgets/neon_toggle.dart';
+import '../services/haptics_service.dart';
 import '../widgets/neon_button.dart';
 
 const List<Color> _presetColors = [
@@ -61,11 +62,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () {
+              HapticsService.light();
+              Navigator.pop(ctx);
+            },
             child: const Text('CANCELAR', style: TextStyle(color: Colors.white54)),
           ),
           TextButton(
             onPressed: () {
+              HapticsService.light();
               Navigator.pop(ctx);
               settings.resetAllData();
               _p1Controller.text = settings.player1Name;
@@ -362,7 +367,10 @@ class _PlayerConfigSection extends StatelessWidget {
                   final c = _presetColors[index];
                   final isSelected = c.toARGB32() == color.toARGB32();
                   return GestureDetector(
-                    onTap: () => onColorChanged(c),
+                    onTap: () {
+                      HapticsService.light();
+                      onColorChanged(c);
+                    },
                     child: Container(
                       width: 28,
                       height: 28,
@@ -413,7 +421,10 @@ class _GenderChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () {
+          HapticsService.light();
+          onTap();
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
@@ -474,7 +485,10 @@ class _GuestModeRow extends StatelessWidget {
         ),
         const Spacer(),
         GestureDetector(
-          onTap: () => onChanged(!value),
+          onTap: () {
+            HapticsService.light();
+            onChanged(!value);
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: 50,
@@ -601,7 +615,10 @@ class _ModeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticsService.light();
+        onTap();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(

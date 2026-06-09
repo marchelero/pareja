@@ -9,6 +9,7 @@ import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
+import '../../services/haptics_service.dart';
 import 'roulette_game_screen.dart';
 
 class RouletteStartScreen extends StatefulWidget {
@@ -129,7 +130,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () { HapticsService.light(); Navigator.pop(context); },
       ),
       actions: [
         Padding(
@@ -162,6 +163,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
     return GlassCard(
       child: InkWell(
         onTap: () async {
+          HapticsService.light();
           final settings = context.read<SettingsProvider>();
           final confirm = await showDialog<bool>(
             context: context,
@@ -176,14 +178,12 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () =>
-                      Navigator.pop(context, false),
+                  onPressed: () { HapticsService.light(); Navigator.pop(context, false); },
                   child: const Text('Cancelar',
                       style: TextStyle(color: Colors.white54)),
                 ),
                 TextButton(
-                  onPressed: () =>
-                      Navigator.pop(context, true),
+                  onPressed: () { HapticsService.light(); Navigator.pop(context, true); },
                   child: const Text('Reiniciar',
                       style:
                           TextStyle(color: Colors.pinkAccent)),
@@ -314,7 +314,10 @@ class _ModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticsService.light();
+        onTap();
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(15),

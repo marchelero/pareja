@@ -228,7 +228,7 @@ class _RouletteGameScreenState extends State<RouletteGameScreen> with TickerProv
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white70, size: 30),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () { HapticsService.light(); Navigator.pop(context); },
           ),
           if (isHotUnlocked)
             Row(

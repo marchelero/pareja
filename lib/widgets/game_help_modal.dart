@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import 'game_button.dart';
+import '../services/haptics_service.dart';
 
 class GameHelpModal {
   static void show({
@@ -62,7 +63,7 @@ class GameHelpModal {
                     child: GameButton(
                       text: 'ENTENDIDO',
                       icon: Icons.check,
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () { HapticsService.light(); Navigator.pop(context); },
                       style: GameButtonStyle.primary,
                       height: 50,
                     ),
@@ -155,7 +156,7 @@ class GameHelpModal {
           child: Text('?', style: TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.w700)),
         ),
       ),
-      onPressed: onPressed,
+      onPressed: () { HapticsService.light(); onPressed(); },
     );
   }
 }

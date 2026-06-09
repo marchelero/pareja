@@ -4,7 +4,16 @@ import 'package:flutter/foundation.dart';
 class HapticsService {
   HapticsService._();
 
+  static bool _globalEnabled = true;
+
+  static bool get isEnabled => _globalEnabled;
+
+  static void setEnabled(bool value) {
+    _globalEnabled = value;
+  }
+
   static void light() {
+    if (!_globalEnabled) return;
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       HapticFeedback.lightImpact();
@@ -12,6 +21,7 @@ class HapticsService {
   }
 
   static void medium() {
+    if (!_globalEnabled) return;
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       HapticFeedback.mediumImpact();
@@ -19,6 +29,7 @@ class HapticsService {
   }
 
   static void heavy() {
+    if (!_globalEnabled) return;
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       HapticFeedback.heavyImpact();
@@ -26,6 +37,7 @@ class HapticsService {
   }
 
   static void vibrate() {
+    if (!_globalEnabled) return;
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       HapticFeedback.vibrate();
@@ -33,6 +45,7 @@ class HapticsService {
   }
 
   static void selection() {
+    if (!_globalEnabled) return;
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
       HapticFeedback.selectionClick();

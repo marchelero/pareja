@@ -6,6 +6,7 @@ import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'duel_start_screen.dart';
 import '../games_menu_screen.dart';
@@ -150,7 +151,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white70, size: 30),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () { HapticsService.light(); Navigator.pop(context); },
           ),
           Row(
             children: [
@@ -292,7 +293,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
             width: double.infinity,
             height: 50,
             child: TextButton(
-              onPressed: c.skipTask,
+              onPressed: () { HapticsService.light(); c.skipTask(); },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white38,
                 backgroundColor: Colors.white.withValues(alpha: 0.05),
@@ -327,8 +328,8 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
           ),
           child: Material(
             color: Colors.transparent,
-            child: InkWell(
-              onTap: onPressed,
+            child:             InkWell(
+              onTap: () { HapticsService.light(); onPressed(); },
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

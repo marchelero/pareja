@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../core/storage/local_storage.dart';
 import 'game_button.dart';
+import '../services/haptics_service.dart';
 
 class PlayerNamesSection extends StatefulWidget {
   final void Function(String p1, String p2)? onChanged;
@@ -219,7 +220,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                   // Edit button - only when collapsed
                   if (!_isExpanded)
                     GestureDetector(
-                      onTap: _toggleExpanded,
+                      onTap: () { HapticsService.light(); _toggleExpanded(); },
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -244,7 +245,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                           height: 40,
                           child: GameButton(
                             text: 'GUARDAR',
-                            onPressed: _save,
+                            onPressed: () { HapticsService.light(); _save(); },
                             style: GameButtonStyle.primary,
                             height: 40,
                             customColor: Colors.greenAccent,
@@ -257,7 +258,7 @@ class PlayerNamesSectionState extends State<PlayerNamesSection> with SingleTicke
                           height: 40,
                           child: GameButton(
                             text: 'CANCELAR',
-                            onPressed: _cancel,
+                            onPressed: () { HapticsService.light(); _cancel(); },
                             style: GameButtonStyle.secondary,
                             height: 40,
                           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
 import '../services/audio_service.dart';
+import '../services/haptics_service.dart';
 import 'questions/questions_start_screen.dart';
 import 'roulette/roulette_start_screen.dart';
 import 'drinks/drinks_start_screen.dart';
@@ -55,6 +56,7 @@ class GamesMenuScreen extends StatelessWidget {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white54),
                 onPressed: () {
+                  HapticsService.light();
                   audioService.playClick();
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -70,6 +72,7 @@ class GamesMenuScreen extends StatelessWidget {
                     color: Colors.white54,
                   ),
                   onPressed: () {
+                    HapticsService.light();
                     audioService.playClick();
                     Navigator.push(
                       context,

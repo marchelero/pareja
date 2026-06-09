@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/haptics_service.dart';
 
 class GameCard extends StatelessWidget {
   final String title;
@@ -63,7 +64,7 @@ class GameCard extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: onTap,
+            onTap: () { HapticsService.light(); onTap(); },
             borderRadius: BorderRadius.circular(16),
             splashColor: accentColor.withValues(alpha: 0.35),
             highlightColor: accentColor.withValues(alpha: 0.18),

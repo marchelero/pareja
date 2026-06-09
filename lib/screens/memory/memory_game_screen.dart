@@ -7,6 +7,7 @@ import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'memory_start_screen.dart';
 import '../games_menu_screen.dart';
@@ -120,6 +121,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
           Center(
             child: TextButton(
               onPressed: () {
+                HapticsService.light();
                 Navigator.pop(ctx);
                 if (c.isGameOver) return;
                 setState(() {
@@ -279,7 +281,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 30), onPressed: () => Navigator.pop(context)),
+          IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 30), onPressed: () { HapticsService.light(); Navigator.pop(context); }),
           Row(
             children: [
               _scoreChip(c.player1Name, c.player1Score, c.player1Color),
@@ -444,7 +446,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
     final bool isInputPhase = c.isPlayerTurn;
 
     return GestureDetector(
-      onTap: isInputPhase ? () => _onTap(index) : null,
+      onTap: isInputPhase ? () { HapticsService.light(); _onTap(index); } : null,
       child: AnimatedBuilder(
         animation: _flashControllers[index],
         builder: (context, _) {

@@ -7,6 +7,7 @@ import '../../widgets/game_result_screen.dart';
 import '../../widgets/round_result_dialog.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'bomb_start_screen.dart';
 import '../games_menu_screen.dart';
@@ -169,7 +170,7 @@ class _BombGameScreenState extends State<BombGameScreen> with SingleTickerProvid
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
-        onTap: c.isPlaying ? c.passTurn : c.startGame,
+        onTap: () { HapticsService.light(); c.isPlaying ? c.passTurn() : c.startGame(); },
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),

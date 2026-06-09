@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../../controllers/russian_roulette_controller.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/game_button.dart';
@@ -101,8 +102,10 @@ class _RussianRouletteStartScreenState
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 5),
                             child: GestureDetector(
-                              onTap: () =>
-                                  setState(() => _bulletCount = n),
+                              onTap: () {
+                                HapticsService.light();
+                                setState(() => _bulletCount = n);
+                              },
                               child: Container(
                                 width: 48,
                                 height: 48,
@@ -174,6 +177,7 @@ class _RussianRouletteStartScreenState
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
         onPressed: () {
+          HapticsService.light();
           _playSound();
           Navigator.pop(context);
         },

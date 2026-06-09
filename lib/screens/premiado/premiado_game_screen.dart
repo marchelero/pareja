@@ -77,10 +77,9 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
     if (!_pointers.containsKey(e.pointer)) return;
     setState(() {
       _pointers[e.pointer] = e.position;
-      final sorted = _pointers.entries.toList()
-        ..sort((a, b) => a.value.dx.compareTo(b.value.dx));
-      _p1Pos = sorted[0].value;
-      _p2Pos = sorted.length > 1 ? sorted[1].value : null;
+      final entries = _pointers.entries.toList();
+      _p1Pos = entries[0].value;
+      _p2Pos = entries.length > 1 ? entries[1].value : null;
     });
   }
 
@@ -98,10 +97,9 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
 
   void _updateTouchAssignment() {
     if (_pointers.length >= 2) {
-      final sorted = _pointers.entries.toList()
-        ..sort((a, b) => a.value.dx.compareTo(b.value.dx));
-      _p1Pos = sorted[0].value;
-      _p2Pos = sorted[1].value;
+      final entries = _pointers.entries.toList();
+      _p1Pos = entries[0].value;
+      _p2Pos = entries[1].value;
       _isBothReady = true;
       _startCountdown();
     } else {
@@ -207,12 +205,14 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
     return SafeArea(
       child: Stack(
         children: [
-          Listener(
-            onPointerDown: _onPointerDown,
-            onPointerMove: _onPointerMove,
-            onPointerUp: _onPointerUp,
-            child: Column(
-            children: [
+          Positioned.fill(
+            child: Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: _onPointerDown,
+              onPointerMove: _onPointerMove,
+              onPointerUp: _onPointerUp,
+              child: Column(
+                children: [
               const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -285,6 +285,7 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
             ],
             ),
           ),
+          ),
 
           if (_p1Pos != null && !_isBothReady)
             _buildTouchIndicator(_p1Pos!, c.player1Color, c.player1Name, c.player1Icon),
@@ -306,7 +307,7 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
             top: 8,
             child: IconButton(
               icon: const Icon(Icons.close, color: Colors.white70, size: 28),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () { HapticsService.light(); Navigator.pop(context); },
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             ),
@@ -508,6 +509,7 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
+                  HapticsService.light();
                   Navigator.pushAndRemoveUntil(
                     context,
                     RouteTransitions.slideFromBottom(const GamesMenuScreen()),
@@ -716,6 +718,7 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
+                  HapticsService.light();
                   Navigator.pushAndRemoveUntil(
                     context,
                     RouteTransitions.slideFromBottom(const GamesMenuScreen()),
@@ -740,7 +743,7 @@ class _PremiadoGameScreenState extends State<PremiadoGameScreen>
             top: 8,
             child: IconButton(
               icon: const Icon(Icons.close, color: Colors.white70, size: 28),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () { HapticsService.light(); Navigator.pop(context); },
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             ),

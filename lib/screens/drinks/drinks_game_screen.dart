@@ -12,6 +12,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'drinks_start_screen.dart';
+import '../../services/haptics_service.dart';
 import '../games_menu_screen.dart';
 
 class DrinksGameScreen extends StatefulWidget {
@@ -272,7 +273,10 @@ class _DrinksGameScreenState extends State<DrinksGameScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white70),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      HapticsService.light();
+                      Navigator.pop(context);
+                    },
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

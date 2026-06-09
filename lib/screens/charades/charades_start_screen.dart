@@ -10,6 +10,7 @@ import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/setting_row.dart';
 import '../../widgets/selection_chip.dart';
+import '../../services/haptics_service.dart';
 import 'charades_game_screen.dart';
 
 class CharadesStartScreen extends StatefulWidget {
@@ -206,6 +207,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
         onPressed: () {
+          HapticsService.light();
           _playSound();
           Navigator.pop(context);
         },

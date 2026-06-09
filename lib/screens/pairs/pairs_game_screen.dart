@@ -9,6 +9,7 @@ import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
 import '../games_menu_screen.dart';
 import 'pairs_start_screen.dart';
+import '../../services/haptics_service.dart';
 
 class PairsGameScreen extends StatefulWidget {
   final PairsController controller;
@@ -153,6 +154,7 @@ class _PairsGameScreenState extends State<PairsGameScreen>
           Center(
             child: TextButton(
               onPressed: () {
+                HapticsService.light();
                 _showingDialog = false;
                 Navigator.pop(ctx);
                 c.continueToNextRound();
@@ -358,7 +360,7 @@ class _PairsGameScreenState extends State<PairsGameScreen>
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white70, size: 30),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () { HapticsService.light(); Navigator.pop(context); },
           ),
           Row(
             children: [
@@ -514,7 +516,7 @@ class _PairsGameScreenState extends State<PairsGameScreen>
     final isClickable = !card.isMatched && !c.isChecking;
 
     return GestureDetector(
-      onTap: isClickable ? () => c.selectCard(index) : null,
+      onTap: isClickable ? () { HapticsService.light(); c.selectCard(index); } : null,
       child: AnimatedOpacity(
         opacity: card.isMatched ? 0.45 : 1.0,
         duration: const Duration(milliseconds: 400),

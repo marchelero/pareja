@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../services/haptics_service.dart';
 
 class NeonToggle extends StatelessWidget {
   final bool value;
@@ -23,7 +24,7 @@ class NeonToggle extends StatelessWidget {
         Icon(icon, color: value ? color : Colors.white54, size: 24),
         const SizedBox(width: 12),
         GestureDetector(
-          onTap: () => onChanged(!value),
+          onTap: () { HapticsService.light(); onChanged(!value); },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: 50,

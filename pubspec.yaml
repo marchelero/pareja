@@ -52,6 +52,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
+dependency_overrides:
+  audioplayers_android:
+    git:
+      url: https://github.com/bluefireteam/audioplayers.git
+      path: packages/audioplayers_android
+      ref: main
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -10,6 +10,7 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import 'coin_flip_screen.dart';
+import '../../services/haptics_service.dart';
 import 'questions_game_screen.dart';
 
 class QuestionsStartScreen extends StatefulWidget {
@@ -161,6 +162,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                                 cat['color'] as Color;
                             return GestureDetector(
                               onTap: () {
+                                HapticsService.light();
                                 setState(() {
                                   if (isSelected) {
                                     if (_selectedCategories
@@ -278,7 +280,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () { HapticsService.light(); Navigator.pop(context); },
       ),
       actions: [
         Padding(
@@ -392,7 +394,10 @@ class _RoundCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticsService.light();
+        onTap();
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 70,

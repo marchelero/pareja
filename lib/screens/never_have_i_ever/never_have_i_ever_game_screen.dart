@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import 'never_have_i_ever_start_screen.dart';
+import '../../services/haptics_service.dart';
 import '../games_menu_screen.dart';
 
 class NeverHaveIEverGameScreen extends StatefulWidget {
@@ -254,7 +255,10 @@ class _NeverHaveIEverGameScreenState extends State<NeverHaveIEverGameScreen>
                         color: Colors.white70,
                         size: 28,
                       ),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        HapticsService.light();
+                        Navigator.pop(context);
+                      },
                     ),
                     const Spacer(),
                     Row(

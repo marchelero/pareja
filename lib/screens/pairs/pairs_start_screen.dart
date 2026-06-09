@@ -4,6 +4,7 @@ import '../../controllers/pairs_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
@@ -159,10 +160,13 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
                             padding: EdgeInsets.only(
                                 left: idx > 0 ? 8 : 0),
                             child: GestureDetector(
-                              onTap: () => setState(() {
-                                _gridRows = rows;
-                                _gridCols = cols;
-                              }),
+                              onTap: () {
+                                HapticsService.light();
+                                setState(() {
+                                  _gridRows = rows;
+                                  _gridCols = cols;
+                                });
+                              },
                               child: AnimatedContainer(
                                 duration:
                                     const Duration(milliseconds: 200),
@@ -246,7 +250,7 @@ class _PairsStartScreenState extends State<PairsStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () { HapticsService.light(); Navigator.pop(context); },
       ),
       actions: [
         Padding(

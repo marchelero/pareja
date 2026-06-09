@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../controllers/rapid_fire_controller.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
@@ -208,7 +209,7 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () { HapticsService.light(); Navigator.pop(context); },
       ),
       actions: [
         Padding(
@@ -280,6 +281,7 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
 
     return GestureDetector(
       onTap: () {
+        HapticsService.light();
         setState(() {
           if (selected) {
             _selectedCategories.remove(cat);

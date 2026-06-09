@@ -7,6 +7,7 @@ import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
 import '../../widgets/neon_background.dart';
+import '../../services/haptics_service.dart';
 
 class QuestionsGameScreen extends StatefulWidget {
   final QuestionsController controller;
@@ -164,7 +165,7 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
                     children: [
                       Expanded(
                         child: TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () { HapticsService.light(); Navigator.pop(context); },
                           child: const Text('CANCELAR', style: TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                       ),
@@ -223,7 +224,7 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
                             children: [
                               IconButton(
                                 icon: const Icon(Icons.close, color: Colors.white70),
-                                onPressed: () => Navigator.pop(context),
+                                onPressed: () { HapticsService.light(); Navigator.pop(context); },
                               ),
                               Text('Ronda ${c.currentRound}/${c.maxRounds}', style: const TextStyle(color: Colors.white70, fontSize: 16)),
                               GameHelpModal.helpButton(_showHelpModal),
@@ -333,7 +334,7 @@ class _QuestionsGameScreenState extends State<QuestionsGameScreen> {
                                   width: double.infinity,
                                   height: 55,
                                   child: OutlinedButton.icon(
-                                    onPressed: _activateSuddenDeath,
+                                    onPressed: () { HapticsService.light(); _activateSuddenDeath(); },
                                     icon: const Icon(Icons.flash_on, color: Colors.yellow),
                                     label: const Text('MUERTE SÚBITA', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
                                     style: OutlinedButton.styleFrom(

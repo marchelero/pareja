@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../../controllers/bomb_controller.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/game_button.dart';
@@ -141,6 +142,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
         onPressed: () {
+          HapticsService.light();
           _playSound();
           Navigator.pop(context);
         },
@@ -232,6 +234,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
   ) {
     return GestureDetector(
       onTap: () {
+        HapticsService.light();
         _playSound();
         onChanged(!isActive);
       },

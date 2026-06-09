@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/storage/local_storage.dart';
 import '../core/constants/app_constants.dart';
 import '../core/theme/app_colors.dart';
+import '../services/haptics_service.dart';
 
 enum PlayerGender { male, female }
 
@@ -93,6 +94,7 @@ class SettingsProvider extends ChangeNotifier {
 
     _soundEnabled = await LocalStorage.isSoundEnabled();
     _vibrationEnabled = await LocalStorage.isVibrationEnabled();
+    HapticsService.setEnabled(_vibrationEnabled);
     _rouletteSpinCount = await LocalStorage.getRouletteSpinCount();
 
     _guestMode = await LocalStorage.isGuestMode();
@@ -179,6 +181,7 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> toggleVibration() async {
     _vibrationEnabled = !_vibrationEnabled;
+    HapticsService.setEnabled(_vibrationEnabled);
     await LocalStorage.setVibrationEnabled(_vibrationEnabled);
     notifyListeners();
   }
@@ -241,6 +244,7 @@ class SettingsProvider extends ChangeNotifier {
     _friendsMode = false;
     _soundEnabled = true;
     _vibrationEnabled = true;
+    HapticsService.setEnabled(true);
     _rouletteSpinCount = 0;
     _guestMode = false;
     _gamesPlayed = 0;

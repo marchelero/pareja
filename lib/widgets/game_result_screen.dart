@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
 import '../services/audio_service.dart';
+import '../services/haptics_service.dart';
 import 'neon_background.dart';
 
 class GameResultScreen extends StatefulWidget {
@@ -389,7 +390,7 @@ class _IconButton extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: onPressed,
+            onTap: () { HapticsService.light(); onPressed(); },
             customBorder: const CircleBorder(),
             child: Center(
               child: Icon(icon, color: Colors.white, size: 28),

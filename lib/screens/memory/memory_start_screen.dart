@@ -4,6 +4,7 @@ import '../../controllers/memory_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
+import '../../services/haptics_service.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
@@ -139,7 +140,7 @@ class _MemoryStartScreenState extends State<MemoryStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () { HapticsService.light(); Navigator.pop(context); },
       ),
       actions: [
         Padding(

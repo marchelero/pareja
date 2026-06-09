@@ -10,6 +10,7 @@ import '../../widgets/game_button.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/game_result_screen.dart';
+import '../../services/haptics_service.dart';
 
 class MentirosoGameScreen extends StatefulWidget {
   final MentirosoController controller;
@@ -540,7 +541,7 @@ class _MentirosoGameScreenState extends State<MentirosoGameScreen>
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white70, size: 30),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () { HapticsService.light(); Navigator.pop(context); },
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -686,7 +687,7 @@ class _StatementChipState extends State<_StatementChip>
       builder: (context, child) {
         final glow = _glowAnim.value;
         return GestureDetector(
-          onTap: widget.onTap,
+          onTap: () { HapticsService.light(); widget.onTap(); },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -755,7 +756,7 @@ class _VerdadButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () { HapticsService.light(); onTap(); },
       child: Container(
         height: 100,
         decoration: BoxDecoration(
@@ -798,7 +799,7 @@ class _MentiraButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () { HapticsService.light(); onTap(); },
       child: Container(
         height: 100,
         decoration: BoxDecoration(

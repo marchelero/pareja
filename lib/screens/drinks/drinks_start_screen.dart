@@ -9,6 +9,7 @@ import '../../widgets/player_names_section.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/selection_chip.dart';
+import '../../services/haptics_service.dart';
 import 'drinks_game_screen.dart';
 
 class DrinksStartScreen extends StatefulWidget {
@@ -331,7 +332,10 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          HapticsService.light();
+          Navigator.pop(context);
+        },
       ),
       actions: [
         Padding(
@@ -365,8 +369,10 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
     bool isSelected = _levelingSpeed == speed;
     return Expanded(
       child: InkWell(
-        onTap: () =>
-            setState(() => _levelingSpeed = speed),
+        onTap: () {
+          HapticsService.light();
+          setState(() => _levelingSpeed = speed);
+        },
         child: Container(
           padding:
               const EdgeInsets.symmetric(vertical: 12),

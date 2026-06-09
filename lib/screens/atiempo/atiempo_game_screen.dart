@@ -129,7 +129,10 @@ class _ATiempoGameScreenState extends State<ATiempoGameScreen>
             children: [
               IconButton(
                 icon: const Icon(Icons.close, color: Colors.white70, size: 28),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  HapticsService.light();
+                  Navigator.pop(context);
+                },
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,

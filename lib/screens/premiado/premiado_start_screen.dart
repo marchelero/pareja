@@ -10,6 +10,7 @@ import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/section_title.dart';
 import '../../widgets/setting_row.dart';
+import '../../services/haptics_service.dart';
 import 'premiado_game_screen.dart';
 
 class PremiadoStartScreen extends StatefulWidget {
@@ -89,7 +90,7 @@ class _PremiadoStartScreenState extends State<PremiadoStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () { HapticsService.light(); Navigator.pop(context); },
       ),
       actions: [
         Padding(

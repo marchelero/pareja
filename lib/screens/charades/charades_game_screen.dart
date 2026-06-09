@@ -9,6 +9,7 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import 'charades_start_screen.dart';
+import '../../services/haptics_service.dart';
 import '../games_menu_screen.dart';
 
 class CharadesGameScreen extends StatefulWidget {
@@ -271,7 +272,10 @@ class _CharadesGameScreenState extends State<CharadesGameScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white70, size: 28),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              HapticsService.light();
+              Navigator.pop(context);
+            },
           ),
           Column(
             children: [

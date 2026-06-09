@@ -9,6 +9,7 @@ import '../../services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'rapid_fire_start_screen.dart';
 import '../games_menu_screen.dart';
+import '../../services/haptics_service.dart';
 
 class RapidFireGameScreen extends StatefulWidget {
   final RapidFireController controller;
@@ -133,7 +134,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
         children: [
-          IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 26), onPressed: () => Navigator.pop(context)),
+          IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 26), onPressed: () { HapticsService.light(); Navigator.pop(context); }),
           const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -330,7 +331,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
       animation: _pulseAnim,
       builder: (context, _) {
         return GestureDetector(
-          onTap: () => c.buzz(isHe ? 'he' : 'she'),
+          onTap: () { HapticsService.light(); c.buzz(isHe ? 'he' : 'she'); },
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -376,7 +377,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: GestureDetector(
-              onTap: () => c.selectAnswer(i),
+              onTap: () { HapticsService.light(); c.selectAnswer(i); },
               child: Container(
                 constraints: const BoxConstraints(minWidth: 120),
                 padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 12),

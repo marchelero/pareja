@@ -9,6 +9,7 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../core/theme/app_colors.dart';
+import '../../services/haptics_service.dart';
 import 'duel_game_screen.dart';
 
 class DuelStartScreen extends StatefulWidget {
@@ -121,7 +122,10 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          HapticsService.light();
+          Navigator.pop(context);
+        },
       ),
       actions: [
         Padding(

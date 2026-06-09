@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/haptics_service.dart';
 
 class SelectionChip extends StatelessWidget {
   final String label;
@@ -27,7 +28,7 @@ class SelectionChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () { HapticsService.light(); onTap(); },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: width,
@@ -159,7 +160,7 @@ class CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () { HapticsService.light(); onTap(); },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
