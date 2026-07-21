@@ -27,11 +27,7 @@ class AudioService extends ChangeNotifier {
     if (!_enabled) return;
     try {
       await _player.stop();
-      if (kIsWeb) {
-        await _player.play(UrlSource('assets/sounds/$fileName'));
-      } else {
-        await _player.play(AssetSource('sounds/$fileName'));
-      }
+      await _player.play(AssetSource('sounds/$fileName'));
     } catch (e) {
       debugPrint('AudioService error: $e');
     }
