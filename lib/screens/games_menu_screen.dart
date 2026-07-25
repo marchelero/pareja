@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
+import '../data/ad_service.dart';
+import '../providers/monetization_provider.dart';
 import '../services/audio_service.dart';
 import '../services/haptics_service.dart';
 import 'questions/questions_start_screen.dart';
@@ -29,6 +32,9 @@ class GamesMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audioService = context.read<AudioService>();
+    final adService = context.read<AdService>();
+    final monetization = context.watch<MonetizationProvider>();
+    final showBanner = !kIsWeb && !monetization.isPremium && adService.isAvailable;
 
     return Scaffold(
       body: NeonBackground(
@@ -303,6 +309,14 @@ class GamesMenuScreen extends StatelessWidget {
                 ],
               ),
             ),
+            if (showBanner)
+              Container(
+                alignment: Alignment.center,
+                width: double.infinity,
+                height: 60,
+                color: Colors.black,
+                child: adService.buildBannerAd(),
+              ),
           ],
         ),
       ),

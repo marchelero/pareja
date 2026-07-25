@@ -125,11 +125,24 @@ class _PlayLimitSheet extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  // v1: llama directo al provider. Phase 3.3 reemplaza
-                  // con AdService real.
-                  await context.read<MonetizationProvider>().watchAdForGame(game);
-                  if (context.mounted) {
+                  // Phase 3.3: llama a AdService real via provider.
+                  // showRewardedAd abre el ad rewarded; si el user completa,
+                  // retorna true y se aplica el +1 jugada. Si falla, modal
+                  // queda abierto y se muestra snackbar.
+                  final success = await context
+                      .read<MonetizationProvider>()
+                      .watchAdForGameWithReward(game);
+                  if (!context.mounted) return;
+                  if (success) {
                     Navigator.pop(context, PlayLimitResult.watchedAd);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'No se pudo mostrar el anuncio. Intentá de nuevo.',
+                        ),
+                      ),
+                    );
                   }
                 },
                 icon: const Icon(Icons.play_circle_outline),

@@ -2,13 +2,20 @@ import 'package:flutter/foundation.dart';
 import '../core/constants/game_caps.dart';
 import '../core/storage/local_storage.dart';
 import '../core/utils/date_utils.dart' as utils;
+import '../data/ad_service.dart';
 
 /// Orquesta reglas de monetizacion: premium, caps diarios, rewarded ads.
 ///
 /// **Source of truth**: `LocalStorage`. Provider hace caching en memoria y
 /// re-persiste en cada cambio. Tests pueden mockear SharedPreferences via
-/// `SharedPreferences.setMockInitialValues`.
+/// `SharedPreferences.setMockInitialValues` y AdService pasando un fake.
 class MonetizationProvider extends ChangeNotifier {
+  /// Servicio de ads. Default [NoOpAdService] para tests / web / error de init.
+  final AdService adService;
+
+  MonetizationProvider({AdService? adService})
+      : adService = adService ?? const NoOpAdService();
+
   bool _isPremium = false;
   bool _isLoaded = false;
   Map<String, int> _playCounts = <String, int>{};
@@ -78,6 +85,10 @@ class MonetizationProvider extends ChangeNotifier {
   /// en 1, lo cual aumenta `remainingPlays` en 1. Permite count negativo
   /// (representa "bonus plays banked" — user gano plays sin haber usado ninguna).
   /// Si el juego no tiene cap, es no-op.
+  ///
+  /// **Direct grant**: este metodo NO muestra un ad — solo aplica el bonus.
+  /// Usar cuando ya se valido la recompensa externamente. Para el flow
+  /// completo de "user mira ad → recibe bonus", usar [watchAdForGameWithReward].
   Future<void> watchAdForGame(GameCap game) async {
     if (!game.isCapped) return;
     final name = game.displayName;
@@ -86,6 +97,19 @@ class MonetizationProvider extends ChangeNotifier {
     await LocalStorage.savePlayCounts(_playCounts);
     await LocalStorage.setLastResetDate(_lastResetDateKey);
     notifyListeners();
+  }
+
+  /// Flow completo: muestra rewarded ad via [adService], y SOLO si el user
+  /// gano la recompensa, aplica el bonus de +1 jugada. Retorna true si
+  /// el bonus fue aplicado, false si ad fallo, user no completo, o el juego
+  /// no necesita rewarded (uncapped, premium).
+  Future<bool> watchAdForGameWithReward(GameCap game) async {
+    if (!game.isCapped) return false;
+    if (_isPremium) return false; // premium no necesita ads
+    final success = await adService.showRewardedAd();
+    if (!success) return false;
+    await watchAdForGame(game);
+    return true;
   }
 
   /// Limpia contadores del dia. Util para QA y para "empezar de cero".
