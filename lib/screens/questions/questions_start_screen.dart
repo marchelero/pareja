@@ -26,6 +26,8 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
   String _player2Name = 'ELLA';
   int _selectedRounds = 10;
   final List<int> _roundOptions = [10, 20, 30, 40, 50];
+  late List<Map<String, dynamic>> _categories;
+  bool _hotModeAvailable = false;
 
   @override
   void initState() {
@@ -33,22 +35,27 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
     final settings = context.read<SettingsProvider>();
     _player1Name = settings.player1Name;
     _player2Name = settings.player2Name;
+    _hotModeAvailable = settings.hotModeEnabled;
+    _categories = _buildCategories(hotModeAvailable: _hotModeAvailable);
   }
 
-  final List<Map<String, dynamic>> _categories = [
-    {'name': 'General', 'icon': Icons.all_inclusive, 'color': Colors.blue},
-    {'name': 'Romántico', 'icon': Icons.favorite, 'color': Colors.pink},
-    {'name': 'Picante', 'icon': Icons.whatshot, 'color': Colors.deepOrange},
-    {'name': 'Convivencia', 'icon': Icons.home, 'color': Colors.green},
-    {'name': 'Futuro', 'icon': Icons.rocket_launch, 'color': Colors.purple},
-    {'name': 'Viajes', 'icon': Icons.flight, 'color': Colors.teal},
-    {'name': 'Pasatiempos', 'icon': Icons.sports_esports, 'color': Colors.indigo},
-    {'name': 'Valores', 'icon': Icons.balance, 'color': Colors.brown},
-    {'name': 'Humor', 'icon': Icons.mood, 'color': Colors.amber.shade800},
-    {'name': 'Profundo', 'icon': Icons.psychology, 'color': Colors.blueGrey},
-    {'name': 'Trivia', 'icon': Icons.quiz, 'color': Colors.indigo},
-    {'name': 'Flirteo', 'icon': Icons.favorite_border, 'color': Colors.redAccent},
-  ];
+  static List<Map<String, dynamic>> _buildCategories({required bool hotModeAvailable}) {
+    final all = [
+      {'name': 'General', 'icon': Icons.all_inclusive, 'color': Colors.blue},
+      {'name': 'Romántico', 'icon': Icons.favorite, 'color': Colors.pink},
+      {'name': 'Picante', 'icon': Icons.whatshot, 'color': Colors.deepOrange, 'hotOnly': true},
+      {'name': 'Convivencia', 'icon': Icons.home, 'color': Colors.green},
+      {'name': 'Futuro', 'icon': Icons.rocket_launch, 'color': Colors.purple},
+      {'name': 'Viajes', 'icon': Icons.flight, 'color': Colors.teal},
+      {'name': 'Pasatiempos', 'icon': Icons.sports_esports, 'color': Colors.indigo},
+      {'name': 'Valores', 'icon': Icons.balance, 'color': Colors.brown},
+      {'name': 'Humor', 'icon': Icons.mood, 'color': Colors.amber.shade800},
+      {'name': 'Profundo', 'icon': Icons.psychology, 'color': Colors.blueGrey},
+      {'name': 'Trivia', 'icon': Icons.quiz, 'color': Colors.indigo},
+      {'name': 'Flirteo', 'icon': Icons.favorite_border, 'color': Colors.redAccent},
+    ];
+    return all.where((c) => hotModeAvailable || c['hotOnly'] != true).toList();
+  }
 
   final Set<String> _selectedCategories = {'General', 'Romántico'};
 

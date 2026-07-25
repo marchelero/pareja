@@ -17,6 +17,10 @@ class LocalStorage {
   static const String _keyFavoriteGame = 'stats_favorite_game';
   static const String _keyPlayTimeMinutes = 'stats_play_time_minutes';
 
+  // ── Adult content gate (+18) ──
+  static const String _keyHotModeEnabled = 'hot_mode_enabled';
+  static const String _keyAgeVerified = 'age_verified';
+
   // ── Migration from old keys ──
   static const String _keyHeName = 'he_name';
   static const String _keySheName = 'she_name';
@@ -217,6 +221,28 @@ class LocalStorage {
   static Future<int> getPlayTimeMinutes() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_keyPlayTimeMinutes) ?? 0;
+  }
+
+  // ── Adult content gate (+18) ──
+
+  static Future<void> setHotModeEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyHotModeEnabled, enabled);
+  }
+
+  static Future<bool> isHotModeEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyHotModeEnabled) ?? false;
+  }
+
+  static Future<void> setAgeVerified(bool verified) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyAgeVerified, verified);
+  }
+
+  static Future<bool> isAgeVerified() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyAgeVerified) ?? false;
   }
 
   // ── Reset all data ──

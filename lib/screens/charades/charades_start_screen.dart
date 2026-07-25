@@ -22,7 +22,7 @@ class CharadesStartScreen extends StatefulWidget {
 
 class _CharadesStartScreenState extends State<CharadesStartScreen> {
   static const Map<String, String> _categoryLabels = {
-    'peliculas': 'Pel\u00edculas',
+    'peliculas': 'Películas',
     'canciones': 'Canciones',
     'series': 'Series',
     'personajes': 'Personajes',
@@ -33,7 +33,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
     'acciones': 'Acciones Cotidianas',
     'lugares': 'Lugares',
     'deportes': 'Deportes',
-    'superheroes': 'Superh\u00e9roes',
+    'superheroes': 'Superhéroes',
     'disney': 'Disney',
     'videojuegos': 'Videojuegos',
     'posiciones_sexuales': 'Posiciones Sexuales',
@@ -68,7 +68,16 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
   int _pointsToWin = 3;
   int _strikesForPenance = 5;
   bool _isHotMode = false;
+  bool _hotModeAvailable = false;
   bool _singleCategoryMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<SettingsProvider>();
+    _hotModeAvailable = settings.hotModeEnabled;
+    _isHotMode = settings.hotModeEnabled;
+  }
 
   void _playSound() => context.read<AudioService>().playClick();
 
@@ -169,18 +178,40 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                       ),
                     ),
                     const SettingDivider(),
-                    SettingRow(
-                      icon: Icons.whatshot,
-                      iconColor: Colors.pinkAccent,
-                      title: 'Modo Hot',
-                      child: SettingSwitch(
-                        value: _isHotMode,
-                        onChanged: (v) {
-                          _playSound();
-                          setState(() => _isHotMode = v);
-                        },
+                    if (_hotModeAvailable)
+                      SettingRow(
+                        icon: Icons.whatshot,
+                        iconColor: Colors.pinkAccent,
+                        title: 'Modo Hot',
+                        child: SettingSwitch(
+                          value: _isHotMode,
+                          onChanged: (v) {
+                            _playSound();
+                            setState(() => _isHotMode = v);
+                          },
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_outline,
+                                color: Colors.white38, size: 20),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Modo Hot bloqueado. Actívalo en Configuración.',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
