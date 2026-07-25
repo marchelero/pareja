@@ -10,6 +10,9 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/selection_chip.dart';
 import '../../services/haptics_service.dart';
+import '../../widgets/gate_guard.dart';
+import '../../widgets/play_limit_indicator.dart';
+import '../../core/constants/game_caps.dart';
 import 'drinks_game_screen.dart';
 
 class DrinksStartScreen extends StatefulWidget {
@@ -311,6 +314,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                 ),
               ),
               const SizedBox(height: 40),
+              PlayLimitIndicator(game: GameCap.chupitos),
               _buildStartButton(),
               const SizedBox(height: 40),
             ],
@@ -420,6 +424,9 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          final gate = await GateGuard.tryStart(context, GameCap.chupitos);
+          if (gate != GateResult.allowed) return;
+          if (!mounted) return;
           final settings = context.read<SettingsProvider>();
           await settings.setPlayer1Name(_player1Name);
           await settings.setPlayer2Name(_player2Name);

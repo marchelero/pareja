@@ -10,6 +10,9 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/setting_row.dart';
+import '../../widgets/gate_guard.dart';
+import '../../widgets/play_limit_indicator.dart';
+import '../../core/constants/game_caps.dart';
 import 'bomb_game_screen.dart';
 
 class BombStartScreen extends StatefulWidget {
@@ -120,6 +123,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
               const SizedBox(height: 20),
               _buildModifierExplanations(),
               const SizedBox(height: 20),
+              PlayLimitIndicator(game: GameCap.bomba),
               _buildStartButton(),
               const SizedBox(height: 40),
             ],
@@ -343,6 +347,9 @@ class _BombStartScreenState extends State<BombStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          final gate = await GateGuard.tryStart(context, GameCap.bomba);
+          if (gate != GateResult.allowed) return;
+          if (!mounted) return;
           _playSound();
           final audioService = context.read<AudioService>();
           final settingsProvider = context.read<SettingsProvider>();

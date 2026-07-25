@@ -12,6 +12,9 @@ import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../core/theme/app_colors.dart';
+import '../../widgets/gate_guard.dart';
+import '../../widgets/play_limit_indicator.dart';
+import '../../core/constants/game_caps.dart';
 import 'rapid_fire_game_screen.dart';
 
 class RapidFireStartScreen extends StatefulWidget {
@@ -188,6 +191,7 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
                 ),
               ),
               const SizedBox(height: 40),
+              PlayLimitIndicator(game: GameCap.altoAlFuego),
               _buildStartButton(),
               const SizedBox(height: 40),
             ],
@@ -332,6 +336,9 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          final gate = await GateGuard.tryStart(context, GameCap.altoAlFuego);
+          if (gate != GateResult.allowed) return;
+          if (!mounted) return;
           if (_selectedCategories.isEmpty && _allCategories.isNotEmpty) {
             return;
           }

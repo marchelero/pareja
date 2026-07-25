@@ -10,6 +10,9 @@ import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
 import '../../core/theme/app_colors.dart';
 import '../../services/haptics_service.dart';
+import '../../widgets/gate_guard.dart';
+import '../../widgets/play_limit_indicator.dart';
+import '../../core/constants/game_caps.dart';
 import 'duel_game_screen.dart';
 
 class DuelStartScreen extends StatefulWidget {
@@ -101,6 +104,7 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
                 ),
               ),
               const SizedBox(height: 40),
+              PlayLimitIndicator(game: GameCap.dueloNocturno),
               _buildStartButton(),
               const SizedBox(height: 40),
             ],
@@ -160,7 +164,10 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          final gate = await GateGuard.tryStart(context, GameCap.dueloNocturno);
+          if (gate != GateResult.allowed) return;
           if (!mounted) return;
+          if (!context.mounted) return;
           final audioService = context.read<AudioService>();
           final settingsProvider = context.read<SettingsProvider>();
           final controller = DuelController(

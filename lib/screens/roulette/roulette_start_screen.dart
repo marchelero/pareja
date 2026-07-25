@@ -9,6 +9,9 @@ import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/gate_guard.dart';
+import '../../widgets/play_limit_indicator.dart';
+import '../../core/constants/game_caps.dart';
 import '../../services/haptics_service.dart';
 import 'roulette_game_screen.dart';
 
@@ -109,6 +112,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               const SizedBox(height: 24),
               _buildResetProgressCard(),
               const SizedBox(height: 40),
+              PlayLimitIndicator(game: GameCap.ruleta),
               _buildStartButton(),
               const SizedBox(height: 40),
             ],
@@ -239,6 +243,10 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          final gate = await GateGuard.tryStart(context, GameCap.ruleta);
+          if (gate != GateResult.allowed) return;
+          if (!mounted) return;
+
           final settings = context.read<SettingsProvider>();
           await settings.setPlayer1Name(_player1Name);
           await settings.setPlayer2Name(_player2Name);
