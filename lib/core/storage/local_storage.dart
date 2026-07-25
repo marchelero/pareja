@@ -17,6 +17,11 @@ class LocalStorage {
   static const String _keyFavoriteGame = 'stats_favorite_game';
   static const String _keyPlayTimeMinutes = 'stats_play_time_minutes';
 
+  // ── Monetization (Phase 3) ──
+  static const String _keyIsPremium = 'monetization_is_premium';
+  static const String _keyPlayCounts = 'monetization_play_counts';
+  static const String _keyLastResetDate = 'monetization_last_reset_date';
+
   // ── Migration from old keys ──
   static const String _keyHeName = 'he_name';
   static const String _keySheName = 'she_name';
@@ -224,5 +229,74 @@ class LocalStorage {
   static Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+
+  /// Borra todo MENOS las keys de monetizacion (`monetization_*`).
+  /// Usado por `SettingsProvider.resetAllData()` — el user pide "reset"
+  /// pero su compra premium no debe evaporarse.
+  static Future<void> clearAllExceptMonetization() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keysToKeep = <String>{
+      _keyIsPremium,
+      _keyPlayCounts,
+      _keyLastResetDate,
+    };
+    for (final key in prefs.getKeys()) {
+      if (!keysToKeep.contains(key)) {
+        await prefs.remove(key);
+      }
+    }
+  }
+
+  // ── Monetization (Phase 3) ──
+  //
+  // IMPORTANTE: clearAll() borra isPremium. La razon: resetAllData() del
+  // SettingsProvider NO debe borrar premium (decision de diseno), pero un
+  // uninstall+reinstall o un debug reset debe arrancar como free. Quien
+  // llama a clearAll es responsable de re-marcar premium si corresponde.
+
+  static Future<void> setIsPremium(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyIsPremium, value);
+  }
+
+  static Future<bool> isPremium() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyIsPremium) ?? false;
+  }
+
+  /// Guarda el mapa de plays de hoy: { gameName: count }.
+  /// Usar una sola key (string JSON) es mas simple que una key por juego.
+  static Future<void> savePlayCounts(Map<String, int> counts) async {
+    final prefs = await SharedPreferences.getInstance();
+    final json = counts.entries.map((e) => '${e.key}:${e.value}').join(',');
+    await prefs.setString(_keyPlayCounts, json);
+  }
+
+  static Future<Map<String, int>> getPlayCounts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_keyPlayCounts) ?? '';
+    if (raw.isEmpty) return <String, int>{};
+    final out = <String, int>{};
+    for (final pair in raw.split(',')) {
+      final parts = pair.split(':');
+      if (parts.length == 2) {
+        final name = parts[0];
+        final count = int.tryParse(parts[1]) ?? 0;
+        if (name.isNotEmpty) out[name] = count;
+      }
+    }
+    return out;
+  }
+
+  /// Guarda la fecha del ultimo reset diario (string YYYY-MM-DD local).
+  static Future<void> setLastResetDate(String dayKey) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyLastResetDate, dayKey);
+  }
+
+  static Future<String> getLastResetDate() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyLastResetDate) ?? '';
   }
 }

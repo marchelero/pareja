@@ -235,13 +235,16 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> resetAllData() async {
-    await LocalStorage.clearAll();
+    // NO usar clearAll() — eso borraria isPremium. El user que compro
+    // premium no deberia perder su compra al pedir un reset general.
+    await LocalStorage.clearAllExceptMonetization();
+    // Orden importante: _friendsMode antes de _defaultName (que depende de el).
+    _friendsMode = false;
     _player1Name = _defaultName(1);
     _player2Name = _defaultName(2);
     _player1Gender = PlayerGender.male;
     _player2Gender = PlayerGender.female;
     _assignDefaultColors();
-    _friendsMode = false;
     _soundEnabled = true;
     _vibrationEnabled = true;
     HapticsService.setEnabled(true);

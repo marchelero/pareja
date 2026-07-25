@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'services/audio_service.dart';
 import 'providers/settings_provider.dart';
+import 'providers/monetization_provider.dart';
 import 'screens/splash_screen.dart';
 
 void main() {
@@ -12,6 +13,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => AudioService()),
+        ChangeNotifierProvider(create: (_) => MonetizationProvider()),
       ],
       child: const App(home: SplashScreen()),
     ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/monetization_provider.dart';
 import 'home_screen.dart';
 
 const Color _carbonBlack = Color(0xFF0D0D0D);
@@ -36,8 +37,11 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startLoading() async {
-    // 1. Cargar settings
-    context.read<SettingsProvider>().load();
+    // 1. Cargar settings + monetization en paralelo
+    await Future.wait([
+      context.read<SettingsProvider>().load(),
+      context.read<MonetizationProvider>().load(),
+    ]);
 
     // 2. Precargar Google Fonts para evitar flicker
     GoogleFonts.montserratTextTheme();
