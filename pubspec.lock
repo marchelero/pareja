@@ -37,7 +37,7 @@ packages:
     dependency: "direct overridden"
     description:
       path: "packages/audioplayers_android"
-      ref: main
+      ref: "687218b96682a7bcadd9490572db692dbc9a2f07"
       resolved-ref: "687218b96682a7bcadd9490572db692dbc9a2f07"
       url: "https://github.com/bluefireteam/audioplayers.git"
     source: git

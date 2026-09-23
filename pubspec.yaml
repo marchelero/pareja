@@ -59,7 +59,9 @@ dependency_overrides:
     git:
       url: https://github.com/bluefireteam/audioplayers.git
       path: packages/audioplayers_android
-      ref: main
+      # Pinned a un commit: evita que `main` (branch movil) rompa builds
+      # futuros en `flutter pub get`.
+      ref: 687218b96682a7bcadd9490572db692dbc9a2f07
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
