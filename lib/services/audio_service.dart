@@ -1,10 +1,19 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import '../core/constants/app_constants.dart';
+import '../core/storage/local_storage.dart';
 
 class AudioService extends ChangeNotifier {
   final AudioPlayer _player = AudioPlayer();
   bool _enabled = true;
+
+  AudioService() {
+    _initFromStorage();
+  }
+
+  Future<void> _initFromStorage() async {
+    _enabled = await LocalStorage.isSoundEnabled();
+  }
 
   bool get enabled => _enabled;
 

@@ -40,6 +40,9 @@ class FakeAdService implements AdService {
   Widget buildBannerAd() => bannerWidget;
 
   @override
+  void disposeBanner() {}
+
+  @override
   bool get isAvailable => available;
 
   @override

@@ -7,6 +7,7 @@ import '../widgets/glass_card.dart';
 import '../widgets/section_title.dart';
 import '../widgets/neon_toggle.dart';
 import '../services/haptics_service.dart';
+import '../services/audio_service.dart';
 import '../widgets/neon_button.dart';
 
 const List<Color> _presetColors = [
@@ -199,7 +200,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         children: [
                           NeonToggle(
                             value: settings.soundEnabled,
-                            onChanged: (_) => settings.toggleSound(),
+                            onChanged: (value) {
+                              context.read<AudioService>().setEnabled(value);
+                              settings.toggleSound();
+                            },
                             icon: Icons.volume_up,
                             activeColor: AppColors.primaryNeon,
                           ),

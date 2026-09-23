@@ -309,17 +309,40 @@ class GamesMenuScreen extends StatelessWidget {
                 ],
               ),
             ),
-            if (showBanner)
-              Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 60,
-                color: Colors.black,
-                child: adService.buildBannerAd(),
-              ),
+            _AdBannerSlot(adService: adService, visible: showBanner),
           ],
         ),
       ),
     );
+  }
+}
+
+class _AdBannerSlot extends StatefulWidget {
+  const _AdBannerSlot({required this.adService, required this.visible});
+
+  final AdService adService;
+  final bool visible;
+
+  @override
+  State<_AdBannerSlot> createState() => _AdBannerSlotState();
+}
+
+class _AdBannerSlotState extends State<_AdBannerSlot> {
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.visible) return const SizedBox.shrink();
+    return Container(
+      alignment: Alignment.center,
+      width: double.infinity,
+      height: 60,
+      color: Colors.black,
+      child: widget.adService.buildBannerAd(),
+    );
+  }
+
+  @override
+  void dispose() {
+    widget.adService.disposeBanner();
+    super.dispose();
   }
 }

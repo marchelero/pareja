@@ -21,6 +21,9 @@ abstract class AdService {
   /// no estan disponibles (web, error de carga, o premium user).
   Widget buildBannerAd();
 
+  /// Libera el banner activo si existe. Llamar en dispose del widget slot.
+  void disposeBanner();
+
   /// True si el servicio puede mostrar ads en este momento.
   bool get isAvailable;
 
@@ -45,6 +48,9 @@ class NoOpAdService implements AdService {
   Widget buildBannerAd() => const SizedBox.shrink();
 
   @override
+  void disposeBanner() {}
+
+  @override
   bool get isAvailable => false;
 
   @override
@@ -61,6 +67,7 @@ class MobileAdService implements AdService {
   admob.RewardedAd? _rewardedAd;
   bool _isLoading = false;
   bool _isInitialized = false;
+  admob.BannerAd? _activeBanner;
 
   @override
   bool get isAvailable => _isInitialized && !kIsWeb;
@@ -133,6 +140,7 @@ class MobileAdService implements AdService {
   @override
   Widget buildBannerAd() {
     if (!isAvailable) return const SizedBox.shrink();
+    _activeBanner?.dispose();
     final unitId = defaultTargetPlatform == TargetPlatform.iOS
         ? AdMobIds.bannerIos
         : AdMobIds.bannerAndroid;
@@ -146,11 +154,18 @@ class MobileAdService implements AdService {
         },
       ),
     )..load();
+    _activeBanner = banner;
     return SizedBox(
       width: banner.size.width.toDouble(),
       height: banner.size.height.toDouble(),
       child: admob.AdWidget(ad: banner),
     );
+  }
+
+  @override
+  void disposeBanner() {
+    _activeBanner?.dispose();
+    _activeBanner = null;
   }
 
   @override
