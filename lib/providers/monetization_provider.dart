@@ -13,8 +13,13 @@ class MonetizationProvider extends ChangeNotifier {
   /// Servicio de ads. Default [NoOpAdService] para tests / web / error de init.
   final AdService adService;
 
-  MonetizationProvider({AdService? adService})
-      : adService = adService ?? const NoOpAdService();
+  /// Fuente de tiempo inyectable para testear rollover de dia. Default:
+  /// [DateTime.now].
+  final DateTime Function() _now;
+
+  MonetizationProvider({AdService? adService, DateTime Function()? clock})
+      : adService = adService ?? const NoOpAdService(),
+        _now = clock ?? DateTime.now;
 
   bool _isPremium = false;
   bool _isLoaded = false;
@@ -27,6 +32,7 @@ class MonetizationProvider extends ChangeNotifier {
   /// Cuantas plays le quedan al juego en el dia. Retorna **-1** como sentinel
   /// para "sin limite" (juegos no-capped, o premium users).
   int remainingPlays(GameCap game) {
+    _syncDayRollover();
     if (!game.isCapped) return -1;
     if (_isPremium) return -1;
     final used = _playCounts[game.displayName] ?? 0;
@@ -50,10 +56,10 @@ class MonetizationProvider extends ChangeNotifier {
 
     if (utils.DateUtils.isDayRollover(
       _lastResetDateKey.isEmpty ? null : _parseStoredDate(_lastResetDateKey),
-      DateTime.now(),
+      _now(),
     )) {
       _playCounts = <String, int>{};
-      _lastResetDateKey = utils.DateUtils.dayKey(DateTime.now());
+      _lastResetDateKey = utils.DateUtils.dayKey(_now());
       await LocalStorage.savePlayCounts(_playCounts);
       await LocalStorage.setLastResetDate(_lastResetDateKey);
     }
@@ -73,9 +79,10 @@ class MonetizationProvider extends ChangeNotifier {
   /// Llamar DESPUES de EMPEZAR un juego. Incrementa el contador diario.
   /// Para juegos no-capped, igual se registra (para stats futuras).
   Future<void> recordPlay(GameCap game) async {
+    _syncDayRollover();
     final name = game.displayName;
     _playCounts[name] = (_playCounts[name] ?? 0) + 1;
-    _lastResetDateKey = utils.DateUtils.dayKey(DateTime.now());
+    _lastResetDateKey = utils.DateUtils.dayKey(_now());
     await LocalStorage.savePlayCounts(_playCounts);
     await LocalStorage.setLastResetDate(_lastResetDateKey);
     notifyListeners();
@@ -91,9 +98,10 @@ class MonetizationProvider extends ChangeNotifier {
   /// completo de "user mira ad → recibe bonus", usar [watchAdForGameWithReward].
   Future<void> watchAdForGame(GameCap game) async {
     if (!game.isCapped) return;
+    _syncDayRollover();
     final name = game.displayName;
     _playCounts[name] = (_playCounts[name] ?? 0) - 1;
-    _lastResetDateKey = utils.DateUtils.dayKey(DateTime.now());
+    _lastResetDateKey = utils.DateUtils.dayKey(_now());
     await LocalStorage.savePlayCounts(_playCounts);
     await LocalStorage.setLastResetDate(_lastResetDateKey);
     notifyListeners();
@@ -120,6 +128,16 @@ class MonetizationProvider extends ChangeNotifier {
   }
 
   // ── Helpers ──
+
+  /// Sincroniza el estado si cambió el día local. Se llama desde getters
+  /// (solo muta estado en memoria, sin notifyListeners — el reader actual
+  /// ya obtiene el valor corregido) y desde los métodos que persisten.
+  void _syncDayRollover() {
+    final today = utils.DateUtils.dayKey(_now());
+    if (_lastResetDateKey == today) return;
+    _playCounts = <String, int>{};
+    _lastResetDateKey = today;
+  }
 
   /// Convierte "YYYY-MM-DD" a DateTime local. Usado solo para chequeo
   /// de rollover; si la key no es valida, retorna null y fuerza reset.

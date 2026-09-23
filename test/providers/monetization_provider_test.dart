@@ -246,4 +246,40 @@ void main() {
       expect(p2.isPremium, true);
     });
   });
+
+  group('MonetizationProvider — rollover', () {
+    test('load con fecha de ayer: resetea counts y persiste día nuevo', () async {
+      SharedPreferences.setMockInitialValues({
+        'monetization_is_premium': false,
+        'monetization_play_counts': 'Ruleta:3',
+        'monetization_last_reset_date': '2026-09-22', // ayer (hoy es 2026-09-23)
+      });
+      final p = MonetizationProvider(clock: () => DateTime(2026, 9, 23, 10));
+      await p.load();
+      expect(p.remainingPlays(GameCap.ruleta), 3);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('monetization_last_reset_date'), '2026-09-23');
+    });
+
+    test('sin reiniciar la app, pasada la medianoche el cap se reestablece en remainingPlays', () async {
+      var now = DateTime(2026, 9, 22, 23, 59);
+      SharedPreferences.setMockInitialValues({
+        'monetization_is_premium': false,
+        'monetization_play_counts': 'Ruleta:3',
+        'monetization_last_reset_date': '2026-09-22',
+      });
+      final p = MonetizationProvider(clock: () => now);
+      await p.load();
+      expect(p.remainingPlays(GameCap.ruleta), 0);
+
+      now = DateTime(2026, 9, 23, 0, 1); // pasó la medianoche
+      expect(p.canPlay(GameCap.ruleta), isTrue);
+      expect(p.remainingPlays(GameCap.ruleta), 3);
+
+      await p.recordPlay(GameCap.ruleta);
+      expect(p.remainingPlays(GameCap.ruleta), 2);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('monetization_last_reset_date'), '2026-09-23');
+    });
+  });
 }
