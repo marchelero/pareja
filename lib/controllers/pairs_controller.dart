@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../services/audio_service.dart';
@@ -37,6 +38,7 @@ class PairsController extends ChangeNotifier {
   final List<CardData> _cards = [];
   int? _firstIndex;
   bool _isChecking = false;
+  Timer? _pendingTimer;
   bool _isPlayer1Turn = true;
   int _player1Score = 0;
   int _player2Score = 0;
@@ -134,7 +136,8 @@ class PairsController extends ChangeNotifier {
     final secondCard = _cards[secondIndex];
 
     if (firstCard.pairId == secondCard.pairId) {
-      Future.delayed(const Duration(milliseconds: 400), () {
+      _pendingTimer?.cancel();
+      _pendingTimer = Timer(const Duration(milliseconds: 400), () {
         firstCard.isMatched = true;
         secondCard.isMatched = true;
         if (_isPlayer1Turn) {
@@ -152,7 +155,8 @@ class PairsController extends ChangeNotifier {
         notifyListeners();
       });
     } else {
-      Future.delayed(const Duration(milliseconds: 900), () {
+      _pendingTimer?.cancel();
+      _pendingTimer = Timer(const Duration(milliseconds: 900), () {
         firstCard.isFlipped = false;
         secondCard.isFlipped = false;
         _firstIndex = null;
@@ -192,5 +196,11 @@ class PairsController extends ChangeNotifier {
   void continueToNextRound() {
     _roundEnded = false;
     _startNewRound();
+  }
+
+  @override
+  void dispose() {
+    _pendingTimer?.cancel();
+    super.dispose();
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
@@ -39,6 +40,7 @@ class RussianRouletteController extends ChangeNotifier {
   bool _isPullingTrigger = false;
   bool _isClickResult = false;
   bool _isBangResult = false;
+  Timer? _pendingTimer;
 
   late String _player1Name;
   late String _player2Name;
@@ -171,7 +173,8 @@ class RussianRouletteController extends ChangeNotifier {
       notifyListeners();
       audioService.play(AppConstants.soundShot);
 
-      Future.delayed(const Duration(milliseconds: 1200), () {
+      _pendingTimer?.cancel();
+      _pendingTimer = Timer(const Duration(milliseconds: 1200), () {
         if (!_isBangResult) return;
         _isBangResult = false;
         notifyListeners();
@@ -198,7 +201,8 @@ class RussianRouletteController extends ChangeNotifier {
       } else {
         _firingPinChamber = (_firingPinChamber + 5) % 6; // CW 60° advance
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        _pendingTimer?.cancel();
+        _pendingTimer = Timer(const Duration(milliseconds: 800), () {
           _isClickResult = false;
           _isPullingTrigger = false;
           _isPlayer1Turn = !_isPlayer1Turn;
@@ -213,5 +217,10 @@ class RussianRouletteController extends ChangeNotifier {
     _startNewRound();
   }
 
+  @override
+  void dispose() {
+    _pendingTimer?.cancel();
+    super.dispose();
+  }
 
 }

@@ -40,6 +40,7 @@ class RapidFireController extends ChangeNotifier {
   double _buzzTimeLeft = 10.0;
   Timer? _inputTimer;
   Timer? _buzzTimer;
+  Timer? _nextTimer;
   String? _lastCorrectAnswer;
 
   bool get isHeTurn => _buzzerPlayer == 'he';
@@ -228,7 +229,8 @@ class RapidFireController extends ChangeNotifier {
   }
 
   void _startNextTimer() {
-    Future.delayed(const Duration(seconds: 2), () {
+    _nextTimer?.cancel();
+    _nextTimer = Timer(const Duration(seconds: 2), () {
       if (_player1Score >= targetScore || _player2Score >= targetScore) {
         _cancelInputTimer();
         _cancelBuzzTimer();
@@ -262,6 +264,7 @@ class RapidFireController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _nextTimer?.cancel();
     _cancelInputTimer();
     _cancelBuzzTimer();
     super.dispose();

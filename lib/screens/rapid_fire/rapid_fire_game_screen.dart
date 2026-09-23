@@ -52,6 +52,7 @@ class _RapidFireGameScreenState extends State<RapidFireGameScreen> with TickerPr
     _pulseController.dispose();
     _resultAnimController.dispose();
     widget.controller.removeListener(_onChange);
+    widget.controller.dispose();
     super.dispose();
   }
 

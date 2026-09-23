@@ -138,6 +138,7 @@ class _RussianRouletteGameScreenState extends State<RussianRouletteGameScreen>
     _pulseController.dispose();
     _shakeController.dispose();
     _bangController.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 

@@ -235,6 +235,7 @@ class _PairsGameScreenState extends State<PairsGameScreen>
   void dispose() {
     widget.controller.removeListener(_onControllerChange);
     _bannerController.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 

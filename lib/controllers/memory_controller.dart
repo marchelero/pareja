@@ -35,6 +35,9 @@ class MemoryController extends ChangeNotifier {
   int _showingIndex = 0;
   Timer? _showTimer;
   Timer? _inputTimer;
+  Timer? _successTimer;
+  Timer? _levelTimer;
+  Timer? _finishTimer;
   int? _highlightedButton;
   double _timeLeft = 3.0;
   bool _isTimeout = false;
@@ -182,14 +185,16 @@ class MemoryController extends ChangeNotifier {
     _isPlayer1Turn = !_isPlayer1Turn;
     notifyListeners();
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    _successTimer?.cancel();
+    _successTimer = Timer(const Duration(milliseconds: 400), () {
       if (!_isShowingSequence) {
         _isTransitioning = true;
         notifyListeners();
       }
     });
 
-    Future.delayed(const Duration(milliseconds: 1400), () {
+    _levelTimer?.cancel();
+    _levelTimer = Timer(const Duration(milliseconds: 1400), () {
       if (!_isShowingSequence) {
         _isTransitioning = false;
         _nextLevel();
@@ -218,7 +223,8 @@ class MemoryController extends ChangeNotifier {
     onRoundLost?.call(loserName: loser);
 
     if (isGameOver) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+      _finishTimer?.cancel();
+      _finishTimer = Timer(const Duration(milliseconds: 500), () {
         _finishGame();
       });
     }
@@ -248,6 +254,9 @@ class MemoryController extends ChangeNotifier {
   void dispose() {
     _showTimer?.cancel();
     _inputTimer?.cancel();
+    _successTimer?.cancel();
+    _levelTimer?.cancel();
+    _finishTimer?.cancel();
     audioService.stop();
     super.dispose();
   }

@@ -90,6 +90,7 @@ class _MentirosoGameScreenState extends State<MentirosoGameScreen>
     });
 
     Future.delayed(const Duration(milliseconds: 1500), () {
+      if (!mounted) return;
       _faceCycler?.cancel();
       _spinCtrl.stop();
       _spinCtrl.reset();

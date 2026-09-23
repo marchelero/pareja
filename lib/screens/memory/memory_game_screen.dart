@@ -94,6 +94,7 @@ class _MemoryGameScreenState extends State<MemoryGameScreen> with TickerProvider
     _shakeController.dispose();
     _successFlashController.dispose();
     for (final c in _flashControllers) { c.dispose(); }
+    widget.controller.dispose();
     super.dispose();
   }
 
