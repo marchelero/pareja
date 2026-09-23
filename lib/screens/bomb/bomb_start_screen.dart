@@ -31,6 +31,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
   bool _optGold = false;
   bool _optWild = false;
   bool _optAccel = false;
+  bool _isStarting = false;
 
   void _playSound() => context.read<AudioService>().playClick();
 
@@ -347,8 +348,13 @@ class _BombStartScreenState extends State<BombStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          if (_isStarting) return;
+          _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.bomba);
-          if (gate != GateResult.allowed) return;
+          if (gate != GateResult.allowed) {
+            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            return;
+          }
           if (!mounted) return;
           _playSound();
           final audioService = context.read<AudioService>();

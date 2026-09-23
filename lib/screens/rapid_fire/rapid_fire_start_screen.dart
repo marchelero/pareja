@@ -32,6 +32,7 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
   Set<String> _allCategories = {};
   Set<String> _selectedCategories = {};
   bool _loading = true;
+  bool _isStarting = false;
 
   static const _categoryIcons = {
     'Geografía': Icons.public,
@@ -336,8 +337,13 @@ class _RapidFireStartScreenState extends State<RapidFireStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          if (_isStarting) return;
+          _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.altoAlFuego);
-          if (gate != GateResult.allowed) return;
+          if (gate != GateResult.allowed) {
+            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            return;
+          }
           if (!mounted) return;
           if (_selectedCategories.isEmpty && _allCategories.isNotEmpty) {
             return;

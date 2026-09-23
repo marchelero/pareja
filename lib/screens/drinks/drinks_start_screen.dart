@@ -31,6 +31,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
   bool _isHotMode = false;
   bool _freeMode = false;
   int _totalGlasses = 5;
+  bool _isStarting = false;
 
   @override
   void initState() {
@@ -424,8 +425,13 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          if (_isStarting) return;
+          _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.chupitos);
-          if (gate != GateResult.allowed) return;
+          if (gate != GateResult.allowed) {
+            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            return;
+          }
           if (!mounted) return;
           final settings = context.read<SettingsProvider>();
           await settings.setPlayer1Name(_player1Name);

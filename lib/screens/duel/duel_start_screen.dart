@@ -24,6 +24,7 @@ class DuelStartScreen extends StatefulWidget {
 
 class _DuelStartScreenState extends State<DuelStartScreen> {
   int _maxRounds = 10;
+  bool _isStarting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -164,8 +165,13 @@ class _DuelStartScreenState extends State<DuelStartScreen> {
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
+          if (_isStarting) return;
+          _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.dueloNocturno);
-          if (gate != GateResult.allowed) return;
+          if (gate != GateResult.allowed) {
+            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            return;
+          }
           if (!mounted) return;
           if (!context.mounted) return;
           final audioService = context.read<AudioService>();
