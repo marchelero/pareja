@@ -4,7 +4,10 @@ import '../core/constants/app_constants.dart';
 import '../core/storage/local_storage.dart';
 
 class AudioService extends ChangeNotifier {
-  final AudioPlayer _player = AudioPlayer();
+  /// Player creado perezosamente: solo existe si hay sonido habilitado y se
+  /// reproduce algo. Evita tocar el canal del plugin (inexistente en tests)
+  /// cuando el sonido está apagado.
+  AudioPlayer? _player;
   bool _enabled = true;
 
   AudioService() {
@@ -22,7 +25,9 @@ class AudioService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> stop() async => _player.stop();
+  Future<void> stop() async {
+    await _player?.stop();
+  }
 
   Future<void> playClick() async => _play(AppConstants.soundClick);
   Future<void> playLevelUp() async => _play(AppConstants.soundLevelUp);
@@ -34,9 +39,10 @@ class AudioService extends ChangeNotifier {
 
   Future<void> _play(String fileName) async {
     if (!_enabled) return;
+    final player = _player ??= AudioPlayer();
     try {
-      await _player.stop();
-      await _player.play(AssetSource('sounds/$fileName'));
+      await player.stop();
+      await player.play(AssetSource('sounds/$fileName'));
     } catch (e) {
       debugPrint('AudioService error: $e');
     }
@@ -44,7 +50,7 @@ class AudioService extends ChangeNotifier {
 
   @override
   void dispose() {
-    _player.dispose();
+    _player?.dispose();
     super.dispose();
   }
 }

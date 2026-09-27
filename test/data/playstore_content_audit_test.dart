@@ -51,8 +51,7 @@ void main() {
 
   setUpAll(() {
     fileContents = <String, String>{
-      for (final f in _dataFiles)
-        f: File('$_dataDir/$f').readAsStringSync(),
+      for (final f in _dataFiles) f: File('$_dataDir/$f').readAsStringSync(),
     };
   });
 
@@ -62,14 +61,15 @@ void main() {
       for (final entry in fileContents.entries) {
         for (final banned in _forbiddenStrings) {
           if (entry.value.contains(banned)) {
-            violations.add('"${entry.key}" contains forbidden "${banned}"');
+            violations.add('"${entry.key}" contains forbidden "$banned"');
           }
         }
       }
       expect(
         violations,
         isEmpty,
-        reason: 'Forbidden content re-introduced. Violations:\n'
+        reason:
+            'Forbidden content re-introduced. Violations:\n'
             '  - ${violations.join('\n  - ')}',
       );
     });
@@ -79,7 +79,11 @@ void main() {
     test('never_have_i_ever.json id 58 was removed (health policy)', () {
       final items = jsonDecode(fileContents['never_have_i_ever.json']!) as List;
       final hasId58 = items.any((dynamic i) => (i as Map)['id'] == 58);
-      expect(hasId58, isFalse, reason: 'id 58 must be deleted; promotes unsafe sex');
+      expect(
+        hasId58,
+        isFalse,
+        reason: 'id 58 must be deleted; promotes unsafe sex',
+      );
     });
 
     test('never_have_i_ever.json id 54 reformulated', () {
@@ -104,7 +108,10 @@ void main() {
 
     test('roulette_dare.json no "baile sexy"', () {
       expect(fileContents['roulette_dare.json']!, contains('baile sensual'));
-      expect(fileContents['roulette_dare.json']!, isNot(contains('baile sexy')));
+      expect(
+        fileContents['roulette_dare.json']!,
+        isNot(contains('baile sexy')),
+      );
     });
 
     test('drinks_tasks hot items are no-strip', () {
@@ -118,7 +125,7 @@ void main() {
         // Match the "id":"hotN" pair with its "text" field, allowing
         // arbitrary JSON whitespace between them.
         final pattern = RegExp(
-          '"id"\\s*:\\s*"' + id + '"[\\s\\S]*?"text"\\s*:\\s*"([^"]+)"',
+          '"id"\\s*:\\s*"$id"[\\s\\S]*?"text"\\s*:\\s*"([^"]+)"',
         );
         final match = pattern.firstMatch(content);
         if (match == null) {
@@ -127,7 +134,9 @@ void main() {
         }
         final text = (match.group(1) ?? '').toLowerCase();
         // Look for the strip-remove verb in any conjugation.
-        if (RegExp(r'\b(quita|quítate|quítale|quitar|quitas)\b').hasMatch(text)) {
+        if (RegExp(
+          r'\b(quita|quítate|quítale|quitar|quitas)\b',
+        ).hasMatch(text)) {
           violations.add('$id: "$text" still references strip');
         }
       }
@@ -135,7 +144,8 @@ void main() {
       expect(
         violations,
         isEmpty,
-        reason: 'Hot items still reference strip:\n  - ${violations.join('\n  - ')}',
+        reason:
+            'Hot items still reference strip:\n  - ${violations.join('\n  - ')}',
       );
     });
   });
