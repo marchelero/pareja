@@ -29,6 +29,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
   int _initialLevel = 1;
   int _levelingSpeed = 7;
   bool _isHotMode = false;
+  bool _hotModeAvailable = false;
   bool _freeMode = false;
   int _totalGlasses = 5;
   bool _isStarting = false;
@@ -39,6 +40,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
     final settings = context.read<SettingsProvider>();
     _player1Name = settings.player1Name;
     _player2Name = settings.player2Name;
+    _hotModeAvailable = settings.hotModeEnabled;
+    _isHotMode = settings.hotModeEnabled;
   }
 
   @override
@@ -293,24 +296,46 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                       ),
                     ),
                     const Divider(color: Colors.white10),
-                    Material(
-                      color: Colors.transparent,
-                      child: SwitchListTile(
-                        title: const Text('Modo Hot',
+                    if (_hotModeAvailable)
+                      Material(
+                        color: Colors.transparent,
+                        child: SwitchListTile(
+                          title: const Text('Modo Hot',
+                              style: TextStyle(
+                                  color: Colors.white)),
+                          subtitle: const Text(
+                            'Incluye retos picantes',
                             style: TextStyle(
-                                color: Colors.white)),
-                        subtitle: const Text(
-                          'Incluye retos picantes',
-                          style: TextStyle(
-                              color: Colors.white54,
-                              fontSize: 12),
+                                color: Colors.white54,
+                                fontSize: 12),
+                          ),
+                          value: _isHotMode,
+                          activeThumbColor: Colors.pink,
+                          onChanged: (val) =>
+                              setState(() => _isHotMode = val),
                         ),
-                        value: _isHotMode,
-                        activeThumbColor: Colors.pink,
-                        onChanged: (val) =>
-                            setState(() => _isHotMode = val),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_outline,
+                                color: Colors.white38, size: 20),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Modo Hot bloqueado. Actívalo en Configuración.',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

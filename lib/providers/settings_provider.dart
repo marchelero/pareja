@@ -23,6 +23,8 @@ class SettingsProvider extends ChangeNotifier {
   int _gamesPlayed = 0;
   String _favoriteGame = '';
   int _playTimeMinutes = 0;
+  bool _hotModeEnabled = false;
+  bool _ageVerified = false;
 
   String get player1Name => _player1Name;
   String get player2Name => _player2Name;
@@ -40,6 +42,12 @@ class SettingsProvider extends ChangeNotifier {
   int get gamesPlayed => _gamesPlayed;
   String get favoriteGame => _favoriteGame;
   int get playTimeMinutes => _playTimeMinutes;
+  bool get hotModeEnabled => _hotModeEnabled;
+  bool get ageVerified => _ageVerified;
+
+  /// True when the user can access adult content: globally enabled AND
+  /// age-verified at least once in this install.
+  bool get adultContentAvailable => _hotModeEnabled && _ageVerified;
 
   String get displayName1 => _guestMode ? 'J1' : _player1Name;
   String get displayName2 => _guestMode ? 'J2' : _player2Name;
@@ -101,6 +109,8 @@ class SettingsProvider extends ChangeNotifier {
     _gamesPlayed = await LocalStorage.getGamesPlayed();
     _favoriteGame = await LocalStorage.getFavoriteGame();
     _playTimeMinutes = await LocalStorage.getPlayTimeMinutes();
+    _hotModeEnabled = await LocalStorage.isHotModeEnabled();
+    _ageVerified = await LocalStorage.isAgeVerified();
 
     _isLoaded = true;
     notifyListeners();
@@ -220,6 +230,23 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ── Adult content gate (+18) ──
+
+  /// Persist the user's choice. Does NOT touch [ageVerified] — that flag
+  /// is set independently once the user passes the age gate modal.
+  Future<void> setHotModeEnabled(bool value) async {
+    _hotModeEnabled = value;
+    await LocalStorage.setHotModeEnabled(value);
+    notifyListeners();
+  }
+
+  /// Persist that the user has confirmed they are 18+ via the age gate.
+  Future<void> setAgeVerified(bool value) async {
+    _ageVerified = value;
+    await LocalStorage.setAgeVerified(value);
+    notifyListeners();
+  }
+
   // ── Stats tracking ──
 
   Future<void> incrementGamePlayed(String gameName) async {
@@ -254,6 +281,8 @@ class SettingsProvider extends ChangeNotifier {
     _favoriteGame = '';
     _playTimeMinutes = 0;
     _namesCustomized = false;
+    _hotModeEnabled = false;
+    _ageVerified = false;
     notifyListeners();
   }
 }

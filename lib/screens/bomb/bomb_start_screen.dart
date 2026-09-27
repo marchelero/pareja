@@ -24,6 +24,7 @@ class BombStartScreen extends StatefulWidget {
 
 class _BombStartScreenState extends State<BombStartScreen> {
   bool _isHotMode = false;
+  bool _hotModeAvailable = false;
   int _bestOf = 3;
   int _bombTimer = 5;
 
@@ -32,6 +33,14 @@ class _BombStartScreenState extends State<BombStartScreen> {
   bool _optWild = false;
   bool _optAccel = false;
   bool _isStarting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = context.read<SettingsProvider>();
+    _hotModeAvailable = settings.hotModeEnabled;
+    _isHotMode = settings.hotModeEnabled;
+  }
 
   void _playSound() => context.read<AudioService>().playClick();
 
@@ -104,18 +113,40 @@ class _BombStartScreenState extends State<BombStartScreen> {
                       ),
                     ),
                     const SettingDivider(),
-                    SettingRow(
-                      icon: Icons.whatshot,
-                      iconColor: Colors.pinkAccent,
-                      title: 'Modo Hot',
-                      child: SettingSwitch(
-                        value: _isHotMode,
-                        onChanged: (v) {
-                          _playSound();
-                          setState(() => _isHotMode = v);
-                        },
+                    if (_hotModeAvailable)
+                      SettingRow(
+                        icon: Icons.whatshot,
+                        iconColor: Colors.pinkAccent,
+                        title: 'Modo Hot',
+                        child: SettingSwitch(
+                          value: _isHotMode,
+                          onChanged: (v) {
+                            _playSound();
+                            setState(() => _isHotMode = v);
+                          },
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_outline,
+                                color: Colors.white38, size: 20),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Modo Hot bloqueado. Actívalo en Configuración.',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

@@ -27,6 +27,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
   String _player2Name = 'ELLA';
   bool _isDareMode = false;
   bool _isStarting = false;
+  bool _hotModeAvailable = false;
 
   @override
   void initState() {
@@ -34,6 +35,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
     final settings = context.read<SettingsProvider>();
     _player1Name = settings.player1Name;
     _player2Name = settings.player2Name;
+    _hotModeAvailable = settings.hotModeEnabled;
+    _isDareMode = settings.hotModeEnabled;
   }
 
   @override
@@ -97,15 +100,20 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                     ),
                     const SizedBox(width: 15),
                     Expanded(
-                      child: _ModeCard(
-                        title: 'Atrevida',
-                        subtitle: 'Más picante',
-                        icon: Icons.whatshot,
-                        color: Colors.deepOrange,
-                        isSelected: _isDareMode,
-                        onTap: () =>
-                            setState(() => _isDareMode = true),
-                      ),
+                      child: _hotModeAvailable
+                          ? _ModeCard(
+                              title: 'Atrevida',
+                              subtitle: 'Más picante',
+                              icon: Icons.whatshot,
+                              color: Colors.deepOrange,
+                              isSelected: _isDareMode,
+                              onTap: () =>
+                                  setState(() => _isDareMode = true),
+                            )
+                          : _LockedModeCard(
+                              title: 'Atrevida',
+                              subtitle: 'Bloqueada (+18)',
+                            ),
                     ),
                   ],
                 ),
@@ -368,6 +376,47 @@ class _ModeCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _LockedModeCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const _LockedModeCard({required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        children: [
+          const Icon(Icons.lock_outline, size: 40, color: Colors.white38),
+          const SizedBox(height: 10),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white38,
+            ),
+          ),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, color: Colors.white38),
+          ),
+        ],
       ),
     );
   }

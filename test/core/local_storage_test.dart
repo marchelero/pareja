@@ -3,6 +3,8 @@ import 'package:pareja/core/storage/local_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
   });
@@ -79,10 +81,13 @@ void main() {
   });
 
   group('LocalStorage — clearAll', () {
-    test('borra premium, play counts, last reset, todo', () async {
+    test('borra premium, play counts, last reset, hot mode, age, todo',
+        () async {
       await LocalStorage.setIsPremium(true);
       await LocalStorage.savePlayCounts({'Ruleta': 3});
       await LocalStorage.setLastResetDate('2026-07-25');
+      await LocalStorage.setHotModeEnabled(true);
+      await LocalStorage.setAgeVerified(true);
       await LocalStorage.savePlayer1Name('Test');
 
       await LocalStorage.clearAll();
@@ -90,6 +95,8 @@ void main() {
       expect(await LocalStorage.isPremium(), false);
       expect(await LocalStorage.getPlayCounts(), <String, int>{});
       expect(await LocalStorage.getLastResetDate(), '');
+      expect(await LocalStorage.isHotModeEnabled(), false);
+      expect(await LocalStorage.isAgeVerified(), false);
       expect(await LocalStorage.getPlayer1Name(), '');
     });
   });
@@ -103,6 +110,8 @@ void main() {
       await LocalStorage.savePlayer1Name('Test');
       await LocalStorage.setSoundEnabled(false);
       await LocalStorage.setGuestMode(true);
+      await LocalStorage.setHotModeEnabled(true);
+      await LocalStorage.setAgeVerified(true);
 
       await LocalStorage.clearAllExceptMonetization();
 
@@ -111,10 +120,46 @@ void main() {
       expect(await LocalStorage.getPlayCounts(), {'Ruleta': 3});
       expect(await LocalStorage.getLastResetDate(), '2026-07-25');
 
-      // User data borrado
+      // User data borrado (hot mode + age son config de usuario: se limpian)
       expect(await LocalStorage.getPlayer1Name(), '');
       expect(await LocalStorage.isSoundEnabled(), true); // default
       expect(await LocalStorage.isGuestMode(), false);
+      expect(await LocalStorage.isHotModeEnabled(), false);
+      expect(await LocalStorage.isAgeVerified(), false);
+    });
+  });
+
+  group('hot mode', () {
+    test('default is false', () async {
+      expect(await LocalStorage.isHotModeEnabled(), isFalse);
+    });
+
+    test('setHotModeEnabled(true) persists', () async {
+      await LocalStorage.setHotModeEnabled(true);
+      expect(await LocalStorage.isHotModeEnabled(), isTrue);
+    });
+
+    test('setHotModeEnabled(false) overrides previous true', () async {
+      await LocalStorage.setHotModeEnabled(true);
+      await LocalStorage.setHotModeEnabled(false);
+      expect(await LocalStorage.isHotModeEnabled(), isFalse);
+    });
+  });
+
+  group('age verification', () {
+    test('default is false', () async {
+      expect(await LocalStorage.isAgeVerified(), isFalse);
+    });
+
+    test('setAgeVerified(true) persists', () async {
+      await LocalStorage.setAgeVerified(true);
+      expect(await LocalStorage.isAgeVerified(), isTrue);
+    });
+
+    test('setAgeVerified(false) overrides previous true', () async {
+      await LocalStorage.setAgeVerified(true);
+      await LocalStorage.setAgeVerified(false);
+      expect(await LocalStorage.isAgeVerified(), isFalse);
     });
   });
 }

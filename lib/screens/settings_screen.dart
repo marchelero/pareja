@@ -9,6 +9,7 @@ import '../widgets/neon_toggle.dart';
 import '../services/haptics_service.dart';
 import '../services/audio_service.dart';
 import '../widgets/neon_button.dart';
+import 'settings/age_gate_modal.dart';
 
 const List<Color> _presetColors = [
   Color(0xFF448AFF), // blueAccent
@@ -222,6 +223,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 16),
+
+                    // ── CONTENIDO ADULTO (+18) ──
+                    SectionTitle(
+                      text: 'CONTENIDO ADULTO (+18)',
+                      icon: Icons.local_fire_department,
+                      color: Colors.pinkAccent,
+                    ),
+                    const SizedBox(height: 6),
+                    const _HotModeSection(),
                     const SizedBox(height: 16),
 
                     // ── ESTADÍSTICAS ──
@@ -644,6 +655,117 @@ class _ModeButton extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HotModeSection extends StatelessWidget {
+  const _HotModeSection();
+
+  Future<void> _onToggle(BuildContext context, SettingsProvider settings) async {
+    HapticsService.light();
+    if (settings.ageVerified) {
+      await settings.setHotModeEnabled(!settings.hotModeEnabled);
+      return;
+    }
+    final passed = await AgeGateModal.show(context);
+    if (!passed) return;
+    await settings.setAgeVerified(true);
+    await settings.setHotModeEnabled(true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final enabled = settings.hotModeEnabled;
+    final verified = settings.ageVerified;
+
+    return GlassCard(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          children: [
+            Icon(
+              Icons.local_fire_department,
+              color: enabled ? Colors.pinkAccent : Colors.white38,
+              size: 28,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Modo adulto',
+                    style: TextStyle(
+                      color: enabled ? Colors.white : Colors.white70,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    verified
+                        ? (enabled
+                            ? 'Activo: contenido +18 habilitado'
+                            : 'Verificado: toca para activar')
+                        : 'Verificación de edad requerida',
+                    style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () => _onToggle(context, settings),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 50,
+                height: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: enabled
+                      ? Colors.pinkAccent.withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.15),
+                  border: Border.all(
+                    color: enabled
+                        ? Colors.pinkAccent.withValues(alpha: 0.8)
+                        : Colors.white.withValues(alpha: 0.1),
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    AnimatedAlign(
+                      duration: const Duration(milliseconds: 200),
+                      alignment: enabled ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.all(2),
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: enabled
+                                  ? Colors.pinkAccent.withValues(alpha: 0.4)
+                                  : Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
