@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../core/i18n/app_strings.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/roulette_controller.dart';
 import '../paywall/paywall_screen.dart';
@@ -117,8 +118,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                           : _LockedModeCard(
                               title: 'Atrevida',
                               subtitle: _isPremium(context)
-                                  ? 'Actívalo en Configuración.'
-                                  : 'Modo Hot (+18) — Requiere Premium',
+                                  ? AppStrings.rouletteDareLockedHint
+                                  : AppStrings.hotModeFree,
                               onTap: _isPremium(context)
                                   ? null
                                   : () => _openPaywall(context),

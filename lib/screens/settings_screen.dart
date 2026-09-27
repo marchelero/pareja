@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
+import '../core/i18n/app_strings.dart';
 import '../providers/monetization_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/neon_background.dart';
@@ -756,7 +757,7 @@ class _HotModeSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Modo adulto (+18)',
+                      AppStrings.adultContentTitle,
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 15,
@@ -765,7 +766,7 @@ class _HotModeSection extends StatelessWidget {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Requiere Premium — obtén acceso al contenido +18',
+                      AppStrings.adultContentLockedDesc,
                       style: TextStyle(color: Colors.white54, fontSize: 12),
                     ),
                   ],
@@ -777,7 +778,7 @@ class _HotModeSection extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const PaywallScreen()),
                 ),
                 child: const Text(
-                  'Obtener Premium',
+                  AppStrings.hotModeGetPremium,
                   style: TextStyle(
                     color: Colors.amber,
                     fontWeight: FontWeight.w700,
@@ -817,9 +818,9 @@ class _HotModeSection extends StatelessWidget {
                   Text(
                     verified
                         ? (enabled
-                              ? 'Activo: contenido +18 habilitado'
-                              : 'Verificado: toca para activar')
-                        : 'Verificación de edad requerida',
+                              ? AppStrings.adultContentActive
+                              : AppStrings.adultContentVerifiedHint)
+                        : AppStrings.adultContentVerifyRequired,
                     style: const TextStyle(color: Colors.white54, fontSize: 12),
                   ),
                 ],

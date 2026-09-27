@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/i18n/app_strings.dart';
 import '../screens/paywall/paywall_screen.dart';
 
 /// Fila de bloqueo del Modo Hot (+18) usada en los start screens.
@@ -31,9 +32,7 @@ class HotModeLockRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              showCta
-                  ? 'Modo Hot (+18) — Requiere Premium'
-                  : 'Modo Hot bloqueado. Actívalo en Configuración.',
+              showCta ? AppStrings.hotModeFree : AppStrings.hotModePremiumHint,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.5),
                 fontSize: 12,
@@ -44,7 +43,7 @@ class HotModeLockRow extends StatelessWidget {
             TextButton(
               onPressed: () => _openPaywall(context),
               child: const Text(
-                'Obtener Premium',
+                AppStrings.hotModeGetPremium,
                 style: TextStyle(
                   color: Colors.amber,
                   fontSize: 12,

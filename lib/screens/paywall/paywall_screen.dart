@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/i18n/app_strings.dart';
 import '../../providers/monetization_provider.dart';
 import '../../services/billing_service.dart';
 import '../../widgets/neon_background.dart';
@@ -34,25 +35,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
     switch (outcome) {
       case PurchaseOutcome.success:
         messenger.showSnackBar(
-          const SnackBar(content: Text('¡Bienvenido a Pareja Premium!')),
+          const SnackBar(content: Text(AppStrings.paywallPurchaseSuccess)),
         );
       case PurchaseOutcome.cancelled:
         messenger.showSnackBar(
-          const SnackBar(content: Text('Compra cancelada.')),
+          const SnackBar(content: Text(AppStrings.paywallPurchaseCancelled)),
         );
       case PurchaseOutcome.failed:
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No se pudo completar la compra. Inténtalo de nuevo.',
-            ),
-          ),
+          const SnackBar(content: Text(AppStrings.paywallPurchaseFailed)),
         );
       case PurchaseOutcome.unavailable:
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text('Las compras no están disponibles en este device.'),
-          ),
+          const SnackBar(content: Text(AppStrings.paywallPurchaseUnavailable)),
         );
     }
   }
@@ -67,8 +62,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
       SnackBar(
         content: Text(
           restored
-              ? 'Compras restauradas. ¡Bienvenido de nuevo!'
-              : 'No se encontraron compras previas.',
+              ? AppStrings.paywallRestoreSuccess
+              : AppStrings.paywallRestoreNone,
         ),
       ),
     );
@@ -103,7 +98,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Pareja Premium',
+                    AppStrings.paywallTitle,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -113,7 +108,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Pago único. Sin suscripciones.',
+                    AppStrings.paywallSubtitle,
                     style: TextStyle(color: Colors.white54, fontSize: 14),
                   ),
                   const SizedBox(height: 32),
@@ -125,19 +120,22 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         children: const [
                           _Benefit(
                             icon: Icons.all_inclusive,
-                            text: 'Sin límites de jugadas',
+                            text: AppStrings.paywallBenefitNoLimit,
                           ),
                           SizedBox(height: 14),
-                          _Benefit(icon: Icons.block, text: 'Sin anuncios'),
+                          _Benefit(
+                            icon: Icons.block,
+                            text: AppStrings.paywallBenefitNoAds,
+                          ),
                           SizedBox(height: 14),
                           _Benefit(
                             icon: Icons.local_fire_department,
-                            text: 'Modo +18 desbloqueado',
+                            text: AppStrings.paywallBenefitHot18,
                           ),
                           SizedBox(height: 14),
                           _Benefit(
                             icon: Icons.lock_open,
-                            text: 'Acceso a TODO el contenido',
+                            text: AppStrings.paywallBenefitAllContent,
                           ),
                         ],
                       ),
@@ -148,7 +146,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     Column(
                       children: [
                         const Text(
-                          '✓ Premium activado',
+                          AppStrings.paywallPremiumActive,
                           style: TextStyle(
                             color: Colors.greenAccent,
                             fontSize: 18,
@@ -159,7 +157,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: GameButton(
-                            text: 'CERRAR',
+                            text: AppStrings.paywallClose,
                             onPressed: () => Navigator.pop(context),
                             style: GameButtonStyle.secondary,
                           ),
@@ -179,7 +177,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                               ),
                             )
                           : GameButton(
-                              text: 'COMPRAR — \$4.99',
+                              text: AppStrings.paywallBuy,
                               onPressed: _purchase,
                               style: GameButtonStyle.primary,
                             ),
@@ -188,13 +186,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     TextButton(
                       onPressed: _busy ? null : _restore,
                       child: const Text(
-                        'Restaurar compras',
+                        AppStrings.paywallRestore,
                         style: TextStyle(color: Colors.white54),
                       ),
                     ),
                     const SizedBox(height: 24),
                     const Text(
-                      'Pago seguro via Google Play / App Store.',
+                      AppStrings.paywallSecureNote,
                       style: TextStyle(color: Colors.white24, fontSize: 11),
                     ),
                   ],
