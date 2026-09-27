@@ -111,8 +111,7 @@ void main() {
       expect(c.isSpinning, isTrue);
       expect(c.isPlaying, isFalse);
       expect(c.bulletFired, isFalse);
-      // Nota: startRespin NO resetea _triggerPulls (quirk del controller:
-      // el conteo de disparos del giro interno queda en 1).
+      expect(c.triggerPulls, 0); // el nuevo giro arranca con contador limpio
     });
 
     testWidgets('bang en bestOf=5 llama onRoundResult y nextRoundAfterDialog',

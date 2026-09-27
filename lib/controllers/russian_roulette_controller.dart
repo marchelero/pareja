@@ -134,6 +134,7 @@ class RussianRouletteController extends ChangeNotifier {
     }
     _firingPinChamber = rng.nextInt(6);
     _checkedOrder.clear();
+    _triggerPulls = 0; // el giro interno arranca con contador de disparos limpio
 
     _isSpinning = true;
     _isPlaying = false;

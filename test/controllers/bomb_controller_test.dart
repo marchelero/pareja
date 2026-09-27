@@ -168,8 +168,7 @@ void main() {
       } else {
         expect(c.scoreHe, 1);
       }
-      // Nota: _explode() no pone _isPlaying en false (quirk del controller:
-      // el UI cierra la ronda via nextRoundAfterDialog). Se valida sin eso.
+      expect(c.isPlaying, isFalse); // la ronda terminó: la bomba explotó
       expect(winner, isNull); // bestOf=5 => falta para ganar
     });
 

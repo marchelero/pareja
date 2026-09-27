@@ -178,6 +178,7 @@ class BombController extends ChangeNotifier {
 
   void _explode() {
     _timer?.cancel();
+    _isPlaying = false; // la ronda terminó: nadie puede pasar turno ni usar comodín
     audioService.playGameOver();
 
     bool heLost = _isPlayer1Turn;
