@@ -6,9 +6,10 @@
         android:icon="@mipmap/ic_launcher">
         <!-- AdMob App ID. v1: test ID. Production: replace with real ID from
              AdMob console (ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX).
-             Note: The Dart side uses --dart-define=ADMOB_APP_ID_ANDROID=...
-             but AndroidManifest.xml is static. For prod deployment, swap
-             the value below OR move to a flavor-based build setup. -->
+             Note: The Dart side uses dart define ADMOB_APP_ID_ANDROID (no
+             double hyphen: forbidden in XML comments). AndroidManifest.xml
+             is static: for prod deployment swap the value below or move to
+             a flavor-based build setup. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
