@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
+import '../providers/monetization_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/neon_background.dart';
 import '../widgets/glass_card.dart';
@@ -10,6 +11,7 @@ import '../services/haptics_service.dart';
 import '../services/audio_service.dart';
 import '../widgets/neon_button.dart';
 import 'settings/age_gate_modal.dart';
+import 'paywall/paywall_screen.dart';
 
 const List<Color> _presetColors = [
   Color(0xFF448AFF), // blueAccent
@@ -57,7 +59,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        title: const Text('Resetear datos', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Resetear datos',
+          style: TextStyle(color: Colors.white),
+        ),
         content: const Text(
           '¿Borrar todos los datos? Los nombres, colores, ajustes y estadísticas volverán a sus valores de fábrica.',
           style: TextStyle(color: Colors.white70),
@@ -68,7 +73,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               HapticsService.light();
               Navigator.pop(ctx);
             },
-            child: const Text('CANCELAR', style: TextStyle(color: Colors.white54)),
+            child: const Text(
+              'CANCELAR',
+              style: TextStyle(color: Colors.white54),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -78,7 +86,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _p1Controller.text = settings.player1Name;
               _p2Controller.text = settings.player2Name;
             },
-            child: const Text('RESETEAR', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+            child: const Text(
+              'RESETEAR',
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -160,7 +174,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // ── MODO ──
                     SectionTitle(
                       text: 'MODO',
-                      icon: settings.friendsMode ? Icons.people : Icons.favorite,
+                      icon: settings.friendsMode
+                          ? Icons.people
+                          : Icons.favorite,
                       color: AppColors.primaryNeon,
                     ),
                     const SizedBox(height: 6),
@@ -263,7 +279,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         await settings.setPlayer2Name(_p2Controller.text);
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Configuración guardada')),
+                          const SnackBar(
+                            content: Text('Configuración guardada'),
+                          ),
                         );
                       },
                     ),
@@ -316,10 +334,14 @@ class _PlayerConfigSection extends StatelessWidget {
             labelStyle: const TextStyle(color: Colors.white54),
             prefixIcon: Icon(isMale ? Icons.male : Icons.female, color: color),
             border: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.2),
+              ),
             ),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.2),
+              ),
             ),
             focusedBorder: UnderlineInputBorder(
               borderSide: const BorderSide(color: AppColors.primaryNeon),
@@ -443,10 +465,14 @@ class _GenderChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? color.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
+            color: isSelected
+                ? color.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? color.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.1),
+              color: isSelected
+                  ? color.withValues(alpha: 0.6)
+                  : Colors.white.withValues(alpha: 0.1),
             ),
           ),
           child: Row(
@@ -475,10 +501,7 @@ class _GuestModeRow extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
 
-  const _GuestModeRow({
-    required this.value,
-    required this.onChanged,
-  });
+  const _GuestModeRow({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -510,16 +533,22 @@ class _GuestModeRow extends StatelessWidget {
             height: 30,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: value ? AppColors.primaryNeon.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.15),
+              color: value
+                  ? AppColors.primaryNeon.withValues(alpha: 0.5)
+                  : Colors.white.withValues(alpha: 0.15),
               border: Border.all(
-                color: value ? AppColors.primaryNeon.withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.1),
+                color: value
+                    ? AppColors.primaryNeon.withValues(alpha: 0.8)
+                    : Colors.white.withValues(alpha: 0.1),
               ),
             ),
             child: Stack(
               children: [
                 AnimatedAlign(
                   duration: const Duration(milliseconds: 200),
-                  alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: value
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.all(2),
                     width: 26,
@@ -529,7 +558,9 @@ class _GuestModeRow extends StatelessWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: value ? AppColors.primaryNeon.withValues(alpha: 0.4) : Colors.black.withValues(alpha: 0.2),
+                          color: value
+                              ? AppColors.primaryNeon.withValues(alpha: 0.4)
+                              : Colors.black.withValues(alpha: 0.2),
                           blurRadius: 6,
                           spreadRadius: 1,
                         ),
@@ -564,7 +595,11 @@ class _StatsSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Column(
           children: [
-            _StatRow(icon: Icons.videogame_asset, label: 'Partidas totales', value: '$gamesPlayed'),
+            _StatRow(
+              icon: Icons.videogame_asset,
+              label: 'Partidas totales',
+              value: '$gamesPlayed',
+            ),
             const Divider(color: Colors.white10, height: 12),
             _StatRow(
               icon: Icons.emoji_events,
@@ -572,7 +607,11 @@ class _StatsSection extends StatelessWidget {
               value: favoriteGame.isEmpty ? '—' : favoriteGame,
             ),
             const Divider(color: Colors.white10, height: 12),
-            _StatRow(icon: Icons.access_time, label: 'Tiempo estimado', value: estimatedPlayTime),
+            _StatRow(
+              icon: Icons.access_time,
+              label: 'Tiempo estimado',
+              value: estimatedPlayTime,
+            ),
           ],
         ),
       ),
@@ -606,7 +645,11 @@ class _StatRow extends StatelessWidget {
           const Spacer(),
           Text(
             value,
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -637,16 +680,24 @@ class _ModeButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryNeon.withValues(alpha: 0.2) : Colors.transparent,
+          color: isSelected
+              ? AppColors.primaryNeon.withValues(alpha: 0.2)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.primaryNeon.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.15),
+            color: isSelected
+                ? AppColors.primaryNeon.withValues(alpha: 0.6)
+                : Colors.white.withValues(alpha: 0.15),
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: isSelected ? AppColors.primaryNeon : Colors.white38, size: 22),
+            Icon(
+              icon,
+              color: isSelected ? AppColors.primaryNeon : Colors.white38,
+              size: 22,
+            ),
             const SizedBox(width: 8),
             Text(
               label,
@@ -667,7 +718,10 @@ class _ModeButton extends StatelessWidget {
 class _HotModeSection extends StatelessWidget {
   const _HotModeSection();
 
-  Future<void> _onToggle(BuildContext context, SettingsProvider settings) async {
+  Future<void> _onToggle(
+    BuildContext context,
+    SettingsProvider settings,
+  ) async {
     HapticsService.light();
     if (settings.ageVerified) {
       await settings.setHotModeEnabled(!settings.hotModeEnabled);
@@ -682,8 +736,59 @@ class _HotModeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final isPremium = context.watch<MonetizationProvider>().isPremium;
     final enabled = settings.hotModeEnabled;
     final verified = settings.ageVerified;
+
+    // Phase 3.5: el Modo adulto (+18) es premium-only. Free users ven un
+    // gate con CTA hacia el paywall; premium users ven el toggle (con
+    // age-gate si aún no verificaron edad).
+    if (!isPremium) {
+      return GlassCard(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              const Icon(Icons.lock_outline, color: Colors.white38, size: 28),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Modo adulto (+18)',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Requiere Premium — obtén acceso al contenido +18',
+                      style: TextStyle(color: Colors.white54, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PaywallScreen()),
+                ),
+                child: const Text(
+                  'Obtener Premium',
+                  style: TextStyle(
+                    color: Colors.amber,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return GlassCard(
       child: Padding(
@@ -712,13 +817,10 @@ class _HotModeSection extends StatelessWidget {
                   Text(
                     verified
                         ? (enabled
-                            ? 'Activo: contenido +18 habilitado'
-                            : 'Verificado: toca para activar')
+                              ? 'Activo: contenido +18 habilitado'
+                              : 'Verificado: toca para activar')
                         : 'Verificación de edad requerida',
-                    style: const TextStyle(
-                      color: Colors.white54,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: Colors.white54, fontSize: 12),
                   ),
                 ],
               ),
@@ -744,7 +846,9 @@ class _HotModeSection extends StatelessWidget {
                   children: [
                     AnimatedAlign(
                       duration: const Duration(milliseconds: 200),
-                      alignment: enabled ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment: enabled
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: Container(
                         margin: const EdgeInsets.all(2),
                         width: 26,

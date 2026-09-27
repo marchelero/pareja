@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/roulette_controller.dart';
+import '../paywall/paywall_screen.dart';
 import '../questions/coin_flip_screen.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
@@ -35,8 +37,20 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
     final settings = context.read<SettingsProvider>();
     _player1Name = settings.player1Name;
     _player2Name = settings.player2Name;
-    _hotModeAvailable = settings.hotModeEnabled;
+    _hotModeAvailable =
+        settings.hotModeEnabled &&
+        context.read<MonetizationProvider>().isPremium;
     _isDareMode = settings.hotModeEnabled;
+  }
+
+  bool _isPremium(BuildContext context) =>
+      context.watch<MonetizationProvider>().isPremium;
+
+  Future<void> _openPaywall(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PaywallScreen()),
+    );
   }
 
   @override
@@ -60,21 +74,13 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon:
-                    context.read<SettingsProvider>().player1Icon,
-                player2Icon:
-                    context.read<SettingsProvider>().player2Icon,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {
-                  context
-                      .read<SettingsProvider>()
-                      .setPlayer1Name(p1);
-                  context
-                      .read<SettingsProvider>()
-                      .setPlayer2Name(p2);
+                  context.read<SettingsProvider>().setPlayer1Name(p1);
+                  context.read<SettingsProvider>().setPlayer2Name(p2);
                   setState(() {
                     _player1Name = p1;
                     _player2Name = p2;
@@ -94,8 +100,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                         icon: Icons.sentiment_satisfied,
                         color: Colors.blue,
                         isSelected: !_isDareMode,
-                        onTap: () =>
-                            setState(() => _isDareMode = false),
+                        onTap: () => setState(() => _isDareMode = false),
                       ),
                     ),
                     const SizedBox(width: 15),
@@ -107,12 +112,16 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                               icon: Icons.whatshot,
                               color: Colors.deepOrange,
                               isSelected: _isDareMode,
-                              onTap: () =>
-                                  setState(() => _isDareMode = true),
+                              onTap: () => setState(() => _isDareMode = true),
                             )
                           : _LockedModeCard(
                               title: 'Atrevida',
-                              subtitle: 'Bloqueada (+18)',
+                              subtitle: _isPremium(context)
+                                  ? 'Actívalo en Configuración.'
+                                  : 'Modo Hot (+18) — Requiere Premium',
+                              onTap: _isPremium(context)
+                                  ? null
+                                  : () => _openPaywall(context),
                             ),
                     ),
                   ],
@@ -143,7 +152,10 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () { HapticsService.light(); Navigator.pop(context); },
+        onPressed: () {
+          HapticsService.light();
+          Navigator.pop(context);
+        },
       ),
       actions: [
         Padding(
@@ -182,8 +194,10 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
             context: context,
             builder: (context) => AlertDialog(
               backgroundColor: const Color(0xFF1A0A2E),
-              title: const Text('Reiniciar progreso',
-                  style: TextStyle(color: Colors.white)),
+              title: const Text(
+                'Reiniciar progreso',
+                style: TextStyle(color: Colors.white),
+              ),
               content: const Text(
                 '¿Estás seguro de que quieres reiniciar '
                 'el progreso de la ruleta?',
@@ -191,15 +205,24 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () { HapticsService.light(); Navigator.pop(context, false); },
-                  child: const Text('Cancelar',
-                      style: TextStyle(color: Colors.white54)),
+                  onPressed: () {
+                    HapticsService.light();
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.white54),
+                  ),
                 ),
                 TextButton(
-                  onPressed: () { HapticsService.light(); Navigator.pop(context, true); },
-                  child: const Text('Reiniciar',
-                      style:
-                          TextStyle(color: Colors.pinkAccent)),
+                  onPressed: () {
+                    HapticsService.light();
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text(
+                    'Reiniciar',
+                    style: TextStyle(color: Colors.pinkAccent),
+                  ),
                 ),
               ],
             ),
@@ -208,9 +231,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
             await settings.resetRouletteProgress();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content:
-                        Text('Progreso de ruleta reiniciado')),
+                const SnackBar(content: Text('Progreso de ruleta reiniciado')),
               );
             }
           }
@@ -220,15 +241,13 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
           height: 45,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            border: Border.all(
-                color: Colors.redAccent.withValues(alpha: 0.5)),
+            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5)),
             borderRadius: BorderRadius.circular(15),
           ),
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.refresh,
-                  color: Colors.redAccent, size: 18),
+              Icon(Icons.refresh, color: Colors.redAccent, size: 18),
               SizedBox(width: 8),
               Text(
                 'REINICIAR PROGRESO',
@@ -256,7 +275,8 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
           _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.ruleta);
           if (gate != GateResult.allowed) {
-            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            _isStarting =
+                false; // permitir reintento (volvió del paywall o dismiss)
             return;
           }
           if (!mounted) return;
@@ -273,15 +293,11 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
               builder: (context) => CoinFlipScreen(
                 player1Name: _player1Name,
                 player2Name: _player2Name,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 createGameScreen: (isP1Winner) async {
-                  final audioService =
-                      context.read<AudioService>();
-                  final settingsProvider =
-                      context.read<SettingsProvider>();
+                  final audioService = context.read<AudioService>();
+                  final settingsProvider = context.read<SettingsProvider>();
                   final controller = RouletteController(
                     audioService: audioService,
                     settingsProvider: settingsProvider,
@@ -289,8 +305,7 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
                     startingPlayerIsP1: isP1Winner,
                   );
                   await controller.initGame();
-                  return RouletteGameScreen(
-                      controller: controller);
+                  return RouletteGameScreen(controller: controller);
                 },
               ),
             ),
@@ -308,9 +323,12 @@ class _RouletteStartScreenState extends State<RouletteStartScreen> {
         GameHelpModal.step('1', 'Gira la ruleta para ver tu desafío.'),
         GameHelpModal.step('2', 'Cumple el desafío que aparezca.'),
         GameHelpModal.step(
-            '3', 'El modo Atrevida añade desafíos más intensos.'),
+          '3',
+          'El modo Atrevida añade desafíos más intensos.',
+        ),
         GameHelpModal.text(
-            'Los desafíos pueden ser preguntas, acciones, o pruebas para ambos.'),
+          'Los desafíos pueden ser preguntas, acciones, o pruebas para ambos.',
+        ),
       ],
     );
   }
@@ -355,9 +373,7 @@ class _ModeCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon,
-                size: 40,
-                color: isSelected ? Colors.white : color),
+            Icon(icon, size: 40, color: isSelected ? Colors.white : color),
             const SizedBox(height: 10),
             Text(
               title,
@@ -384,39 +400,47 @@ class _ModeCard extends StatelessWidget {
 class _LockedModeCard extends StatelessWidget {
   final String title;
   final String subtitle;
+  final VoidCallback? onTap;
 
-  const _LockedModeCard({required this.title, required this.subtitle});
+  const _LockedModeCard({
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 2,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 2,
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.lock_outline, size: 40, color: Colors.white38),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white38,
+        child: Column(
+          children: [
+            const Icon(Icons.lock_outline, size: 40, color: Colors.white38),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white38,
+              ),
             ),
-          ),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: Colors.white38),
-          ),
-        ],
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: Colors.white38),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/never_have_i_ever_controller.dart';
+import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/hot_mode_lock_row.dart';
 import '../../widgets/setting_row.dart';
 import '../../services/haptics_service.dart';
 import 'never_have_i_ever_game_screen.dart';
@@ -20,8 +22,7 @@ class NeverHaveIEverStartScreen extends StatefulWidget {
       _NeverHaveIEverStartScreenState();
 }
 
-class _NeverHaveIEverStartScreenState
-    extends State<NeverHaveIEverStartScreen> {
+class _NeverHaveIEverStartScreenState extends State<NeverHaveIEverStartScreen> {
   int _rounds = 10;
   int _pointsToWin = 5;
   int _strikesForPenance = 3;
@@ -32,7 +33,9 @@ class _NeverHaveIEverStartScreenState
   void initState() {
     super.initState();
     final settings = context.read<SettingsProvider>();
-    _hotModeAvailable = settings.hotModeEnabled;
+    _hotModeAvailable =
+        settings.hotModeEnabled &&
+        context.read<MonetizationProvider>().isPremium;
     _isHotMode = settings.hotModeEnabled;
   }
 
@@ -59,14 +62,10 @@ class _NeverHaveIEverStartScreenState
               _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon:
-                    context.read<SettingsProvider>().player1Icon,
-                player2Icon:
-                    context.read<SettingsProvider>().player2Icon,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {},
               ),
               const SizedBox(height: 24),
@@ -137,25 +136,10 @@ class _NeverHaveIEverStartScreenState
                         ),
                       )
                     else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.lock_outline,
-                                color: Colors.white38, size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Modo Hot bloqueado. Actívalo en Configuración.',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      HotModeLockRow(
+                        isPremium: context
+                            .watch<MonetizationProvider>()
+                            .isPremium,
                       ),
                   ],
                 ),
@@ -237,8 +221,8 @@ class _NeverHaveIEverStartScreenState
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NeverHaveIEverGameScreen(
-                  controller: controller),
+              builder: (context) =>
+                  NeverHaveIEverGameScreen(controller: controller),
             ),
           );
         },
@@ -254,14 +238,30 @@ class _NeverHaveIEverStartScreenState
         GameHelpModal.step('1', 'Se muestra una pregunta.'),
         GameHelpModal.step('2', 'Cada jugador responde por turno:'),
         GameHelpModal.bullet(
-            'SI', 'SI, LO HE HECHO', Colors.greenAccent, 'lo has hecho'),
+          'SI',
+          'SI, LO HE HECHO',
+          Colors.greenAccent,
+          'lo has hecho',
+        ),
         GameHelpModal.bullet(
-            'NO', 'NUNCA', Colors.orangeAccent, 'nunca lo has hecho'),
+          'NO',
+          'NUNCA',
+          Colors.orangeAccent,
+          'nunca lo has hecho',
+        ),
         GameHelpModal.step('3', 'RESULTADO:'),
-        GameHelpModal.bullet(null, 'Si uno dice SI y el otro NO',
-            Colors.orangeAccent, 'el que dijo NO gana 1 punto'),
-        GameHelpModal.bullet(null, 'Si ambos dicen igual', Colors.grey,
-            'nadie gana puntos'),
+        GameHelpModal.bullet(
+          null,
+          'Si uno dice SI y el otro NO',
+          Colors.orangeAccent,
+          'el que dijo NO gana 1 punto',
+        ),
+        GameHelpModal.bullet(
+          null,
+          'Si ambos dicen igual',
+          Colors.grey,
+          'nadie gana puntos',
+        ),
         GameHelpModal.step('4', '3 strikes = penitencia'),
       ],
     );

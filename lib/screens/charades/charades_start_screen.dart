@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/charades_controller.dart';
+import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/hot_mode_lock_row.dart';
 import '../../widgets/setting_row.dart';
 import '../../widgets/selection_chip.dart';
 import '../../services/haptics_service.dart';
@@ -75,7 +77,9 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
   void initState() {
     super.initState();
     final settings = context.read<SettingsProvider>();
-    _hotModeAvailable = settings.hotModeEnabled;
+    _hotModeAvailable =
+        settings.hotModeEnabled &&
+        context.read<MonetizationProvider>().isPremium;
     _isHotMode = settings.hotModeEnabled;
   }
 
@@ -112,14 +116,10 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
               _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon:
-                    context.read<SettingsProvider>().player1Icon,
-                player2Icon:
-                    context.read<SettingsProvider>().player2Icon,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {},
               ),
               const SizedBox(height: 24),
@@ -192,25 +192,10 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                         ),
                       )
                     else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.lock_outline,
-                                color: Colors.white38, size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Modo Hot bloqueado. Actívalo en Configuración.',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      HotModeLockRow(
+                        isPremium: context
+                            .watch<MonetizationProvider>()
+                            .isPremium,
                       ),
                   ],
                 ),
@@ -277,11 +262,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
         tilePadding: EdgeInsets.zero,
         childrenPadding: EdgeInsets.zero,
         initiallyExpanded: true,
-        leading: const Icon(
-          Icons.category,
-          color: Colors.white70,
-          size: 24,
-        ),
+        leading: const Icon(Icons.category, color: Colors.white70, size: 24),
         title: const Text(
           'CATEGOR\u00cdAS',
           style: TextStyle(
@@ -300,8 +281,11 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.shuffle,
-                      color: Colors.amberAccent, size: 24),
+                  const Icon(
+                    Icons.shuffle,
+                    color: Colors.amberAccent,
+                    size: 24,
+                  ),
                   const SizedBox(width: 15),
                   Text(
                     _singleCategoryMode
@@ -322,8 +306,7 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                   setState(() => _singleCategoryMode = value);
                 },
                 activeThumbColor: Colors.amberAccent,
-                activeTrackColor:
-                    Colors.amberAccent.withValues(alpha: 0.5),
+                activeTrackColor: Colors.amberAccent.withValues(alpha: 0.5),
               ),
             ],
           ),
@@ -364,13 +347,11 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
             : () async {
                 _playSound();
                 final audioService = context.read<AudioService>();
-                final settingsProvider =
-                    context.read<SettingsProvider>();
+                final settingsProvider = context.read<SettingsProvider>();
                 final controller = CharadesController(
                   audioService: audioService,
                   settingsProvider: settingsProvider,
-                  selectedCategories:
-                      _selectedCategories.toList(),
+                  selectedCategories: _selectedCategories.toList(),
                   singleCategoryMode: _singleCategoryMode,
                   timerSeconds: _timerSeconds,
                   pointsToWin: _pointsToWin,
@@ -382,8 +363,8 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CharadesGameScreen(
-                        controller: controller),
+                    builder: (context) =>
+                        CharadesGameScreen(controller: controller),
                   ),
                 );
               },
@@ -397,15 +378,24 @@ class _CharadesStartScreenState extends State<CharadesStartScreen> {
       context: context,
       sections: [
         GameHelpModal.step(
-            '1', 'Tu pareja debe adivinar la palabra que aparece en pantalla.'),
+          '1',
+          'Tu pareja debe adivinar la palabra que aparece en pantalla.',
+        ),
         GameHelpModal.step(
-            '2', 'Tú haces gestos y señas sin hablar ni deletrear.'),
+          '2',
+          'Tú haces gestos y señas sin hablar ni deletrear.',
+        ),
         GameHelpModal.step(
-            '3', 'Tienes 60 segundos para adivinar. Si aciertas, ganan.'),
+          '3',
+          'Tienes 60 segundos para adivinar. Si aciertas, ganan.',
+        ),
         GameHelpModal.bullet(
-            'Adivina', 'suman un punto.', Colors.greenAccent, ''),
-        GameHelpModal.bullet(
-            'No adivina', 'penitencia.', Colors.redAccent, ''),
+          'Adivina',
+          'suman un punto.',
+          Colors.greenAccent,
+          '',
+        ),
+        GameHelpModal.bullet('No adivina', 'penitencia.', Colors.redAccent, ''),
       ],
     );
   }

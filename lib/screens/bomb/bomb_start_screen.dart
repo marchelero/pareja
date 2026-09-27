@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptics_service.dart';
 import '../../controllers/bomb_controller.dart';
+import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/hot_mode_lock_row.dart';
 import '../../widgets/setting_row.dart';
 import '../../widgets/gate_guard.dart';
 import '../../widgets/play_limit_indicator.dart';
@@ -38,7 +40,9 @@ class _BombStartScreenState extends State<BombStartScreen> {
   void initState() {
     super.initState();
     final settings = context.read<SettingsProvider>();
-    _hotModeAvailable = settings.hotModeEnabled;
+    _hotModeAvailable =
+        settings.hotModeEnabled &&
+        context.read<MonetizationProvider>().isPremium;
     _isHotMode = settings.hotModeEnabled;
   }
 
@@ -65,14 +69,10 @@ class _BombStartScreenState extends State<BombStartScreen> {
               _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon:
-                    context.read<SettingsProvider>().player1Icon,
-                player2Icon:
-                    context.read<SettingsProvider>().player2Icon,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {},
               ),
               const SizedBox(height: 24),
@@ -127,25 +127,10 @@ class _BombStartScreenState extends State<BombStartScreen> {
                         ),
                       )
                     else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.lock_outline,
-                                color: Colors.white38, size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Modo Hot bloqueado. Actívalo en Configuración.',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      HotModeLockRow(
+                        isPremium: context
+                            .watch<MonetizationProvider>()
+                            .isPremium,
                       ),
                   ],
                 ),
@@ -227,12 +212,18 @@ class _BombStartScreenState extends State<BombStartScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildModifierBtn(
-                'Pánico', Icons.visibility_off, _optPanic,
-                (v) => setState(() => _optPanic = v)),
+              'Pánico',
+              Icons.visibility_off,
+              _optPanic,
+              (v) => setState(() => _optPanic = v),
+            ),
             const SizedBox(width: 20),
             _buildModifierBtn(
-                'Acelerar', Icons.speed, _optAccel,
-                (v) => setState(() => _optAccel = v)),
+              'Acelerar',
+              Icons.speed,
+              _optAccel,
+              (v) => setState(() => _optAccel = v),
+            ),
           ],
         ),
         const SizedBox(height: 15),
@@ -250,12 +241,18 @@ class _BombStartScreenState extends State<BombStartScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildModifierBtn(
-                'Dorado', Icons.star, _optGold,
-                (v) => setState(() => _optGold = v)),
+              'Dorado',
+              Icons.star,
+              _optGold,
+              (v) => setState(() => _optGold = v),
+            ),
             const SizedBox(width: 20),
             _buildModifierBtn(
-                'Comodín', Icons.style, _optWild,
-                (v) => setState(() => _optWild = v)),
+              'Comodín',
+              Icons.style,
+              _optWild,
+              (v) => setState(() => _optWild = v),
+            ),
           ],
         ),
       ],
@@ -291,9 +288,11 @@ class _BombStartScreenState extends State<BombStartScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon,
-                color: isActive ? Colors.amber : Colors.white54,
-                size: 28),
+            Icon(
+              icon,
+              color: isActive ? Colors.amber : Colors.white54,
+              size: 28,
+            ),
             const SizedBox(height: 5),
             Text(
               label,
@@ -331,32 +330,41 @@ class _BombStartScreenState extends State<BombStartScreen> {
       decoration: BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-            color: Colors.amber.withValues(alpha: 0.3)),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (_optPanic)
-            _buildExplanationRow(Icons.visibility_off,
-                'Pánico: Oculta los números del reloj', Colors.white70),
+            _buildExplanationRow(
+              Icons.visibility_off,
+              'Pánico: Oculta los números del reloj',
+              Colors.white70,
+            ),
           if (_optGold)
-            _buildExplanationRow(Icons.star,
-                'Dorado: Rondas al azar valen 2 puntos', Colors.amber),
+            _buildExplanationRow(
+              Icons.star,
+              'Dorado: Rondas al azar valen 2 puntos',
+              Colors.amber,
+            ),
           if (_optWild)
-            _buildExplanationRow(Icons.style,
-                'Comodín: 1 uso por partida para cambiar categoría',
-                Colors.white70),
+            _buildExplanationRow(
+              Icons.style,
+              'Comodín: 1 uso por partida para cambiar categoría',
+              Colors.white70,
+            ),
           if (_optAccel)
-            _buildExplanationRow(Icons.speed,
-                'Acelerar: El tiempo baja con cada toque', Colors.white70),
+            _buildExplanationRow(
+              Icons.speed,
+              'Acelerar: El tiempo baja con cada toque',
+              Colors.white70,
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildExplanationRow(
-      IconData icon, String text, Color color) {
+  Widget _buildExplanationRow(IconData icon, String text, Color color) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
@@ -365,8 +373,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
           Icon(icon, color: color, size: 14),
           const SizedBox(width: 6),
           Expanded(
-            child: Text(text,
-                style: TextStyle(color: color, fontSize: 11)),
+            child: Text(text, style: TextStyle(color: color, fontSize: 11)),
           ),
         ],
       ),
@@ -383,7 +390,8 @@ class _BombStartScreenState extends State<BombStartScreen> {
           _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.bomba);
           if (gate != GateResult.allowed) {
-            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            _isStarting =
+                false; // permitir reintento (volvió del paywall o dismiss)
             return;
           }
           if (!mounted) return;
@@ -406,8 +414,7 @@ class _BombStartScreenState extends State<BombStartScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  BombGameScreen(controller: controller),
+              builder: (context) => BombGameScreen(controller: controller),
             ),
           );
         },
@@ -420,17 +427,22 @@ class _BombStartScreenState extends State<BombStartScreen> {
     GameHelpModal.show(
       context: context,
       sections: [
+        GameHelpModal.step('1', 'Se muestra una categoría y un tiempo límite.'),
         GameHelpModal.step(
-            '1', 'Se muestra una categoría y un tiempo límite.'),
+          '2',
+          'Di una palabra relacionada con la categoría y '
+              'toca la pantalla para pasar la bomba.',
+        ),
         GameHelpModal.step(
-            '2',
-            'Di una palabra relacionada con la categoría y '
-            'toca la pantalla para pasar la bomba.'),
-        GameHelpModal.step(
-            '3',
-            'El que se quede sin respuestas cuando explote la bomba pierde.'),
-        GameHelpModal.bullet(null, 'Pierde la ronda', Colors.redAccent,
-            'el rival suma 1 punto'),
+          '3',
+          'El que se quede sin respuestas cuando explote la bomba pierde.',
+        ),
+        GameHelpModal.bullet(
+          null,
+          'Pierde la ronda',
+          Colors.redAccent,
+          'el rival suma 1 punto',
+        ),
         GameHelpModal.text(
           'Configuración adicional: Pánico (oculta el tiempo), '
           'Acelerar (menos tiempo cada vez), '

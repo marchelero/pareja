@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../services/audio_service.dart';
 import '../../controllers/questions_controller.dart';
@@ -17,8 +18,7 @@ class QuestionsStartScreen extends StatefulWidget {
   const QuestionsStartScreen({super.key});
 
   @override
-  State<QuestionsStartScreen> createState() =>
-      _QuestionsStartScreenState();
+  State<QuestionsStartScreen> createState() => _QuestionsStartScreenState();
 }
 
 class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
@@ -35,24 +35,41 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
     final settings = context.read<SettingsProvider>();
     _player1Name = settings.player1Name;
     _player2Name = settings.player2Name;
-    _hotModeAvailable = settings.hotModeEnabled;
+    _hotModeAvailable =
+        settings.hotModeEnabled &&
+        context.read<MonetizationProvider>().isPremium;
     _categories = _buildCategories(hotModeAvailable: _hotModeAvailable);
   }
 
-  static List<Map<String, dynamic>> _buildCategories({required bool hotModeAvailable}) {
+  static List<Map<String, dynamic>> _buildCategories({
+    required bool hotModeAvailable,
+  }) {
     final all = [
       {'name': 'General', 'icon': Icons.all_inclusive, 'color': Colors.blue},
       {'name': 'Romántico', 'icon': Icons.favorite, 'color': Colors.pink},
-      {'name': 'Picante', 'icon': Icons.whatshot, 'color': Colors.deepOrange, 'hotOnly': true},
+      {
+        'name': 'Picante',
+        'icon': Icons.whatshot,
+        'color': Colors.deepOrange,
+        'hotOnly': true,
+      },
       {'name': 'Convivencia', 'icon': Icons.home, 'color': Colors.green},
       {'name': 'Futuro', 'icon': Icons.rocket_launch, 'color': Colors.purple},
       {'name': 'Viajes', 'icon': Icons.flight, 'color': Colors.teal},
-      {'name': 'Pasatiempos', 'icon': Icons.sports_esports, 'color': Colors.indigo},
+      {
+        'name': 'Pasatiempos',
+        'icon': Icons.sports_esports,
+        'color': Colors.indigo,
+      },
       {'name': 'Valores', 'icon': Icons.balance, 'color': Colors.brown},
       {'name': 'Humor', 'icon': Icons.mood, 'color': Colors.amber.shade800},
       {'name': 'Profundo', 'icon': Icons.psychology, 'color': Colors.blueGrey},
       {'name': 'Trivia', 'icon': Icons.quiz, 'color': Colors.indigo},
-      {'name': 'Flirteo', 'icon': Icons.favorite_border, 'color': Colors.redAccent},
+      {
+        'name': 'Flirteo',
+        'icon': Icons.favorite_border,
+        'color': Colors.redAccent,
+      },
     ];
     return all.where((c) => hotModeAvailable || c['hotOnly'] != true).toList();
   }
@@ -80,21 +97,13 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
               _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon:
-                    context.read<SettingsProvider>().player1Icon,
-                player2Icon:
-                    context.read<SettingsProvider>().player2Icon,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {
-                  context
-                      .read<SettingsProvider>()
-                      .setPlayer1Name(p1);
-                  context
-                      .read<SettingsProvider>()
-                      .setPlayer2Name(p2);
+                  context.read<SettingsProvider>().setPlayer1Name(p1);
+                  context.read<SettingsProvider>().setPlayer2Name(p2);
                   setState(() {
                     _player1Name = p1;
                     _player2Name = p2;
@@ -102,8 +111,7 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle(
-                  'NÚMERO DE PREGUNTAS', Icons.timer),
+              _buildSectionTitle('NÚMERO DE PREGUNTAS', Icons.timer),
               const SizedBox(height: 8),
               GlassCard(
                 child: SizedBox(
@@ -115,13 +123,11 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                         const SizedBox(width: 12),
                     itemBuilder: (context, index) {
                       final rounds = _roundOptions[index];
-                      final isSelected =
-                          _selectedRounds == rounds;
+                      final isSelected = _selectedRounds == rounds;
                       return _RoundCard(
                         rounds: rounds,
                         isSelected: isSelected,
-                        onTap: () => setState(
-                            () => _selectedRounds = rounds),
+                        onTap: () => setState(() => _selectedRounds = rounds),
                       );
                     },
                   ),
@@ -160,98 +166,63 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
-                          children:
-                              _categories.map((cat) {
-                            final isSelected =
-                                _selectedCategories
-                                    .contains(cat['name']);
-                            final catColor =
-                                cat['color'] as Color;
+                          children: _categories.map((cat) {
+                            final isSelected = _selectedCategories.contains(
+                              cat['name'],
+                            );
+                            final catColor = cat['color'] as Color;
                             return GestureDetector(
                               onTap: () {
                                 HapticsService.light();
                                 setState(() {
                                   if (isSelected) {
-                                    if (_selectedCategories
-                                            .length >
-                                        1) {
-                                      _selectedCategories
-                                          .remove(
-                                              cat['name']);
+                                    if (_selectedCategories.length > 1) {
+                                      _selectedCategories.remove(cat['name']);
                                     }
                                   } else {
-                                    _selectedCategories
-                                        .add(
-                                            cat['name']);
+                                    _selectedCategories.add(cat['name']);
                                   }
                                 });
                               },
                               child: AnimatedContainer(
-                                duration:
-                                    const Duration(
-                                        milliseconds:
-                                            200),
-                                padding: const EdgeInsets
-                                    .symmetric(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
                                   vertical: 10,
                                 ),
-                                decoration:
-                                    BoxDecoration(
+                                decoration: BoxDecoration(
                                   color: isSelected
-                                      ? catColor
-                                          .withValues(
-                                              alpha: 0.3)
-                                      : Colors.white
-                                          .withValues(
-                                              alpha:
-                                                  0.08),
-                                  borderRadius:
-                                      BorderRadius
-                                          .circular(15),
+                                      ? catColor.withValues(alpha: 0.3)
+                                      : Colors.white.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
                                     color: isSelected
                                         ? catColor
-                                        : Colors
-                                            .white24,
-                                    width:
-                                        isSelected
-                                            ? 2
-                                            : 1,
+                                        : Colors.white24,
+                                    width: isSelected ? 2 : 1,
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisSize:
-                                      MainAxisSize.min,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
-                                      cat['icon']
-                                          as IconData,
+                                      cat['icon'] as IconData,
                                       color: isSelected
                                           ? Colors.white
-                                          : Colors
-                                              .white54,
+                                          : Colors.white54,
                                       size: 18,
                                     ),
-                                    const SizedBox(
-                                        width: 8),
+                                    const SizedBox(width: 8),
                                     Text(
-                                      cat['name']
-                                          as String,
-                                      style:
-                                          TextStyle(
+                                      cat['name'] as String,
+                                      style: TextStyle(
                                         color: isSelected
-                                            ? Colors
-                                                .white
-                                            : Colors
-                                                .white54,
+                                            ? Colors.white
+                                            : Colors.white54,
                                         fontSize: 13,
-                                        fontWeight:
-                                            isSelected
-                                                ? FontWeight
-                                                    .bold
-                                                : FontWeight
-                                                    .normal,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
                                       ),
                                     ),
                                   ],
@@ -287,7 +258,10 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
       foregroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () { HapticsService.light(); Navigator.pop(context); },
+        onPressed: () {
+          HapticsService.light();
+          Navigator.pop(context);
+        },
       ),
       actions: [
         Padding(
@@ -332,29 +306,21 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
               builder: (context) => CoinFlipScreen(
                 player1Name: _player1Name,
                 player2Name: _player2Name,
-                player1Color: context
-                    .read<SettingsProvider>()
-                    .player1Color,
-                player2Color: context
-                    .read<SettingsProvider>()
-                    .player2Color,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 createGameScreen: (isP1Winner) async {
-                  final audioService =
-                      context.read<AudioService>();
-                  final settingsProvider =
-                      context.read<SettingsProvider>();
+                  final audioService = context.read<AudioService>();
+                  final settingsProvider = context.read<SettingsProvider>();
                   final controller = QuestionsController(
                     repository: QuestionsRepository(),
                     audioService: audioService,
                     settingsProvider: settingsProvider,
                     maxRounds: _selectedRounds,
-                    categories:
-                        _selectedCategories.toList(),
+                    categories: _selectedCategories.toList(),
                     startingPlayerIsP1: isP1Winner,
                   );
                   await controller.initGame();
-                  return QuestionsGameScreen(
-                      controller: controller);
+                  return QuestionsGameScreen(controller: controller);
                 },
               ),
             ),
@@ -370,18 +336,31 @@ class _QuestionsStartScreenState extends State<QuestionsStartScreen> {
       context: context,
       sections: [
         GameHelpModal.step(
-            '1', 'Se muestra una pregunta para el jugador activo.'),
+          '1',
+          'Se muestra una pregunta para el jugador activo.',
+        ),
         GameHelpModal.step(
-            '2',
-            'El jugador responde y su pareja tasa la respuesta del 1 al 5.'),
+          '2',
+          'El jugador responde y su pareja tasa la respuesta del 1 al 5.',
+        ),
         GameHelpModal.step(
-            '3',
-            'Si la puntuación es 4 o 5, el jugador gana puntos. '
-            'Si es 3 o menos, no suma.'),
-        GameHelpModal.bullet('Respuesta bien valorada',
-            'sumas puntos.', Colors.greenAccent, ''),
-        GameHelpModal.bullet('Gana la partida', 'quien llegue primero '
-            'a la puntuación objetivo.', Colors.amberAccent, ''),
+          '3',
+          'Si la puntuación es 4 o 5, el jugador gana puntos. '
+              'Si es 3 o menos, no suma.',
+        ),
+        GameHelpModal.bullet(
+          'Respuesta bien valorada',
+          'sumas puntos.',
+          Colors.greenAccent,
+          '',
+        ),
+        GameHelpModal.bullet(
+          'Gana la partida',
+          'quien llegue primero '
+              'a la puntuación objetivo.',
+          Colors.amberAccent,
+          '',
+        ),
       ],
     );
   }

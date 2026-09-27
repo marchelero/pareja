@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/monetization_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../controllers/drinks_controller.dart';
 import '../../services/audio_service.dart';
@@ -7,6 +8,7 @@ import '../../widgets/game_button.dart';
 import '../../widgets/game_help_modal.dart';
 import '../../widgets/player_names_section.dart';
 import '../../widgets/neon_background.dart';
+import '../../widgets/hot_mode_lock_row.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/selection_chip.dart';
 import '../../services/haptics_service.dart';
@@ -40,7 +42,9 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
     final settings = context.read<SettingsProvider>();
     _player1Name = settings.player1Name;
     _player2Name = settings.player2Name;
-    _hotModeAvailable = settings.hotModeEnabled;
+    _hotModeAvailable =
+        settings.hotModeEnabled &&
+        context.read<MonetizationProvider>().isPremium;
     _isHotMode = settings.hotModeEnabled;
   }
 
@@ -65,21 +69,13 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
               _buildSectionTitle('JUGADORES', Icons.people),
               const SizedBox(height: 8),
               PlayerNamesSection(
-                player1Icon:
-                    context.read<SettingsProvider>().player1Icon,
-                player2Icon:
-                    context.read<SettingsProvider>().player2Icon,
-                player1Color:
-                    context.read<SettingsProvider>().player1Color,
-                player2Color:
-                    context.read<SettingsProvider>().player2Color,
+                player1Icon: context.read<SettingsProvider>().player1Icon,
+                player2Icon: context.read<SettingsProvider>().player2Icon,
+                player1Color: context.read<SettingsProvider>().player1Color,
+                player2Color: context.read<SettingsProvider>().player2Color,
                 onChanged: (p1, p2) {
-                  context
-                      .read<SettingsProvider>()
-                      .setPlayer1Name(p1);
-                  context
-                      .read<SettingsProvider>()
-                      .setPlayer2Name(p2);
+                  context.read<SettingsProvider>().setPlayer1Name(p1);
+                  context.read<SettingsProvider>().setPlayer2Name(p2);
                   setState(() {
                     _player1Name = p1;
                     _player2Name = p2;
@@ -87,15 +83,13 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle(
-                  'SORBOS POR VASO', Icons.local_drink),
+              _buildSectionTitle('SORBOS POR VASO', Icons.local_drink),
               const SizedBox(height: 8),
               GlassCard(
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Cantidad:',
@@ -112,10 +106,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                             fontSize: 28,
                             fontWeight: FontWeight.w900,
                             shadows: [
-                              Shadow(
-                                color: Colors.pinkAccent,
-                                blurRadius: 10,
-                              )
+                              Shadow(color: Colors.pinkAccent, blurRadius: 10),
                             ],
                           ),
                         ),
@@ -128,8 +119,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                       divisions: 6,
                       activeColor: Colors.pinkAccent,
                       inactiveColor: Colors.white10,
-                      onChanged: (val) => setState(
-                          () => _sipsPerGlass = val.toInt()),
+                      onChanged: (val) =>
+                          setState(() => _sipsPerGlass = val.toInt()),
                     ),
                   ],
                 ),
@@ -143,30 +134,31 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                     Material(
                       color: Colors.transparent,
                       child: SwitchListTile(
-                        title: const Text('Modo Libre',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900)),
+                        title: const Text(
+                          'Modo Libre',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                         subtitle: const Text(
                           'Sin límite de vasos — juego perpetuo',
-                          style: TextStyle(
-                              color: Colors.white54,
-                              fontSize: 12),
+                          style: TextStyle(color: Colors.white54, fontSize: 12),
                         ),
                         value: _freeMode,
                         activeThumbColor: Colors.orangeAccent,
-                        onChanged: (val) =>
-                            setState(() => _freeMode = val),
+                        onChanged: (val) => setState(() => _freeMode = val),
                       ),
                     ),
                     if (!_freeMode) ...[
                       const Divider(color: Colors.white10),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
                               'VASOS A TOMAR:',
@@ -178,12 +170,17 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                             ),
                             const SizedBox(height: 12),
                             SelectionChipRow(
-                              options: [1, 3, 5, 7, 10, 15]
-                                  .map((n) => n.toString())
-                                  .toList(),
+                              options: [
+                                1,
+                                3,
+                                5,
+                                7,
+                                10,
+                                15,
+                              ].map((n) => n.toString()).toList(),
                               selectedIntValue: _totalGlasses,
-                              onIntSelected: (v) => setState(
-                                  () => _totalGlasses = v),
+                              onIntSelected: (v) =>
+                                  setState(() => _totalGlasses = v),
                               accentColor: Colors.pinkAccent,
                             ),
                             const SizedBox(height: 8),
@@ -202,15 +199,13 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle(
-                  'NIVEL INICIAL', Icons.trending_up),
+              _buildSectionTitle('NIVEL INICIAL', Icons.trending_up),
               const SizedBox(height: 8),
               GlassCard(
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Intensidad:',
@@ -230,7 +225,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                               Shadow(
                                 color: Colors.purpleAccent,
                                 blurRadius: 10,
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -243,22 +238,23 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                       divisions: 7,
                       activeColor: Colors.purpleAccent,
                       inactiveColor: Colors.white10,
-                      onChanged: (val) => setState(
-                          () => _initialLevel = val.toInt()),
+                      onChanged: (val) =>
+                          setState(() => _initialLevel = val.toInt()),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-              _buildSectionTitle(
-                  'AJUSTES ADICIONALES', Icons.tune),
+              _buildSectionTitle('AJUSTES ADICIONALES', Icons.tune),
               const SizedBox(height: 8),
               GlassCard(
                 child: Column(
                   children: [
                     const Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Text(
                         'Velocidad de Subida de Nivel',
                         style: TextStyle(
@@ -270,23 +266,24 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Row(
                         children: [
-                          _buildSpeedOption('Rápido', 4,
-                              Colors.pinkAccent),
+                          _buildSpeedOption('Rápido', 4, Colors.pinkAccent),
                           const SizedBox(width: 8),
-                          _buildSpeedOption('Medio', 7,
-                              Colors.purpleAccent),
+                          _buildSpeedOption('Medio', 7, Colors.purpleAccent),
                           const SizedBox(width: 8),
-                          _buildSpeedOption('Lento', 10,
-                              Colors.blueAccent),
+                          _buildSpeedOption('Lento', 10, Colors.blueAccent),
                         ],
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 4),
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
                       child: Text(
                         'Sube de nivel cada $_levelingSpeed turnos',
                         style: const TextStyle(
@@ -300,41 +297,27 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
                       Material(
                         color: Colors.transparent,
                         child: SwitchListTile(
-                          title: const Text('Modo Hot',
-                              style: TextStyle(
-                                  color: Colors.white)),
+                          title: const Text(
+                            'Modo Hot',
+                            style: TextStyle(color: Colors.white),
+                          ),
                           subtitle: const Text(
                             'Incluye retos picantes',
                             style: TextStyle(
-                                color: Colors.white54,
-                                fontSize: 12),
+                              color: Colors.white54,
+                              fontSize: 12,
+                            ),
                           ),
                           value: _isHotMode,
                           activeThumbColor: Colors.pink,
-                          onChanged: (val) =>
-                              setState(() => _isHotMode = val),
+                          onChanged: (val) => setState(() => _isHotMode = val),
                         ),
                       )
                     else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.lock_outline,
-                                color: Colors.white38, size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Modo Hot bloqueado. Actívalo en Configuración.',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      HotModeLockRow(
+                        isPremium: context
+                            .watch<MonetizationProvider>()
+                            .isPremium,
                       ),
                   ],
                 ),
@@ -394,8 +377,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
     );
   }
 
-  Widget _buildSpeedOption(
-      String label, int speed, Color color) {
+  Widget _buildSpeedOption(String label, int speed, Color color) {
     bool isSelected = _levelingSpeed == speed;
     return Expanded(
       child: InkWell(
@@ -404,24 +386,19 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           setState(() => _levelingSpeed = speed);
         },
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
                 ? color.withValues(alpha: 0.3)
                 : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(
-              color: isSelected
-                  ? color
-                  : Colors.white10,
-            ),
+            border: Border.all(color: isSelected ? color : Colors.white10),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
                       color: color.withValues(alpha: 0.2),
                       blurRadius: 10,
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -429,12 +406,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isSelected
-                  ? Colors.white
-                  : Colors.white54,
-              fontWeight: isSelected
-                  ? FontWeight.w900
-                  : FontWeight.normal,
+              color: isSelected ? Colors.white : Colors.white54,
+              fontWeight: isSelected ? FontWeight.w900 : FontWeight.normal,
               fontSize: 13,
             ),
           ),
@@ -445,8 +418,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
 
   Widget _buildStartButton() {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 40),
       child: GameButton(
         text: 'EMPEZAR',
         onPressed: () async {
@@ -454,7 +426,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           _isStarting = true;
           final gate = await GateGuard.tryStart(context, GameCap.chupitos);
           if (gate != GateResult.allowed) {
-            _isStarting = false; // permitir reintento (volvió del paywall o dismiss)
+            _isStarting =
+                false; // permitir reintento (volvió del paywall o dismiss)
             return;
           }
           if (!mounted) return;
@@ -462,10 +435,8 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           await settings.setPlayer1Name(_player1Name);
           await settings.setPlayer2Name(_player2Name);
           if (!mounted) return;
-          final audioService =
-              context.read<AudioService>();
-          final settingsProvider =
-              context.read<SettingsProvider>();
+          final audioService = context.read<AudioService>();
+          final settingsProvider = context.read<SettingsProvider>();
           final controller = DrinksController(
             audioService: audioService,
             settingsProvider: settingsProvider,
@@ -481,8 +452,7 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  DrinksGameScreen(controller: controller),
+              builder: (context) => DrinksGameScreen(controller: controller),
             ),
           );
         },
@@ -496,14 +466,18 @@ class _DrinksStartScreenState extends State<DrinksStartScreen> {
       context: context,
       sections: [
         GameHelpModal.step(
-            '1', 'Se muestran desafíos y tragos para cada jugador.'),
+          '1',
+          'Se muestran desafíos y tragos para cada jugador.',
+        ),
+        GameHelpModal.step('2', 'Cada jugador cumple su reto o bebe.'),
         GameHelpModal.step(
-            '2', 'Cada jugador cumple su reto o bebe.'),
-        GameHelpModal.step(
-            '3', 'El primero en llegar al límite de tragos pierde.'),
+          '3',
+          'El primero en llegar al límite de tragos pierde.',
+        ),
         GameHelpModal.text(
-            'Los desafíos pueden ser: tomar un trago, hacer una pregunta, '
-            'o una acción especial.'),
+          'Los desafíos pueden ser: tomar un trago, hacer una pregunta, '
+          'o una acción especial.',
+        ),
       ],
     );
   }
