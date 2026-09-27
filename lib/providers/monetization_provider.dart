@@ -3,6 +3,7 @@ import '../core/constants/game_caps.dart';
 import '../core/storage/local_storage.dart';
 import '../core/utils/date_utils.dart' as utils;
 import '../data/ad_service.dart';
+import '../services/billing_service.dart';
 
 /// Orquesta reglas de monetizacion: premium, caps diarios, rewarded ads.
 ///
@@ -13,12 +14,19 @@ class MonetizationProvider extends ChangeNotifier {
   /// Servicio de ads. Default [NoOpAdService] para tests / web / error de init.
   final AdService adService;
 
+  /// Servicio de billing IAP. Null en tests sin compras: [purchasePremium]
+  /// y [restorePurchases] retornan "no disponible" sin tocarlo.
+  final BillingService? billingService;
+
   /// Fuente de tiempo inyectable para testear rollover de dia. Default:
   /// [DateTime.now].
   final DateTime Function() _now;
 
-  MonetizationProvider({AdService? adService, DateTime Function()? clock})
-      : adService = adService ?? const NoOpAdService(),
+MonetizationProvider({
+    AdService? adService,
+    this.billingService,
+    DateTime Function()? clock,
+  })  : adService = adService ?? const NoOpAdService(),
         _now = clock ?? DateTime.now;
 
   bool _isPremium = false;
@@ -125,6 +133,30 @@ class MonetizationProvider extends ChangeNotifier {
     _playCounts = <String, int>{};
     await LocalStorage.savePlayCounts(_playCounts);
     notifyListeners();
+  }
+
+  // ── Billing (Phase 3.4) ──
+
+  /// Flujo de compra del premium via [billingService]. Si la compra
+  /// confirma, persiste `isPremium = true`. Retorna el outcome para que
+  /// la UI pueda mostrar errores/estados.
+  Future<PurchaseOutcome> purchasePremium() async {
+    final billing = billingService;
+    if (billing == null) return PurchaseOutcome.unavailable;
+    if (!billing.isReady) await billing.init();
+    final outcome = await billing.purchasePremium();
+    if (outcome == PurchaseOutcome.success) await setPremium(true);
+    return outcome;
+  }
+
+  /// Restaura compras previas. True si el premium quedó activo (y persistido).
+  Future<bool> restorePurchases() async {
+    final billing = billingService;
+    if (billing == null) return false;
+    if (!billing.isReady) await billing.init();
+    final restored = await billing.restorePurchases();
+    if (restored && !isPremium) await setPremium(true);
+    return restored;
   }
 
   // ── Helpers ──

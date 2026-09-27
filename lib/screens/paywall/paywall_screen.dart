@@ -1,21 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/monetization_provider.dart';
+import '../../services/billing_service.dart';
 import '../../widgets/neon_background.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/game_button.dart';
 
-/// Pantalla de paywall — stub en Phase 3.2.
+/// Pantalla de paywall — Phase 3.4 (IAP real).
 ///
-/// **Phase 3.2 (stub)**: muestra beneficios + boton "Cerrar". El boton
-/// "Comprar" no hace nada todavia (Phase 3.4 conecta BillingService).
+/// Muestra beneficios del premium y el flujo de compra via
+/// [MonetizationProvider.purchasePremium] (BillingService). Incluye
+/// restaurar compras, estados de loading y manejo de errores/cancelación.
 ///
-/// **Phase 3.4 (real)**: boton "Comprar \$4.99" llama a BillingService.purchase,
-/// restore button, manejo de errores de Play Billing, verificacion de
-/// receipts.
-class PaywallScreen extends StatelessWidget {
+/// Requiere `MonetizationProvider` en el árbol (provisto globalmente en
+/// main.dart). Si ya es premium, muestra estado "activado" con CTA de cierre.
+class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
 
   @override
+  State<PaywallScreen> createState() => _PaywallScreenState();
+}
+
+class _PaywallScreenState extends State<PaywallScreen> {
+  bool _busy = false;
+
+  Future<void> _purchase() async {
+    final monetization = context.read<MonetizationProvider>();
+    setState(() => _busy = true);
+    final outcome = await monetization.purchasePremium();
+    if (!mounted) return;
+    setState(() => _busy = false);
+    final messenger = ScaffoldMessenger.of(context);
+    switch (outcome) {
+      case PurchaseOutcome.success:
+        messenger.showSnackBar(
+          const SnackBar(content: Text('¡Bienvenido a Pareja Premium!')),
+        );
+      case PurchaseOutcome.cancelled:
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Compra cancelada.')),
+        );
+      case PurchaseOutcome.failed:
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudo completar la compra. Inténtalo de nuevo.',
+            ),
+          ),
+        );
+      case PurchaseOutcome.unavailable:
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Las compras no están disponibles en este device.'),
+          ),
+        );
+    }
+  }
+
+  Future<void> _restore() async {
+    final monetization = context.read<MonetizationProvider>();
+    setState(() => _busy = true);
+    final restored = await monetization.restorePurchases();
+    if (!mounted) return;
+    setState(() => _busy = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          restored
+              ? 'Compras restauradas. ¡Bienvenido de nuevo!'
+              : 'No se encontraron compras previas.',
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isPremium = context.watch<MonetizationProvider>().isPremium;
+
     return Scaffold(
       body: NeonBackground(
         child: SafeArea(
@@ -82,45 +144,60 @@ class PaywallScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // Stub: boton "Comprar" wired pero no-op hasta Phase 3.4.
-                  SizedBox(
-                    width: double.infinity,
-                    child: GameButton(
-                      text: 'PRÓXIMAMENTE — \$4.99',
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Las compras in-app estarán disponibles pronto.',
-                            ),
-                          ),
-                        );
-                      },
-                      style: GameButtonStyle.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Restaurar compras — disponible en v1.1',
+                  if (isPremium)
+                    Column(
+                      children: [
+                        const Text(
+                          '✓ Premium activado',
+                          style: TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
-                      );
-                    },
-                    child: const Text(
-                      'Restaurar compras',
-                      style: TextStyle(color: Colors.white54),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: GameButton(
+                            text: 'CERRAR',
+                            onPressed: () => Navigator.pop(context),
+                            style: GameButtonStyle.secondary,
+                          ),
+                        ),
+                      ],
+                    )
+                  else ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: _busy
+                          ? const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.amber,
+                                ),
+                              ),
+                            )
+                          : GameButton(
+                              text: 'COMPRAR — \$4.99',
+                              onPressed: _purchase,
+                              style: GameButtonStyle.primary,
+                            ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Próximamente — Phase 3.4',
-                    style: TextStyle(color: Colors.white24, fontSize: 11),
-                  ),
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: _busy ? null : _restore,
+                      child: const Text(
+                        'Restaurar compras',
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Pago seguro via Google Play / App Store.',
+                      style: TextStyle(color: Colors.white24, fontSize: 11),
+                    ),
+                  ],
                 ],
               ),
             ),

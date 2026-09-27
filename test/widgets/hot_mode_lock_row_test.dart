@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:pareja/providers/monetization_provider.dart';
 import 'package:pareja/screens/paywall/paywall_screen.dart';
 import 'package:pareja/widgets/hot_mode_lock_row.dart';
 
 void main() {
-  testWidgets('free user: muestra mensaje Requiere Premium + CTA', (tester) async {
+  testWidgets('free user: muestra mensaje Requiere Premium + CTA', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(home: Scaffold(body: HotModeLockRow(isPremium: false))),
     );
@@ -27,7 +31,14 @@ void main() {
 
   testWidgets('CTA navega a PaywallScreen', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: HotModeLockRow(isPremium: false))),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => MonetizationProvider()),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(body: HotModeLockRow(isPremium: false)),
+        ),
+      ),
     );
 
     await tester.tap(find.text('Obtener Premium'));
