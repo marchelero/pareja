@@ -11,7 +11,9 @@ void main() {
       settingsProvider: settings,
       maxRounds: maxRounds,
     );
-    addTearDown(controller.dispose);
+    // NOTA: NO usar addTearDown(dispose): el check de flutter_test contra
+    // timers pendientes corre ANTES que addTearDown, asi que cada test que
+    // inicia timers debe cancelarlos EN el cuerpo (dispose() los cancela).
     await controller.initGame();
     return controller;
   }
@@ -27,6 +29,7 @@ void main() {
       expect(c.currentRound, 0);
       expect(c.isPlayerTurn, isFalse);
       expect(c.maxRoundsValue, 5);
+      c.dispose();
     });
 
     testWidgets('setStartingPlayer fija quién empieza', (tester) async {
@@ -36,6 +39,7 @@ void main() {
       expect(c.activeName, kPlayer2);
       c.setStartingPlayer(true);
       expect(c.isHeTurn, isTrue);
+      c.dispose();
     });
 
     testWidgets('startRound genera secuencia y muestra el tile',
@@ -49,18 +53,22 @@ void main() {
 
       await tester.pump(const Duration(milliseconds: 100));
       expect(c.highlightedButton, c.sequence[0]);
+      c.dispose();
     });
 
     testWidgets('tras mostrar la secuencia pasa al input del jugador',
         (tester) async {
       final c = await setup(tester);
       c.startRound();
-      await tester.pump(const Duration(milliseconds: 650));
-      await tester.pump(const Duration(milliseconds: 350));
+      // La exhibicion dura 600ms por tile + 300ms de gap; a los 900ms exactos
+      // arranca el input timer con timeLeft=3.0 (sin ticks todavia).
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
       expect(c.isShowingSequence, isFalse);
       expect(c.isPlayerTurn, isTrue);
       expect(c.inputIndex, 0);
       expect(c.timeLeft, closeTo(3.0, 0.01));
+      c.dispose();
     });
 
     testWidgets('tap fuera del turno no hace nada', (tester) async {
@@ -70,6 +78,7 @@ void main() {
       c.playerTap(0);
       expect(c.inputIndex, 0);
       expect(c.currentLevel, 1);
+      c.dispose();
     });
   });
 
@@ -78,8 +87,8 @@ void main() {
         (tester) async {
       final c = await setup(tester);
       c.startRound();
-      await tester.pump(const Duration(milliseconds: 650));
-      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
 
       final right = c.sequence[0];
       c.playerTap(right);
@@ -89,20 +98,22 @@ void main() {
       expect(c.isPlayerTurn, isFalse);
       expect(c.isHeTurn, isFalse); // cambio de jugador tras exito
       expect(c.isGameOver, isFalse);
+      c.dispose();
     });
 
     testWidgets('tras 1.4s el nivel siguiente empieza a mostrarse',
         (tester) async {
       final c = await setup(tester);
       c.startRound();
-      await tester.pump(const Duration(milliseconds: 650));
-      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
       c.playerTap(c.sequence[0]);
 
       await tester.pump(const Duration(milliseconds: 1500));
       expect(c.sequence.length, 2);
       expect(c.isShowingSequence, isTrue);
       expect(c.currentLevel, 2);
+      c.dispose();
     });
   });
 
@@ -117,8 +128,8 @@ void main() {
           finished = (winnerName: winnerName, loserName: loserName);
 
       c.startRound();
-      await tester.pump(const Duration(milliseconds: 650));
-      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
 
       final wrong = (c.sequence[0] + 1) % 4;
       c.playerTap(wrong);
@@ -133,6 +144,7 @@ void main() {
       expect(finished, isNotNull);
       expect(finished!.winnerName, kPlayer2);
       expect(finished!.loserName, kPlayer1);
+      c.dispose();
     });
 
     testWidgets('timeout pierde la ronda y reparte el punto', (tester) async {
@@ -144,8 +156,8 @@ void main() {
           finished = (winnerName: winnerName, loserName: loserName);
 
       c.startRound();
-      await tester.pump(const Duration(milliseconds: 650));
-      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
 
       // El input timer otorga 3.0s; pasan 3.1s => timeout.
       await tester.pump(const Duration(milliseconds: 3100));
@@ -156,18 +168,31 @@ void main() {
 
       await tester.pump(const Duration(milliseconds: 600));
       expect(finished!.winnerName, kPlayer2);
+      c.dispose();
     });
 
     testWidgets('startNextRound abre ronda nueva con turno invertido',
         (tester) async {
       final c = await setup(tester);
       c.startRound();
+      expect(c.currentRound, 1);
+
+      // Completa la muestra de la ronda 1 y falla a propósito: _onMistake
+      // cancela el input timer y (maxRounds 5, ronda 1) no agenda finish
+      // timer. Asi la ronda 2 queda como unico show-timer vivo y dispose()
+      // puede cancelarlo (un startNextRound directo dejaria huerfano el
+      // show-timer de la ronda 1: no es cancelable).
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 300));
+      c.playerTap((c.sequence[0] + 1) % 4);
+
       c.startNextRound();
       expect(c.currentRound, 2);
       expect(c.currentLevel, 1);
       expect(c.sequence.length, 1);
       expect(c.isHeTurn, isFalse); // empezo P1, startNextRound invierte
       expect(c.isGameOver, isFalse);
+      c.dispose();
     });
   });
 }

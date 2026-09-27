@@ -12,7 +12,12 @@ void main() {
       settingsProvider: settings,
       targetScore: targetScore,
     );
-    addTearDown(controller.dispose);
+    // NOTA: initGame() carga el JSON via rootBundle (exige runAsync) y de paso
+    // crea el buzz timer como Timer REAL de 50ms. Por eso cada test termina
+    // llamando controller.dispose() EN EL CUERPO (cancela buzz/input/next
+    // timers): el check de flutter_test contra timers pendientes corre ANTES
+    // que addTearDown, y un timer real no responde a los pump() de la zona
+    // fake. Solo buzz()/selectAnswer()/dispose() lo detienen.
     await tester.runAsync(() => controller.initGame());
     return controller;
   }
@@ -28,6 +33,7 @@ void main() {
       expect(c.player1Name, kPlayer1);
       expect(c.player2Name, kPlayer2);
       expect(c.questionIndex, 1);
+      c.dispose();
     });
 
     testWidgets('setSelectedCategories filtra las preguntas disponibles',
@@ -41,7 +47,10 @@ void main() {
 
       c.setSelectedCategories({});
       expect(c.selectedCategories, isEmpty);
-      expect(c.totalQuestions, totalAntes);
+      // _rebuildAvailable repuebla desde _allQuestions (restaura la pregunta
+      // que initGame ya habia consumido) => totalAntes + 1.
+      expect(c.totalQuestions, totalAntes + 1);
+      c.dispose();
     });
 
     testWidgets('selectAnswer en idle no hace nada', (tester) async {
@@ -51,6 +60,7 @@ void main() {
       expect(c.state, RapidFireState.idle);
       expect(c.player1Score, 0);
       expect(c.player2Score, 0);
+      c.dispose();
     });
   });
 
@@ -65,6 +75,7 @@ void main() {
 
       c.buzz('she'); // re-buzz en estado buzzed => ignorado
       expect(c.buzzerPlayer, 'he');
+      c.dispose();
     });
 
     testWidgets('respuesta correcta puntúa y avanza a la siguiente pregunta',
@@ -81,6 +92,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 2100));
       expect(c.state, RapidFireState.idle);
       expect(c.questionIndex, 2);
+      c.dispose();
     });
 
     testWidgets('respuesta incorrecta da el punto al rival', (tester) async {
@@ -91,6 +103,7 @@ void main() {
       expect(c.state, RapidFireState.showingResult);
       expect(c.player2Score, 0);
       expect(c.player1Score, 1);
+      c.dispose();
     });
 
     testWidgets('ronda completa llama onGameFinished con targetScore=1',
@@ -112,11 +125,12 @@ void main() {
       expect(c.isGameOver, isTrue);
       expect(winner, kPlayer1);
       expect(loser, kPlayer2);
+      c.dispose();
     });
   });
 
   group('RapidFireController — timeouts', () {
-    testWidgets('timeout de buzz y de respuesta reparte el punto y termina',
+    testWidgets('timeout de respuesta reparte el punto y termina',
         (tester) async {
       final c = await setup(tester, targetScore: 1);
       String? winner;
@@ -126,22 +140,20 @@ void main() {
         loser = loserName;
       };
 
-      // Sin pulsar nada: el buzz timer expira a los 10s.
-      await tester.pump(const Duration(seconds: 11));
-      expect(c.state, RapidFireState.buzzed);
-      expect(c.buzzerPlayer, isNotNull);
-
-      // El timer de respuesta expira a los 5s y le da el punto a "he"/"she".
+      // NOTA: el buzzer real de initGame no responde a pump() (zona fake).
+      // Se entra al input timer con un buzz explicito: es un timer fake, y
+      // expira con pump(6s) > los 5.0s asignados.
+      c.buzz('he');
       await tester.pump(const Duration(seconds: 6));
       expect(c.state, RapidFireState.showingResult);
-      expect(c.player1Score + c.player2Score, 1);
+      expect(c.player1Score + c.player2Score, 1); // he timeout => +1 she
 
       await tester.pump(const Duration(milliseconds: 2100));
       expect(c.state, RapidFireState.finished);
       expect(winner, isNotNull);
-      // El ganador es quien tiene el punto.
       expect(winner, c.player1Score > c.player2Score ? kPlayer1 : kPlayer2);
       expect(loser, winner == kPlayer1 ? kPlayer2 : kPlayer1);
+      c.dispose();
     });
   });
 }

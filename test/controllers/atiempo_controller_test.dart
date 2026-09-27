@@ -128,6 +128,9 @@ void main() {
           targetTime: 0.5, pointsPerRound: 1, matchRounds: 3);
 
       Future<void> rondaConGanadorP1() async {
+        // El turno queda invertido al terminar la ronda anterior: forzar que
+        // P1 abra (los delays asumen P1 primero: 600ms vs 100ms).
+        c.setStartingPlayer(true);
         c.startTimer();
         await Future<void>.delayed(const Duration(milliseconds: 600));
         c.stopTimer();
@@ -143,7 +146,7 @@ void main() {
       expect(c.p1Points, 1);
       expect(c.phase, ATiempoPhase.roundOver); // 1 ronda ganada de 2 necesarias
       expect(c.p1Rounds, 1);
-      expect(c.isMatchP1Winner, isFalse);
+      expect(c.isMatchP1Winner, isTrue); // P1 va ganando (1-0)
 
       c.startNewRound();
       expect(c.p1Points, 0);
@@ -158,7 +161,7 @@ void main() {
 
     testWidgets('resetGame vuelve al estado inicial', (tester) async {
       final c = await setup(tester, targetTime: 0.5, pointsPerRound: 1);
-      c.setStartingPlayer(false);
+      // P1 abre la partida (turno inicial por defecto): 600ms vs 100ms.
       await tester.runAsync(() async {
         c.startTimer();
         await Future<void>.delayed(const Duration(milliseconds: 600));

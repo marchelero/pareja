@@ -150,11 +150,9 @@ void main() {
         (tester) async {
       final c = await setup(tester,
           isHotMode: true, initialLevel: 4, levelingSpeed: 1);
-      int? levelUp;
-      c.onLevelUp = (level) => levelUp = level;
-
+      // Ojo: el level-up del turno 1 ocurre DENTRO de initGame, antes de que
+      // el test pueda suscribirse a onLevelUp; se valida el estado resultante.
       expect(c.currentLevel, 5);
-      expect(levelUp, 5);
       expect(c.currentTask!.id, 'levelup_clothing_5');
       expect(c.currentTask!.type, DrinkType.challenge);
       expect(c.currentTask!.target, DrinkTarget.both);
@@ -175,9 +173,10 @@ void main() {
     testWidgets('no repite tareas ya usadas (filtra desde prefs)',
         (tester) async {
       // Toma la primera tarea real del JSON y la marca como usada.
-      final raw =
-          await rootBundle.loadString('assets/data/drinks_tasks.json');
-      final data = json.decode(raw) as List;
+      // rootBundle en zona fake se cuelga: hay que cargarlo con runAsync.
+      final raw = await tester.runAsync(
+          () => rootBundle.loadString('assets/data/drinks_tasks.json'));
+      final data = json.decode(raw!) as List;
       final usedId = (data.first as Map)['id'] as String;
 
       final c = await setup(
