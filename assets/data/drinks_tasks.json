@@ -1167,7 +1167,7 @@
     },
     {
         "id": "hot7",
-        "text": "Que tu pareja te quite una prenda.",
+        "text": "Que tu pareja te ponga una prenda suya por 5 minutos.",
         "target": "loser",
         "type": "challenge",
         "category": "challenge",
@@ -1255,7 +1255,7 @@
     },
     {
         "id": "hot15",
-        "text": "Deja que tu pareja decida qué prenda te quitas.",
+        "text": "Deja que tu pareja decida la pr\u00f3xima actividad que hacen juntos.",
         "target": "loser",
         "type": "challenge",
         "category": "challenge",
@@ -1376,7 +1376,7 @@
     },
     {
         "id": "hot26",
-        "text": "Elige: Deja que tu pareja te quite una prenda o toma.",
+        "text": "Elige: Recibe un masaje de tu pareja o toma.",
         "target": "random",
         "type": "challenge",
         "category": "decision",
@@ -1552,7 +1552,7 @@
     },
     {
         "id": "hot42",
-        "text": "Elige: Quitate una prenda o toma.",
+        "text": "Elige: Ponle a tu pareja una prenda tuya o toma.",
         "target": "random",
         "type": "challenge",
         "category": "decision",
@@ -2036,7 +2036,7 @@
     },
     {
         "id": "hot86",
-        "text": "Elige: Quitale una prenda a tu pareja o toma.",
+        "text": "Elige: Hazle un cumplido al o\u00eddo a tu pareja o toma.",
         "target": "random",
         "type": "challenge",
         "category": "decision",
